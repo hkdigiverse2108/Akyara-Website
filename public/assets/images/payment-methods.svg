@@ -1,0 +1,20 @@
+<svg width="560" height="85" viewBox="0 0 560 85" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="0" y="10.5" width="100" height="64" rx="10" fill="#2448B5"/>
+  <text x="50" y="53" font-family="Jost, Arial, sans-serif" font-size="26" font-weight="700" fill="#FFFFFF" text-anchor="middle">VISA</text>
+
+  <rect x="112" y="10.5" width="100" height="64" rx="10" fill="#2B7DC4"/>
+  <circle cx="162" cy="42.5" r="18" fill="#FFFFFF"/>
+  <circle cx="162" cy="42.5" r="11" fill="#2B7DC4"/>
+  <text x="162" y="49.5" font-family="Jost, Arial, sans-serif" font-size="16" font-weight="700" fill="#FFFFFF" text-anchor="middle">D</text>
+
+  <rect x="224" y="10.5" width="100" height="64" rx="10" fill="#1E9BD7"/>
+  <text x="274" y="39" font-family="Jost, Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">AMERICAN</text>
+  <text x="274" y="57" font-family="Jost, Arial, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">EXPRESS</text>
+
+  <rect x="336" y="10.5" width="100" height="64" rx="10" fill="#F5A623"/>
+  <text x="386" y="50" font-family="Jost, Arial, sans-serif" font-size="18" font-weight="700" fill="#FFFFFF" text-anchor="middle">DISCOVER</text>
+
+  <rect x="448" y="10.5" width="100" height="64" rx="10" fill="#2F3640"/>
+  <circle cx="490" cy="42.5" r="14" fill="#EB001B"/>
+  <circle cx="508" cy="42.5" r="14" fill="#F79E1B"/>
+</svg>

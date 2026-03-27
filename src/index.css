@@ -1,8 +1,9 @@
-* {
-  box-sizing: border-box;
-}
+﻿@import "tailwindcss";
 
-body {
-  margin: 0;
-  font-family: system-ui, sans-serif;
+@import url("https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap");
+
+@layer base {
+  body {
+    @apply font-sans text-black bg-white;
+  }
 }
