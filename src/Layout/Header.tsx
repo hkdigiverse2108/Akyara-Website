@@ -13,18 +13,12 @@ const Header = () => {
             alt="Kumo logo"
           />
         </div>
-        <nav className="flex flex-1 items-center justify-center gap-8 font-medium">
+        <nav className="ml-6 flex items-center gap-8 font-medium">
           {navLinks.map((label) => (
-            <a
-              key={label}
-              href="#"
-              className="relative after:absolute after:left-0 after:-bottom-1.5 after:h-[2px] after:w-0 after:bg-[#f6821f] after:transition-[width] after:duration-200 hover:after:w-full"
-            >
-              {label}
-            </a>
+          <a key={label} href="#" className="relative after:absolute after:left-0 after:-bottom-1.5 after:h-[2px] after:w-0 after:bg-[#f6821f] after:transition-[width] after:duration-200 hover:after:w-full">{label}</a>
           ))}
         </nav>
-        <div className="flex items-center gap-4">
+        <div className="ml-auto flex items-center gap-4">
           <button
             className="relative inline-grid h-10 w-10 place-items-center rounded-full bg-white text-black transition duration-200 hover:-translate-y-0.5 hover:bg-[#ececec]"
             type="button"
