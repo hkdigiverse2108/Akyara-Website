@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import CategoryHighlights from "../Components/CategoryHighlights";
 import HeroSlider from "../Components/HeroSlider";
+import PageLoader from "../Components/PageLoader";
 
 const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 
@@ -37,6 +38,7 @@ const countdownCards = [
 ];
 
 const Home = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [showSubscribe, setShowSubscribe] = useState(false);
   const [isDealsHovered, setIsDealsHovered] = useState(false);
   const dealsSliderRef = useRef<HTMLDivElement | null>(null);
@@ -52,6 +54,14 @@ const Home = () => {
     const scrollAmount = cardWidth + (Number.isFinite(gapValue) ? gapValue : 0);
     container.scrollBy({ left: direction * scrollAmount, behavior: "smooth" });
   };
+  useEffect(() => {
+    const loaderTimer = window.setTimeout(() => {
+      setIsLoading(false);
+    }, 800);
+
+    return () => window.clearTimeout(loaderTimer);
+  }, []);
+
   useEffect(() => {
     const timer = window.setTimeout(() => {
       setShowSubscribe(true);
@@ -88,6 +98,8 @@ const Home = () => {
 
   return (
     <div>
+      {isLoading && <PageLoader />}
+
       {showSubscribe && (
         <div className="fixed inset-0 z-[60] grid place-items-center animate-fadeIn">
           <div className="absolute inset-0 bg-black/55" onClick={() => setShowSubscribe(false)} />
@@ -111,11 +123,11 @@ const Home = () => {
 
       <CategoryHighlights />
 
-      <section className="mt-16 py-[70px] pt-0">
+      <section className="mt-13 py-[70px] pt-0">
         <div className="mx-auto w-[92%] max-w-[1200px]">
           <div className="relative mb-12 text-center">
             <span
-              className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-[70%] whitespace-nowrap text-[clamp(2.2rem,6vw,4rem)] font-semibold italic text-black/10"
+              className="pointer-events-none absolute mt-1.5 left-1/2 top-1/2 -translate-x-1/2 -translate-y-[70%] whitespace-nowrap text-[clamp(2.2rem,6vw,3.5rem)] font-semibold italic text-black/10"
               aria-hidden="true"
             >
               Trendy Products
@@ -217,7 +229,7 @@ const Home = () => {
             <div className="row justify-content-center">
               <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                 <div className="sec_title relative text-center">
-                  <h2 className="off_title pointer-events-none absolute left-1/2 top-0 z-0 -translate-x-1/2 whitespace-nowrap text-[clamp(2.6rem,6vw,4.5rem)] font-semibold italic leading-none text-black/10">
+                  <h2 className="off_title pointer-events-none mt-2 absolute left-1/2 top-0 z-0 -translate-x-1/2 whitespace-nowrap text-[clamp(2.6rem,6vw,4.5rem)] font-semibold italic leading-none text-black/10">
                     Good Deals
                   </h2>
                   <h3 className="ft-bold relative z-10 pt-10 font-display text-2xl font-semibold sm:text-3xl">Deals of The Day</h3>
@@ -311,11 +323,14 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="mt-16 py-[70px] pt-0">
+      <section className=" py-[70px] pt-0">
         <div className="mx-auto w-[92%] max-w-[1200px]">
-          <div className="mb-9 text-center">
-            <h2 className="m-0 font-display text-2xl">Instagram Gallery</h2>
-            <p className="m-0 text-[#777777]">@mahak_71</p>
+          <div className="relative mb-10 text-center">
+            <span className="pointer-events-none absolute mt-5 left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-[clamp(2.4rem,6vw,4rem)] font-semibold italic text-black/10">
+              Instagram Gallery
+            </span>
+            <p className="relative z-10 m-0 pt-2 text-lg font-semibold text-[#e53935]">@mahak_71</p>
+            <h2 className="relative z-10 m-0 pt-2 font-display text-2xl font-bold sm:text-3xl">From Instagram</h2>
           </div>
           <div className="grid grid-cols-[repeat(auto-fit,minmax(120px,1fr))] gap-2.5">
             {Array.from({ length: 8 }).map((_, index) => (
@@ -325,42 +340,65 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="mt-16 py-[70px] pt-0">
-        <div className="mx-auto grid w-[92%] max-w-[1200px] grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-6 pt-6">
-          <div className="flex items-center gap-3 rounded-[16px] bg-white p-[18px]">
-            <div className="inline-grid h-[34px] w-[34px] place-items-center rounded-[9px] bg-[#f6821f] font-bold text-white">
-              F
+      <section className="py-[40px]">
+        <div className="mx-auto w-[92%] max-w-[1200px]">
+          <div className="grid gap-8 text-sm sm:grid-cols-2 lg:grid-cols-4">
+            <div className="flex items-center gap-4">
+              <div className="text-[#e53935]">
+                <svg viewBox="0 0 24 24" className="h-9 w-9" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M4 7h16l-1.8 8.5a2 2 0 0 1-2 1.5H7.8a2 2 0 0 1-2-1.5L4 7z" />
+                  <path d="M7 7a5 5 0 0 1 10 0" />
+                  <path d="M9.2 20a.8.8 0 1 0 0-1.6.8.8 0 0 0 0 1.6z" fill="currentColor" stroke="none" />
+                  <path d="M14.8 20a.8.8 0 1 0 0-1.6.8.8 0 0 0 0 1.6z" fill="currentColor" stroke="none" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.15em] text-[#111111]">Free Shipping</p>
+                <p className="mt-1 text-sm text-[#667085]">Capped at $10 per order</p>
+              </div>
             </div>
-            <div>
-              <strong>Free Shipping</strong>
-              <p className="text-[#777777]">Capped at $10 per order</p>
+
+            <div className="flex items-center gap-4">
+              <div className="text-[#e53935]">
+                <svg viewBox="0 0 24 24" className="h-9 w-9" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2.5" y="5" width="19" height="14" rx="2.4" />
+                  <path d="M2.5 9h19" />
+                  <rect x="6" y="13" width="6" height="3" rx="0.8" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.15em] text-[#111111]">Secure Payments</p>
+                <p className="mt-1 text-sm text-[#667085]">Up to 6 months installments</p>
+              </div>
             </div>
-          </div>
-          <div className="flex items-center gap-3 rounded-[16px] bg-white p-[18px]">
-            <div className="inline-grid h-[34px] w-[34px] place-items-center rounded-[9px] bg-[#f6821f] font-bold text-white">
-              S
+
+            <div className="flex items-center gap-4">
+              <div className="text-[#e53935]">
+                <svg viewBox="0 0 24 24" className="h-9 w-9" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M12 3l7 3v6c0 4.2-3 7.9-7 9-4-1.1-7-4.8-7-9V6z" />
+                  <path d="M12 6v12" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.15em] text-[#111111]">15-Days Returns</p>
+                <p className="mt-1 text-sm text-[#667085]">Shop with full confidence</p>
+              </div>
             </div>
-            <div>
-              <strong>Secure Payments</strong>
-              <p className="text-[#777777]">Up to 6 months installments</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 rounded-[6px] bg-white p-[18px]">
-            <div className="inline-grid h-[34px] w-[34px] place-items-center rounded-[9px] bg-[#f6821f] font-bold text-white">
-              R
-            </div>
-            <div>
-              <strong>15-Day Returns</strong>
-              <p className="text-[#777777]">Shop with confidence</p>
-            </div>
-          </div>
-          <div className="flex items-center gap-3 rounded-[16px] bg-white p-[18px]">
-            <div className="inline-grid h-[34px] w-[34px] place-items-center rounded-[9px] bg-[#f6821f] font-bold text-white">
-              H
-            </div>
-            <div>
-              <strong>24x7 Support</strong>
-              <p className="text-[#777777]">Friendly help anytime</p>
+
+            <div className="flex items-center gap-4">
+              <div className="text-[#e53935]">
+                <svg viewBox="0 0 24 24" className="h-9 w-9" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M4 12a8 8 0 0 1 16 0" />
+                  <path d="M7 20a3 3 0 0 1-3-3v-3a2 2 0 0 1 2-2h1" />
+                  <path d="M17 20a3 3 0 0 0 3-3v-3a2 2 0 0 0-2-2h-1" />
+                  <rect x="2" y="12" width="4" height="6" rx="2" />
+                  <rect x="18" y="12" width="4" height="6" rx="2" />
+                </svg>
+              </div>
+              <div>
+                <p className="text-xs font-bold uppercase tracking-[0.15em] text-[#111111]">24x7 Fully Support</p>
+                <p className="mt-1 text-sm text-[#667085]">Get friendly support</p>
+              </div>
             </div>
           </div>
         </div>
