@@ -1,6 +1,11 @@
 ﻿import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { MainLayout } from "../Layout";
 import Home from "../Pages/Home";
+import ForgotPassword from "../Pages/Auth/ForgotPassword";
+import Login from "../Pages/Auth/Login";
+import ResetPassword from "../Pages/Auth/ResetPassword";
+import Signup from "../Pages/Auth/Signup";
+import VerifyOtp from "../Pages/Auth/VerifyOtp";
 import PrivateRoutes from "./PrivateRoutes";
 import PublicRoutes from "./PublicRoutes";
 
@@ -20,6 +25,11 @@ const PageRoutes = () => {
         <Route element={<PublicRoutes />}>
           <Route element={<MainLayout />}>
             <Route path="/" element={<Home />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/verify-otp" element={<VerifyOtp />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="*" element={<NotFound />} />
           </Route>
         </Route>

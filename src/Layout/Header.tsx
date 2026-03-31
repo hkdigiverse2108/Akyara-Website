@@ -1,4 +1,5 @@
-﻿import { HeartOutlined, SearchOutlined, ShoppingCartOutlined, UserOutlined } from "@ant-design/icons";
+import { HeartOutlined, SearchOutlined, ShoppingCartOutlined, UserOutlined } from "@ant-design/icons";
+import { Link } from "react-router-dom";
 
 const navLinks = ["Home", "Shop", "Product", "Pages", "Docs"];
 
@@ -7,11 +8,13 @@ const Header = () => {
     <header className="sticky top-0 z-20 border-b border-[#e5e5e5] bg-white">
       <div className="mx-auto flex w-[92%] max-w-[1200px] items-center gap-6 py-[18px]">
         <div className="flex items-center gap-2.5">
-          <img
-            className="block h-10 w-auto object-contain"
-            src="/assets/images/logo/logo.png"
-            alt="Kumo logo"
-          />
+          <Link to="/" aria-label="Home">
+            <img
+              className="block h-10 w-auto object-contain"
+              src="/assets/images/logo/logo.png"
+              alt="Kumo logo"
+            />
+          </Link>
         </div>
         <nav className="ml-6 flex items-center gap-8 font-medium">
           {navLinks.map((label) => (
@@ -26,13 +29,13 @@ const Header = () => {
           >
             <SearchOutlined />
           </button>
-          <button
+          <Link
             className="relative inline-grid h-10 w-10 place-items-center rounded-full bg-white text-black transition duration-200 hover:-translate-y-0.5 hover:bg-[#ececec]"
-            type="button"
+            to="/login"
             aria-label="Account"
           >
             <UserOutlined />
-          </button>
+          </Link>
           <button
             className="relative inline-grid h-10 w-10 place-items-center rounded-full bg-white text-black transition duration-200 hover:-translate-y-0.5 hover:bg-[#ececec]"
             type="button"
@@ -60,3 +63,4 @@ const Header = () => {
 };
 
 export default Header;
+
