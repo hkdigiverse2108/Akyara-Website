@@ -33,7 +33,7 @@ const CategoryCard = ({
     >
       {useImageAsBackground && (
         <div
-          className="pointer-events-none absolute inset-0 bg-cover bg-no-repeat bg-right-bottom"
+          className="pointer-events-none absolute inset-0 origin-bottom-left bg-cover bg-no-repeat bg-left-bottom transition-transform duration-500 ease-out group-hover:scale-[1.06]"
           style={{ backgroundImage: `url(${image})` }}
           aria-hidden="true"
         />

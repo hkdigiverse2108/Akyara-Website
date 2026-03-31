@@ -6,4 +6,31 @@
   body {
     @apply font-sans text-black bg-white;
   }
+
+  img,
+  svg {
+    vertical-align: middle;
+  }
+}
+
+@layer components {
+  .product-card {
+    --bs-card-inner-border-radius: 6px;
+  }
+
+  .product-card .card-img,
+  .product-card .card-img-top {
+    width: 100%;
+    border-top-left-radius: var(--bs-card-inner-border-radius);
+    border-top-right-radius: var(--bs-card-inner-border-radius);
+    display: block;
+  }
+
+  .hide-scrollbar {
+    scrollbar-width: none;
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }
