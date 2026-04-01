@@ -71,6 +71,7 @@ export const PageRoutes: RouteObject[] = [
         eyebrow="Company"
         title="About Us"
         description="Learn more about our brand, our values, and how we bring modern shopping experiences to everyday customers."
+        aboutPage
       />
     ),
   },
