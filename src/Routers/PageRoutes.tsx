@@ -1,5 +1,5 @@
 import type { RouteObject } from "react-router-dom";
-import { ROUTES } from "../Constants";
+import { POLICY_TYPE, ROUTES } from "../Constants";
 import ForgotPassword from "../Pages/Auth/ForgotPassword";
 import Login from "../Pages/Auth/Login";
 import ResetPassword from "../Pages/Auth/ResetPassword";
@@ -8,9 +8,16 @@ import VerifyOtp from "../Pages/Auth/VerifyOtp";
 import CategoryPage from "../Pages/CategoryPage";
 import Home from "../Pages/Home";
 import InfoPage from "../Pages/InfoPage";
+import Profile from "../Pages/Profile/index";
 
 export const PageRoutes: RouteObject[] = [
   { path: ROUTES.HOME, element: <Home /> },
+  { path: ROUTES.PROFILE, element: <Profile section="info" /> },
+  { path: ROUTES.ACCOUNT.INFO, element: <Profile section="info" /> },
+  { path: ROUTES.ACCOUNT.ORDERS, element: <Profile section="orders" /> },
+  { path: ROUTES.ACCOUNT.WISHLIST, element: <Profile section="wishlist" /> },
+  { path: ROUTES.ACCOUNT.ADDRESSES, element: <Profile section="addresses" /> },
+  { path: ROUTES.ACCOUNT.PAYMENT, element: <Profile section="payment" /> },
   {
     path: ROUTES.PRODUCTS,
     element: (
@@ -104,6 +111,7 @@ export const PageRoutes: RouteObject[] = [
         eyebrow="Support"
         title="Return & Refund Policy"
         description="Review our return timelines, refund eligibility, and the steps required to complete a return request."
+        policyType={POLICY_TYPE.RETURN_REFUND}
       />
     ),
   },
@@ -114,6 +122,7 @@ export const PageRoutes: RouteObject[] = [
         eyebrow="Support"
         title="Privacy Policy"
         description="Understand how we collect, use, and protect your personal information across our website and services."
+        policyType={POLICY_TYPE.PRIVACY}
       />
     ),
   },
@@ -124,6 +133,7 @@ export const PageRoutes: RouteObject[] = [
         eyebrow="Support"
         title="Terms & Condition"
         description="Review the rules, responsibilities, and usage terms that apply when shopping through our platform."
+        policyType={POLICY_TYPE.TERMS_CONDITION}
       />
     ),
   },
@@ -134,6 +144,7 @@ export const PageRoutes: RouteObject[] = [
         eyebrow="Support"
         title="Cancellation Policy"
         description="See how order cancellations work, including timing requirements and any applicable restrictions."
+        policyType={POLICY_TYPE.CANCELLATION}
       />
     ),
   },

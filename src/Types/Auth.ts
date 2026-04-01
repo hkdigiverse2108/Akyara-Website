@@ -1,4 +1,4 @@
-﻿import type { ApiResponse } from "./Api";
+import type { ApiResponse } from "./Api";
 
 export const USER_ROLES = {
   USER: "USER",
@@ -33,6 +33,7 @@ export type AuthSessionUser = User & {
   _id?: string;
   token?: string;
   userType?: string | number;
+  phoneNumber?: string;
   [key: string]: unknown;
 };
 
@@ -42,9 +43,26 @@ export type LoginPayload = {
 };
 
 export type SignupPayload = {
+  firstName?: string;
+  lastName?: string;
   email: string;
   password: string;
-  phoneNumber?: string;
+  contact?: UserContact;
+  role?: string;
+  [key: string]: unknown;
+};
+
+export type NewsletterSubscriptionPayload = {
+  email: string;
+  [key: string]: unknown;
+};
+
+export type EditUserPayload = {
+  userId: string;
+  firstName?: string;
+  lastName?: string;
+  email: string;
+  contact?: UserContact;
   [key: string]: unknown;
 };
 
@@ -78,3 +96,4 @@ export type ChangePasswordPayload = {
   confirmPassword?: string;
   [key: string]: unknown;
 };
+

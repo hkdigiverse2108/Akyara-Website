@@ -1,4 +1,4 @@
-﻿export const KEYS = {
+export const KEYS = {
   AUTH: {
     SIGNIN: "auth.signin",
     SIGNUP: "auth.signup",
@@ -10,5 +10,14 @@
   USER: {
     BASE: "user.base",
     DROPDOWN: "user.dropdown",
+  },
+  POLICY: {
+    ALL: "policy.all",
+  },
+  ABOUT: {
+    ALL: "about.all",
+  },
+  NEWSLETTER: {
+    SUBSCRIBE: "newsletter.subscribe",
   },
 } as const;

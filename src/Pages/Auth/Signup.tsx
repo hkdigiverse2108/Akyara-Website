@@ -19,7 +19,7 @@ const Signup = () => {
       <Formik initialValues={{firstName: "",lastName: "",email: "",countryCode: "+91",phoneNumber: "",password: "",confirmPassword: "",}} validationSchema={SignupSchema} onSubmit={async (values, { setSubmitting, setStatus }) => {
           setStatus(undefined);
           try {
-            const payload = {firstName: values.firstName.trim(),lastName: values.lastName.trim(),email: values.email,phoneNumber: `${values.countryCode}${values.phoneNumber.replace(/\D/g, "")}`,password: values.password,};
+            const payload = {firstName: values.firstName.trim(),lastName: values.lastName.trim(),email: values.email,contact: {countryCode: values.countryCode,phoneNo: values.phoneNumber.replace(/\D/g, ""),},password: values.password,role: "user",};
             const data = await signupMutation.mutateAsync(payload);
             const token = data?.data?.token ?? (typeof data?.token === "string" ? data.token : undefined);
             if (token) {

@@ -1,4 +1,4 @@
-import {
+﻿import {
   HeartOutlined,
   LogoutOutlined,
   SearchOutlined,
@@ -64,6 +64,11 @@ const Header = () => {
     navigate(ROUTES.HOME);
   };
 
+  const handleProfileOpen = () => {
+    setAccountOpen(false);
+    navigate(ROUTES.PROFILE);
+  };
+
   const displayName = formatDisplayName(user);
   const initials = getInitials(user);
 
@@ -75,15 +80,20 @@ const Header = () => {
         </span>
         <div className="min-w-0">
           <p className="truncate text-sm font-semibold text-[#111111]">{displayName}</p>
+          <p className="truncate text-xs text-[#777777]">{user?.email ?? "Manage your account"}</p>
         </div>
       </div>
 
       <div className="mt-2 grid gap-1">
-        <button
-          type="button"
-          onClick={handleLogout}
-          className="flex w-full items-center justify-between rounded-[14px] px-3 py-3 text-left text-sm font-semibold text-[#c62828] transition hover:bg-[#fff2f2]"
-        >
+        <button type="button" onClick={handleProfileOpen} className="flex w-full items-center justify-between rounded-[14px] px-3 py-3 text-left text-sm font-semibold text-[#111111] transition hover:bg-[#f6f6f6]">
+          <span className="inline-flex items-center gap-2">
+            <UserOutlined />
+            My Profile
+          </span>
+          <span className="text-xs font-medium text-[#8a8a8a]">Open page</span>
+        </button>
+
+        <button type="button" onClick={handleLogout} className="flex w-full items-center justify-between rounded-[14px] px-3 py-3 text-left text-sm font-semibold text-[#c62828] transition hover:bg-[#fff2f2]">
           <span className="inline-flex items-center gap-2">
             <LogoutOutlined />
             Logout
@@ -109,13 +119,7 @@ const Header = () => {
 
         <nav className="flex shrink-0 items-center gap-8 whitespace-nowrap font-medium">
           {navLinks.map(({ label, to }) => (
-            <Link
-              key={label}
-              to={to}
-              className="relative after:absolute after:left-0 after:-bottom-1.5 after:h-[2px] after:w-0 after:bg-[#f6821f] after:transition-[width] after:duration-200 hover:after:w-full"
-            >
-              {label}
-            </Link>
+            <Link key={label} to={to} className="relative after:absolute after:left-0 after:-bottom-1.5 after:h-[2px] after:w-0 after:bg-[#f6821f] after:transition-[width] after:duration-200 hover:after:w-full">{label}</Link>
           ))}
         </nav>
 

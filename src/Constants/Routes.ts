@@ -1,5 +1,13 @@
 export const ROUTES = {
   HOME: "/",
+  PROFILE: "/profile",
+  ACCOUNT: {
+    ORDERS: "/profile/orders",
+    WISHLIST: "/profile/wishlist",
+    INFO: "/profile",
+    ADDRESSES: "/profile/addresses",
+    PAYMENT: "/profile/payment-method",
+  },
   PRODUCTS: "/products",
   SHIRTS: "/shirts",
   TSHIRTS: "/tshirts",

@@ -9,6 +9,18 @@ export const URL_KEYS = {
   USER: {
     BASE: "/user",
     ADD: "/user/add",
+    EDIT: "/user/edit",
     DROPDOWN: "/user/dropdown",
+  },
+  POLICY: {
+    BASE: "/policy",
+    ALL: "/policy/all",
+  },
+  ABOUT: {
+    BASE: "/about",
+    ALL: "/about/all",
+  },
+  NEWSLETTER: {
+    SUBSCRIBE: "/newsletter/subscribe",
   },
 } as const;

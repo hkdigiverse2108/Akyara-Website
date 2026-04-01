@@ -10,36 +10,40 @@ const socialLinks = [{ label: "Facebook", href: "https://facebook.com", icon: <F
 
 const Footer = () => {
   return (
-    <footer className="bg-[#1f2430] pb-5 pt-[60px] text-[#d2d7df]">
-      <div className="mx-auto grid w-[92%] max-w-[1200px] gap-x-10 gap-y-8 md:grid-cols-2 xl:grid-cols-[1.15fr_0.85fr_0.9fr_1fr]">
-        <div>
+    <footer className="bg-[#242834] pb-6 pt-16 text-[#e2e7ef]">
+      <div className="mx-auto grid w-[92%] max-w-[1500px] gap-x-12 gap-y-10 md:grid-cols-2 xl:grid-cols-[1.35fr_0.9fr_1fr_1.2fr]">
+        <div className="max-w-[360px]">
           <div className="flex items-center gap-2.5">
             <Link to={ROUTES.HOME} aria-label="Home">
-              <img className="block h-10 w-auto object-contain" src="/assets/images/logo/image.png" alt="Kumo logo" />
+              <img className="block h-12 w-auto object-contain" src="/assets/images/logo/image.png" alt="Kumo logo" />
             </Link>
           </div>
-          <p>3298 Grant Street Longview, TX</p>
-          <p>United Kingdom 75601</p>
-          <p>
-            <a className="transition hover:text-white" href="tel:+12025550106">
-              1-202-555-0106
-            </a>
-          </p>
-          <p>
-            <a className="transition hover:text-white" href="mailto:help@shopper.com">
-              help@shopper.com
-            </a>
-          </p>
-          <div className="mt-2 flex items-center gap-4">
+          <div className="mt-4 space-y-2 text-[15px] leading-8 text-[#f1f4fa]">
+            <p>3298 Grant Street Longview, TX</p>
+            <p>United Kingdom 75601</p>
+            <p>
+              <a className="transition hover:text-white" href="tel:+12025550106">
+                1-202-555-0106
+              </a>
+            </p>
+            <p>
+              <a className="transition hover:text-white" href="mailto:help@shopper.com">
+                help@shopper.com
+              </a>
+            </p>
+          </div>
+          <div className="mt-5 flex items-center gap-5 text-[20px] text-[#a9b5c8]">
             {socialLinks.map(({ label, href, icon }) => (
-              <a key={label} className="inline-grid h-7 w-7 place-items-center bg-transparent text-[#9fb0c6] hover:text-white" href={href} target="_blank" rel="noreferrer" aria-label={label}>{icon}</a>
+              <a key={label} className="inline-grid place-items-center transition hover:text-white" href={href} target="_blank" rel="noreferrer" aria-label={label}>
+                {icon}
+              </a>
             ))}
           </div>
         </div>
 
         <div>
-          <div className="mb-3.5 font-semibold text-white"> Company</div>
-          <ul className="m-0 grid list-none gap-2.5 p-0">
+          <div className="mb-4 text-[18px] font-semibold text-white">Company</div>
+          <ul className="m-0 grid list-none gap-3 p-0 text-[15px] text-[#f1f4fa]">
             {companyLinks.map(({ label, to }) => (
               <li key={label}>
                 <Link className="transition hover:text-white" to={to}>{label}</Link>
@@ -49,8 +53,8 @@ const Footer = () => {
         </div>
 
         <div>
-          <div className="mb-3.5 font-semibold text-white">Supports</div>
-          <ul className="m-0 grid list-none gap-2.5 p-0">
+          <div className="mb-4 text-[18px] font-semibold text-white">Supports</div>
+          <ul className="m-0 grid list-none gap-3 p-0 text-[15px] text-[#f1f4fa]">
             {supportLinks.map(({ label, to }) => (
               <li key={label}>
                 <Link className="transition hover:text-white" to={to}>{label}</Link>
@@ -59,13 +63,15 @@ const Footer = () => {
           </ul>
         </div>
 
-        <div>
-          <div className="mb-3.5 font-semibold text-white">Secure Payments</div>
-          <img className="mt-2 block h-auto w-full max-w-[280px]" src="/assets/images/payment-methods.svg" alt="Secure payment methods" />
+        <div className="xl:justify-self-end">
+          <div className="mb-4 text-[18px] font-semibold text-white">Secure Payments</div>
+          <img className="mt-2 block h-auto w-full max-w-[340px]" src="/assets/images/payment-methods.svg" alt="Secure payment methods" />
         </div>
       </div>
 
-      <div className="mx-auto mt-[30px] w-[92%] max-w-[1200px] border-t border-white/10 pt-5 text-center text-[0.9rem] text-[#9ea6b1]">2026 Kumo. Designed for your new project.</div>
+      <div className="mx-auto mt-10 w-[92%] max-w-[1500px] border-t border-white/10 pt-6 text-center text-[15px] text-[#aeb7c7]">
+        2026 Kumo. Designed for your new project.
+      </div>
     </footer>
   );
 };

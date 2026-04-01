@@ -1,7 +1,5 @@
 ﻿import * as Yup from "yup";
-
 import { Validation } from "./Validation";
-
 
 // Signin
 export const SigninSchema = Yup.object({
@@ -22,6 +20,15 @@ export const SignupSchema = Yup.object({
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password")], "Passwords must match")
     .required("Confirm your password"),
+});
+
+export const ProfileSchema = Yup.object({
+  firstName: Yup.string().trim().required("First name is required"),
+  lastName: Yup.string().trim().required("Last name is required"),
+  email: Yup.string().email("Enter a valid email").required("Email is required"),
+  phoneNumber: Yup.string()
+    .required("Phone number is required")
+    .test("valid-phone-number", "Enter a valid phone number", (value) => (value?.replace(/\D/g, "").length ?? 0) >= 6),
 });
 
 export const ForgotPasswordSchema = Yup.object({

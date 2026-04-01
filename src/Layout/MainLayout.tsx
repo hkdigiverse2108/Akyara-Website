@@ -23,10 +23,10 @@ const MainLayout = ({ children }: MainLayoutProps) => {
   }, [location.pathname, location.search, location.hash]);
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="flex min-h-screen flex-col bg-white">
       {isPageLoading && <PageLoader />}
       <Header />
-      <main>{children ?? <Outlet />}</main>
+      <main className="flex-1">{children ?? <Outlet />}</main>
       <Footer />
     </div>
   );
