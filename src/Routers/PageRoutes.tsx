@@ -1,42 +1,149 @@
-﻿import { BrowserRouter, Route, Routes } from "react-router-dom";
-import { MainLayout } from "../Layout";
-import Home from "../Pages/Home";
+import type { RouteObject } from "react-router-dom";
+import { ROUTES } from "../Constants";
 import ForgotPassword from "../Pages/Auth/ForgotPassword";
 import Login from "../Pages/Auth/Login";
 import ResetPassword from "../Pages/Auth/ResetPassword";
 import Signup from "../Pages/Auth/Signup";
 import VerifyOtp from "../Pages/Auth/VerifyOtp";
-import PrivateRoutes from "./PrivateRoutes";
-import PublicRoutes from "./PublicRoutes";
+import CategoryPage from "../Pages/CategoryPage";
+import Home from "../Pages/Home";
+import InfoPage from "../Pages/InfoPage";
 
-const NotFound = () => {
-  return (
-    <main className="mx-auto w-[92%] max-w-[1200px] py-[80px]">
-      <h1 className="mb-3 text-2xl font-semibold">Page not found</h1>
-      <p className="text-[#777777]">The page you are looking for does not exist.</p>
-    </main>
-  );
-};
+export const PageRoutes: RouteObject[] = [
+  { path: ROUTES.HOME, element: <Home /> },
+  {
+    path: ROUTES.PRODUCTS,
+    element: (
+      <CategoryPage
+        title="Products"
+        description="Explore our full collection of fashion essentials and trending styles."
+      />
+    ),
+  },
+  {
+    path: ROUTES.SHIRTS,
+    element: (
+      <CategoryPage
+        title="Shirts"
+        description="Browse classic shirts designed for everyday comfort and polished looks."
+      />
+    ),
+  },
+  {
+    path: ROUTES.TSHIRTS,
+    element: (
+      <CategoryPage
+        title="Tshirts"
+        description="Discover easy everyday t-shirts with clean fits and relaxed styling."
+      />
+    ),
+  },
+  {
+    path: ROUTES.JEANS,
+    element: (
+      <CategoryPage
+        title="Jeans"
+        description="Find denim staples built for versatility, comfort, and all-day wear."
+      />
+    ),
+  },
+  {
+    path: ROUTES.INFO.CONTACT,
+    element: (
+      <InfoPage
+        eyebrow="Company"
+        title="Contact Us"
+        description="Get in touch with our team for product questions, order help, and support anytime you need it."
+      />
+    ),
+  },
+  {
+    path: ROUTES.INFO.ABOUT,
+    element: (
+      <InfoPage
+        eyebrow="Company"
+        title="About Us"
+        description="Learn more about our brand, our values, and how we bring modern shopping experiences to everyday customers."
+      />
+    ),
+  },
+  {
+    path: ROUTES.INFO.TRACKING,
+    element: (
+      <InfoPage
+        eyebrow="Company"
+        title="Tracking Order"
+        description="Track your purchase progress and stay updated on processing, shipping, and delivery information."
+      />
+    ),
+  },
+  {
+    path: ROUTES.INFO.BLOG,
+    element: (
+      <InfoPage
+        eyebrow="Company"
+        title="Blog"
+        description="Read the latest updates, shopping tips, styling ideas, and brand stories from our editorial team."
+      />
+    ),
+  },
+  {
+    path: ROUTES.INFO.FAQ,
+    element: (
+      <InfoPage
+        eyebrow="Company"
+        title="FAQ Page"
+        description="Find quick answers to the most common questions about orders, shipping, payments, and returns."
+      />
+    ),
+  },
+  {
+    path: ROUTES.INFO.REFUND,
+    element: (
+      <InfoPage
+        eyebrow="Support"
+        title="Return & Refund Policy"
+        description="Review our return timelines, refund eligibility, and the steps required to complete a return request."
+      />
+    ),
+  },
+  {
+    path: ROUTES.INFO.PRIVACY,
+    element: (
+      <InfoPage
+        eyebrow="Support"
+        title="Privacy Policy"
+        description="Understand how we collect, use, and protect your personal information across our website and services."
+      />
+    ),
+  },
+  {
+    path: ROUTES.INFO.TERMS,
+    element: (
+      <InfoPage
+        eyebrow="Support"
+        title="Terms & Condition"
+        description="Review the rules, responsibilities, and usage terms that apply when shopping through our platform."
+      />
+    ),
+  },
+  {
+    path: ROUTES.INFO.CANCELLATION,
+    element: (
+      <InfoPage
+        eyebrow="Support"
+        title="Cancellation Policy"
+        description="See how order cancellations work, including timing requirements and any applicable restrictions."
+      />
+    ),
+  },
+];
 
-const PageRoutes = () => {
-  return (
-    <BrowserRouter>
-      <Routes>
-        <Route element={<PublicRoutes />}>
-          <Route element={<MainLayout />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/verify-otp" element={<VerifyOtp />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="*" element={<NotFound />} />
-          </Route>
-        </Route>
-        <Route element={<PrivateRoutes />}>{/* Add private routes here */}</Route>
-      </Routes>
-    </BrowserRouter>
-  );
-};
-
-export default PageRoutes;
+export const AuthRoutes: RouteObject[] = [
+  { path: ROUTES.AUTH.SIGNIN, element: <Login /> },
+  { path: ROUTES.AUTH.LOGIN, element: <Login /> },
+  { path: ROUTES.AUTH.SIGNUP, element: <Signup /> },
+  { path: ROUTES.AUTH.FORGOT_PASSWORD, element: <ForgotPassword /> },
+  { path: ROUTES.AUTH.RESET_PASSWORD, element: <ResetPassword /> },
+  { path: ROUTES.AUTH.VERIFY_OTP, element: <VerifyOtp /> },
+];

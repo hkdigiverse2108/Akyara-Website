@@ -29,6 +29,13 @@ export type User = {
   updatedAt?: string;
 };
 
+export type AuthSessionUser = User & {
+  _id?: string;
+  token?: string;
+  userType?: string | number;
+  [key: string]: unknown;
+};
+
 export type LoginPayload = {
   email: string;
   password: string;
@@ -59,10 +66,11 @@ export type VerifyOtpPayload = {
   [key: string]: unknown;
 };
 
-export type LoginResponse = ApiResponse<{
-  token?: string;
-  [key: string]: unknown;
-}>;
+export type LoginResponse = ApiResponse<AuthSessionUser>;
+
+export type VerifyOtpResponse = ApiResponse<AuthSessionUser>;
+
+export type UserProfileResponse = ApiResponse<AuthSessionUser>;
 
 export type ChangePasswordPayload = {
   currentPassword?: string;

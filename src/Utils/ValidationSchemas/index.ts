@@ -1,6 +1,5 @@
 ﻿import * as Yup from "yup";
 
-import type { DepValue, Primitive } from "../../Types";
 import { Validation } from "./Validation";
 
 
@@ -12,10 +11,13 @@ export const SigninSchema = Yup.object({
 
 // Signup
 export const SignupSchema = Yup.object({
-  firstName: Yup.string().optional(),
-  lastName: Yup.string().optional(),
+  firstName: Yup.string().trim().required("First name is required"),
+  lastName: Yup.string().trim().required("Last name is required"),
   email: Yup.string().email("Enter a valid email").required("Email is required"),
-  phoneNumber: Yup.string().required("Phone number is required"),
+  countryCode: Yup.string().required("Country code is required"),
+  phoneNumber: Yup.string()
+    .required("Phone number is required")
+    .test("valid-phone-number", "Enter a valid phone number", (value) => (value?.replace(/\D/g, "").length ?? 0) >= 6),
   password: Yup.string().min(6, "Minimum 6 characters").required("Password is required"),
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password")], "Passwords must match")

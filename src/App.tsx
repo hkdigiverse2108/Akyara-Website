@@ -1,5 +1,6 @@
-import { PageRoutes } from "./Routers";
+import { RouterProvider } from "react-router-dom";
+import { Router } from "./Routers";
 
 export default function App() {
-  return <PageRoutes />;
+  return <RouterProvider router={Router} />;
 }

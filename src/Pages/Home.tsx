@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import CategoryHighlights from "../Components/CategoryHighlights";
 import HeroSlider from "../Components/HeroSlider";
-import PageLoader from "../Components/PageLoader";
 
 const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 
@@ -38,7 +37,6 @@ const countdownCards = [
 ];
 
 const Home = () => {
-  const [isLoading, setIsLoading] = useState(true);
   const [showSubscribe, setShowSubscribe] = useState(false);
   const [isDealsHovered, setIsDealsHovered] = useState(false);
   const dealsSliderRef = useRef<HTMLDivElement | null>(null);
@@ -54,14 +52,6 @@ const Home = () => {
     const scrollAmount = cardWidth + (Number.isFinite(gapValue) ? gapValue : 0);
     container.scrollBy({ left: direction * scrollAmount, behavior: "smooth" });
   };
-  useEffect(() => {
-    const loaderTimer = window.setTimeout(() => {
-      setIsLoading(false);
-    }, 800);
-
-    return () => window.clearTimeout(loaderTimer);
-  }, []);
-
   useEffect(() => {
     const timer = window.setTimeout(() => {
       setShowSubscribe(true);
@@ -98,8 +88,6 @@ const Home = () => {
 
   return (
     <div>
-      {isLoading && <PageLoader />}
-
       {showSubscribe && (
         <div className="fixed inset-0 z-[60] grid place-items-center animate-fadeIn">
           <div className="absolute inset-0 bg-black/55" onClick={() => setShowSubscribe(false)} />

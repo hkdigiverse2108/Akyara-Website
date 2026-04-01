@@ -107,4 +107,81 @@
   .hide-scrollbar::-webkit-scrollbar {
     display: none;
   }
+
+  .country-code-select {
+    width: 100%;
+  }
+
+  .country-code-select .ant-select-selector {
+    min-height: 50px !important;
+    border-radius: 12px !important;
+    border: 1px solid #e1e1e1 !important;
+    padding: 0 14px !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+  }
+
+  .country-code-select .ant-select-selection-wrap {
+    align-items: center;
+  }
+
+  .country-code-select .ant-select-selection-item,
+  .country-code-select .ant-select-selection-placeholder {
+    font-size: 14px;
+    color: #2b2b2b;
+    line-height: 1.4;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .country-code-select .ant-select-selection-placeholder {
+    color: #b7b7b7;
+  }
+
+  .country-code-select .ant-select-selection-search-input {
+    height: 48px !important;
+  }
+
+  .country-code-select:hover .ant-select-selector,
+  .country-code-select.ant-select-focused .ant-select-selector,
+  .country-code-select.ant-select-open .ant-select-selector {
+    border-color: #111111 !important;
+  }
+
+  .country-code-select--error .ant-select-selector {
+    border-color: #e53935 !important;
+  }
+
+  .country-code-dropdown.ant-select-dropdown {
+    padding: 8px;
+    border: 1px solid #ececec;
+    border-radius: 16px;
+    box-shadow: 0 16px 40px rgba(17, 17, 17, 0.12);
+  }
+
+  .country-code-dropdown .ant-select-item {
+    min-height: 42px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 14px;
+  }
+
+  .country-code-dropdown .ant-select-item-option-active:not(.ant-select-item-option-disabled) {
+    background: #f5f5f5;
+  }
+
+  .country-code-dropdown .ant-select-item-option-selected:not(.ant-select-item-option-disabled) {
+    background: #111111;
+    color: #ffffff;
+    font-weight: 600;
+  }
+
+  .country-code-dropdown .ant-select-item-option-selected .ant-select-item-option-state {
+    color: #ffffff;
+  }
+
+  .country-code-dropdown .ant-select-item-group {
+    padding-inline: 12px;
+  }
 }

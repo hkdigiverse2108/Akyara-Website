@@ -1,6 +1,26 @@
-﻿export const ROUTES = {
+export const ROUTES = {
   HOME: "/",
+  PRODUCTS: "/products",
+  SHIRTS: "/shirts",
+  TSHIRTS: "/tshirts",
+  JEANS: "/jeans",
+  INFO: {
+    CONTACT: "/contact-us",
+    ABOUT: "/about-us",
+    TRACKING: "/tracking-order",
+    BLOG: "/blog",
+    FAQ: "/faq",
+    REFUND: "/return-refund-policy",
+    PRIVACY: "/privacy-policy",
+    TERMS: "/terms-condition",
+    CANCELLATION: "/cancellation-policy",
+  },
   AUTH: {
     SIGNIN: "/auth/signin",
+    LOGIN: "/auth/login",
+    SIGNUP: "/auth/signup",
+    FORGOT_PASSWORD: "/auth/forgot-password",
+    RESET_PASSWORD: "/auth/reset-password",
+    VERIFY_OTP: "/auth/verify-otp",
   },
 } as const;

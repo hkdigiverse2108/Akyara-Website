@@ -1,17 +1,32 @@
-import type { ReactNode } from "react";
-import { Outlet } from "react-router-dom";
+import { useEffect, useState, type ReactNode } from "react";
+import { Outlet, useLocation } from "react-router-dom";
+import PageLoader from "../Components/PageLoader";
 import Footer from "./Footer";
 import Header from "./Header";
 
-type MainLayoutProps = {
-  children?: ReactNode;
+type MainLayoutProps = {children?: ReactNode;
 };
 
+const PAGE_TRANSITION_LOADER_MS = 450;
+
 const MainLayout = ({ children }: MainLayoutProps) => {
+  const location = useLocation();
+  const [isPageLoading, setIsPageLoading] = useState(true);
+
+  useEffect(() => {
+    setIsPageLoading(true);
+    const timer = window.setTimeout(() => {
+      setIsPageLoading(false);
+    }, PAGE_TRANSITION_LOADER_MS);
+
+    return () => window.clearTimeout(timer);
+  }, [location.pathname, location.search, location.hash]);
+
   return (
-    <div>
+    <div className="min-h-screen bg-white">
+      {isPageLoading && <PageLoader />}
       <Header />
-      {children ?? <Outlet />}
+      <main>{children ?? <Outlet />}</main>
       <Footer />
     </div>
   );
