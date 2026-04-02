@@ -2,10 +2,11 @@ import type { PolicyType } from "../Constants";
 import type { ApiResponse } from "./Api";
 
 export type InfoPageProps = {
-  eyebrow: string;
-  title: string;
-  description: string;
+  title?: string;
+  emptyMessage?: string;
   policyType?: PolicyType;
+  contentType?: string;
+  strictTypeMatch?: boolean;
   aboutPage?: boolean;
 };
 
@@ -29,17 +30,6 @@ export type PolicyCollection = {
 export type PolicyValue = PolicyItem | PolicyItem[] | PolicyCollection | undefined;
 
 export type PolicyApiResponse = ApiResponse<
-  | PolicyItem
-  | PolicyItem[]
-  | {
-      docs?: PolicyItem[];
-      items?: PolicyItem[];
-      rows?: PolicyItem[];
-      data?: PolicyItem | PolicyItem[];
-    }
->;
-
-export type AboutApiResponse = ApiResponse<
   | PolicyItem
   | PolicyItem[]
   | {

@@ -26,9 +26,18 @@ export const ProfileSchema = Yup.object({
   firstName: Yup.string().trim().required("First name is required"),
   lastName: Yup.string().trim().required("Last name is required"),
   email: Yup.string().email("Enter a valid email").required("Email is required"),
+  countryCode: Yup.string().trim(),
   phoneNumber: Yup.string()
-    .required("Phone number is required")
-    .test("valid-phone-number", "Enter a valid phone number", (value) => (value?.replace(/\D/g, "").length ?? 0) >= 6),
+    .test(
+      "valid-phone-number",
+      "Enter a valid phone number",
+      (value) => !value || (value.replace(/\D/g, "").length ?? 0) >= 6,
+    ),
+  profilePhoto: Yup.string().trim().test(
+    "valid-profile-photo-url",
+    "Please upload a valid image",
+    (value) => !value || /^(https?:\/\/|data:image\/)/i.test(value),
+  ),
 });
 
 export const ForgotPasswordSchema = Yup.object({

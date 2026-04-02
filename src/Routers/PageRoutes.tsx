@@ -1,14 +1,19 @@
 import type { RouteObject } from "react-router-dom";
-import { POLICY_TYPE, ROUTES } from "../Constants";
+import { ROUTES } from "../Constants";
 import ForgotPassword from "../Pages/Auth/ForgotPassword";
 import Login from "../Pages/Auth/Login";
 import ResetPassword from "../Pages/Auth/ResetPassword";
 import Signup from "../Pages/Auth/Signup";
 import VerifyOtp from "../Pages/Auth/VerifyOtp";
-import CategoryPage from "../Pages/CategoryPage";
+import AboutPage from "../Pages/InfoPages/AboutPage";
+import CancellationPolicyPage from "../Pages/InfoPages/CancellationPolicyPage";
+import FAQPage from "../Pages/InfoPages/FAQPage";
 import Home from "../Pages/Home";
 import InfoPage from "../Pages/InfoPage";
+import PrivacyPolicyPage from "../Pages/InfoPages/PrivacyPolicyPage";
 import Profile from "../Pages/Profile/index";
+import ReturnRefundPolicyPage from "../Pages/InfoPages/ReturnRefundPolicyPage";
+import TermsConditionPage from "../Pages/InfoPages/TermsConditionPage";
 
 export const PageRoutes: RouteObject[] = [
   { path: ROUTES.HOME, element: <Home /> },
@@ -18,137 +23,16 @@ export const PageRoutes: RouteObject[] = [
   { path: ROUTES.ACCOUNT.WISHLIST, element: <Profile section="wishlist" /> },
   { path: ROUTES.ACCOUNT.ADDRESSES, element: <Profile section="addresses" /> },
   { path: ROUTES.ACCOUNT.PAYMENT, element: <Profile section="payment" /> },
-  {
-    path: ROUTES.PRODUCTS,
-    element: (
-      <CategoryPage
-        title="Products"
-        description="Explore our full collection of fashion essentials and trending styles."
-      />
-    ),
-  },
-  {
-    path: ROUTES.SHIRTS,
-    element: (
-      <CategoryPage
-        title="Shirts"
-        description="Browse classic shirts designed for everyday comfort and polished looks."
-      />
-    ),
-  },
-  {
-    path: ROUTES.TSHIRTS,
-    element: (
-      <CategoryPage
-        title="Tshirts"
-        description="Discover easy everyday t-shirts with clean fits and relaxed styling."
-      />
-    ),
-  },
-  {
-    path: ROUTES.JEANS,
-    element: (
-      <CategoryPage
-        title="Jeans"
-        description="Find denim staples built for versatility, comfort, and all-day wear."
-      />
-    ),
-  },
-  {
-    path: ROUTES.INFO.CONTACT,
-    element: (
-      <InfoPage
-        eyebrow="Company"
-        title="Contact Us"
-        description="Get in touch with our team for product questions, order help, and support anytime you need it."
-      />
-    ),
-  },
-  {
-    path: ROUTES.INFO.ABOUT,
-    element: (
-      <InfoPage
-        eyebrow="Company"
-        title="About Us"
-        description="Learn more about our brand, our values, and how we bring modern shopping experiences to everyday customers."
-        aboutPage
-      />
-    ),
-  },
-  {
-    path: ROUTES.INFO.TRACKING,
-    element: (
-      <InfoPage
-        eyebrow="Company"
-        title="Tracking Order"
-        description="Track your purchase progress and stay updated on processing, shipping, and delivery information."
-      />
-    ),
-  },
-  {
-    path: ROUTES.INFO.BLOG,
-    element: (
-      <InfoPage
-        eyebrow="Company"
-        title="Blog"
-        description="Read the latest updates, shopping tips, styling ideas, and brand stories from our editorial team."
-      />
-    ),
-  },
-  {
-    path: ROUTES.INFO.FAQ,
-    element: (
-      <InfoPage
-        eyebrow="Company"
-        title="FAQ Page"
-        description="Find quick answers to the most common questions about orders, shipping, payments, and returns."
-      />
-    ),
-  },
-  {
-    path: ROUTES.INFO.REFUND,
-    element: (
-      <InfoPage
-        eyebrow="Support"
-        title="Return & Refund Policy"
-        description="Review our return timelines, refund eligibility, and the steps required to complete a return request."
-        policyType={POLICY_TYPE.RETURN_REFUND}
-      />
-    ),
-  },
-  {
-    path: ROUTES.INFO.PRIVACY,
-    element: (
-      <InfoPage
-        eyebrow="Support"
-        title="Privacy Policy"
-        description="Understand how we collect, use, and protect your personal information across our website and services."
-        policyType={POLICY_TYPE.PRIVACY}
-      />
-    ),
-  },
-  {
-    path: ROUTES.INFO.TERMS,
-    element: (
-      <InfoPage
-        eyebrow="Support"
-        title="Terms & Condition"
-        description="Review the rules, responsibilities, and usage terms that apply when shopping through our platform."
-        policyType={POLICY_TYPE.TERMS_CONDITION}
-      />
-    ),
-  },
-  {
-    path: ROUTES.INFO.CANCELLATION,
-    element: (
-      <InfoPage
-        eyebrow="Support"
-        title="Cancellation Policy"
-        description="See how order cancellations work, including timing requirements and any applicable restrictions."
-        policyType={POLICY_TYPE.CANCELLATION}
-      />
-    ),
-  },
+  { path: ROUTES.ACCOUNT.CHANGE_PASSWORD, element: <Profile section="change-password" /> },
+  { path: ROUTES.INFO.CONTACT, element: <InfoPage title="Contact Us" /> },
+  { path: ROUTES.INFO.ABOUT, element: <AboutPage /> },
+  { path: ROUTES.INFO.TRACKING, element: <InfoPage title="Tracking Order" /> },
+  { path: ROUTES.INFO.BLOG, element: <InfoPage title="Blog" /> },
+  { path: ROUTES.INFO.FAQ, element: <FAQPage /> },
+  { path: ROUTES.INFO.REFUND, element: <ReturnRefundPolicyPage /> },
+  { path: ROUTES.INFO.PRIVACY, element: <PrivacyPolicyPage /> },
+  { path: ROUTES.INFO.TERMS, element: <TermsConditionPage /> },
+  { path: ROUTES.INFO.CANCELLATION, element: <CancellationPolicyPage /> },
 ];
 
 export const AuthRoutes: RouteObject[] = [

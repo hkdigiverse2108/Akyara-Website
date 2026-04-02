@@ -17,6 +17,9 @@ export const KEYS = {
   ABOUT: {
     ALL: "about.all",
   },
+  FAQ: {
+    ALL: "faq.all",
+  },
   NEWSLETTER: {
     SUBSCRIBE: "newsletter.subscribe",
   },

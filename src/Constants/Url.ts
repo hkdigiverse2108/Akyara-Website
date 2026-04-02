@@ -20,6 +20,10 @@ export const URL_KEYS = {
     BASE: "/about",
     ALL: "/about/all",
   },
+  FAQ: {
+    BASE: "/faq",
+    ALL: "/faq/all",
+  },
   NEWSLETTER: {
     SUBSCRIBE: "/newsletter/subscribe",
   },

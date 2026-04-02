@@ -50,10 +50,10 @@ const Profile = ({ section = "info" }: ProfileProps) => {
   };
 
   return (
-    <section className="bg-[radial-gradient(circle_at_top,#fff6ea_0%,#faf8f5_32%,#f7f3ed_100%)] py-12 sm:py-16">
-      <div className="mx-auto grid w-[92%] max-w-[1180px] gap-6 lg:grid-cols-[320px_minmax(0,1fr)]">
+    <section className="min-h-screen w-full bg-[radial-gradient(circle_at_top,#fff6ea_0%,#faf8f5_32%,#f7f3ed_100%)]">
+      <div className="grid min-h-screen w-full lg:grid-cols-[320px_minmax(0,1fr)]">
         <ProfileSidebar />
-        <div className="grid gap-6">{renderContent()}</div>
+        <div className="grid content-start gap-6 p-4 sm:p-6 lg:p-8">{renderContent()}</div>
       </div>
     </section>
   );

@@ -63,6 +63,7 @@ export type EditUserPayload = {
   lastName?: string;
   email: string;
   contact?: UserContact;
+  profilePhoto?: string;
   [key: string]: unknown;
 };
 

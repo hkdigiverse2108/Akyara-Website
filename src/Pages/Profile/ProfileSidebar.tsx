@@ -16,18 +16,16 @@ const ProfileSidebar = () => {
     [ROUTES.ACCOUNT.INFO]: <UserOutlined />,
     [ROUTES.ACCOUNT.ADDRESSES]: <EnvironmentOutlined />,
     [ROUTES.ACCOUNT.PAYMENT]: <CreditCardOutlined />,
+    [ROUTES.ACCOUNT.CHANGE_PASSWORD]: <UserOutlined />,
   } as const;
 
   return (
-    <aside className="self-start overflow-hidden rounded-[10px] bg-[linear-gradient(180deg,#1e1a20_0%,#141216_100%)] shadow-[0_28px_70px_rgba(18,12,20,0.26)]">
+    <aside className="min-h-screen overflow-hidden bg-[linear-gradient(180deg,#1e1a20_0%,#141216_100%)] shadow-[0_28px_70px_rgba(18,12,20,0.26)]">
       <div className="border-b border-white/10 px-6 py-6">
         <p className="text-[0.72rem] font-semibold uppercase tracking-[0.34em] text-[#f1b56a]">
           Account Center
         </p>
         <h2 className="mt-3 text-xl font-semibold text-white">Manage Your Profile</h2>
-        <p className="mt-2 text-sm leading-6 text-white/64">
-          Keep your personal details, wishlist, orders, and saved preferences in one place.
-        </p>
       </div>
 
       {profileSections.map(({ label, to }) => (
