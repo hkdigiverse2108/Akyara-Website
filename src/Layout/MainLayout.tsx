@@ -11,19 +11,27 @@ const PAGE_TRANSITION_LOADER_MS = 450;
 
 const MainLayout = ({ children }: MainLayoutProps) => {
   const location = useLocation();
-  const [isPageLoading, setIsPageLoading] = useState(true);
+  const [isPageLoading, setIsPageLoading] = useState(false);
 
   useEffect(() => {
-    setIsPageLoading(true);
-    const timer = window.setTimeout(() => {
+    const showTimer = window.setTimeout(() => {
+      setIsPageLoading(true);
+    }, 100);
+
+    const hideTimer = window.setTimeout(() => {
       setIsPageLoading(false);
     }, PAGE_TRANSITION_LOADER_MS);
 
-    return () => window.clearTimeout(timer);
-  }, [location.pathname, location.search, location.hash]);
+    window.scrollTo(0, 0);
+
+    return () => {
+      clearTimeout(showTimer);
+      clearTimeout(hideTimer);
+    };
+  }, [location]);
 
   return (
-    <div className="flex min-h-screen flex-col bg-white">
+    <div className="flex min-h-screen flex-col overflow-x-hidden bg-white">
       {isPageLoading && <PageLoader />}
       <Header />
       <main className="flex-1">{children ?? <Outlet />}</main>
@@ -31,5 +39,4 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     </div>
   );
 };
-
 export default MainLayout;

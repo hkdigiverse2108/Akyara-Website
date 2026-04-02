@@ -1,19 +1,17 @@
-import type { ProfilePlaceholderSectionProps } from "./types/index";
+import type { ProfilePlaceholderSectionProps } from "./types";
 
 const ProfilePlaceholderSection = ({eyebrow,title,description,emptyMessage,}: ProfilePlaceholderSectionProps) => {
   return (
-    <div className="overflow-hidden rounded-[10px] border border-[#ece7e1] bg-white shadow-[0_20px_55px_rgba(17,17,17,0.06)]">
-      <div className="border-b border-[#f0ebe6] bg-[linear-gradient(180deg,#ffffff_0%,#fdf9f4_100%)] px-7 py-8 sm:px-9">
-        <p className="text-[0.75rem] font-semibold uppercase tracking-[0.34em] text-[#f6821f]">
-          {eyebrow}
-        </p>
-        <h2 className="mt-3 text-2xl font-semibold text-[#111111] sm:text-[2rem]">{title}</h2>
-        <p className="mt-4 max-w-[720px] text-base leading-7 text-[#666666]">{description}</p>
+    <div className="overflow-hidden rounded-[12px] border border-[#ece6db] bg-white shadow-[0_14px_36px_rgba(17,17,17,0.06)]">
+      <div className="border-b border-[#efe7dd] px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-7">
+        <p className="text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-[#f6821f]">{eyebrow}</p>
+        <h2 className="mt-2 text-xl font-semibold text-[#111111] sm:text-2xl">{title}</h2>
+        <p className="mt-2 text-sm leading-7 text-[#5f6774] sm:text-base">{description}</p>
       </div>
 
-      <div className="p-7 sm:p-9">
-        <div className="rounded-[10px] border border-dashed border-[#e3d8ca] bg-[#faf7f2] px-6 py-10 text-center">
-          <p className="text-sm font-medium text-[#8c8c8c]">{emptyMessage}</p>
+      <div className="p-4 sm:p-6 lg:p-8">
+        <div className="rounded-[10px] border border-dashed border-[#d9d9d9] bg-[#f9fafb] px-5 py-8 text-center text-sm text-[#5f6774] sm:text-base">
+          {emptyMessage}
         </div>
       </div>
     </div>

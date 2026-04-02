@@ -1,10 +1,4 @@
-import {
-  CreditCardOutlined,
-  EnvironmentOutlined,
-  HeartOutlined,
-  ShoppingOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
+import {CreditCardOutlined,EnvironmentOutlined,HeartOutlined,ShoppingOutlined,UserOutlined,} from "@ant-design/icons";
 import { NavLink } from "react-router-dom";
 import { ROUTES } from "../../Constants";
 import { profileSections } from "./constants";
@@ -20,44 +14,26 @@ const ProfileSidebar = () => {
   } as const;
 
   return (
-    <aside className="min-h-screen overflow-hidden bg-[linear-gradient(180deg,#1e1a20_0%,#141216_100%)] shadow-[0_28px_70px_rgba(18,12,20,0.26)]">
-      <div className="border-b border-white/10 px-6 py-6">
-        <p className="text-[0.72rem] font-semibold uppercase tracking-[0.34em] text-[#f1b56a]">
-          Account Center
-        </p>
-        <h2 className="mt-3 text-xl font-semibold text-white">Manage Your Profile</h2>
+    <aside className="border-b border-[#d9dee5] bg-[#f5f7fa] lg:min-h-screen lg:border-b-0 lg:border-r">
+      <div className="hidden border-b border-[#e2e7ee] bg-white px-6 py-6 lg:block">
+        <p className="text-xs uppercase tracking-widest text-[#ef6b4a]">Account Center</p>
+        <h2 className="mt-2 text-xl font-semibold text-[#0f172a]">Manage Your Profile</h2>
       </div>
 
-      {profileSections.map(({ label, to }) => (
-        <NavLink
-          key={label}
-          to={to}
-          end={to === ROUTES.ACCOUNT.INFO}
-          className={({ isActive }) =>
-            `flex w-full items-center justify-between border-b border-white/10 px-6 py-5 text-left text-[1.02rem] font-medium transition last:border-b-0 ${
-              isActive
-                ? "bg-[#2c252e] text-white"
-                : "bg-transparent text-white/72 hover:bg-[#241f26] hover:text-white"
-            }`
-          }
-        >
-          {({ isActive }) => (
-            <>
-              <span className="inline-flex items-center gap-3">
-                <span
-                  className={`inline-grid h-9 w-9 place-items-center rounded-full text-sm ${
-                    isActive ? "bg-[#f1b56a]/18 text-[#f7c88f]" : "bg-white/8 text-white/72"
-                  }`}
-                >
-                  {iconMap[to]}
-                </span>
-                <span>{label}</span>
-              </span>
-              {isActive && <span className="text-sm text-[#f1b56a]">Current</span>}
-            </>
-          )}
-        </NavLink>
-      ))}
+      <nav className="hide-scrollbar overflow-x-auto px-3 py-4 lg:overflow-visible lg:px-0 lg:py-0">
+        <div className="flex gap-2 lg:block lg:space-y-0">
+          {profileSections.map(({ label, to }) => (
+            <NavLink key={label} to={to} end={to === ROUTES.ACCOUNT.INFO} className={({ isActive }) => `   flex min-w-max items-center justify-between gap-3 rounded-[12px] border px-4 py-2.5 text-sm font-semibold transition lg:min-w-0 lg:rounded-none lg:border-0 lg:px-6 lg:py-4 ${     isActive       ? "border-[#111827] bg-[#111827] text-white lg:border-b lg:border-[#1f2937]"       : "border-[#dfe3e9] bg-white text-[#4b5563] hover:bg-[#eceff4] lg:border-b lg:border-[#e2e7ee]"   }` }>
+              {({ isActive }) => (
+                <>
+                  <span className="flex items-center gap-2.5"> {iconMap[to]}{label}</span>
+                  {isActive ? <span className="hidden text-xs uppercase tracking-wide text-white lg:inline">Current</span> : null}
+                </>
+              )}
+            </NavLink>
+          ))}
+        </div>
+      </nav>
     </aside>
   );
 };

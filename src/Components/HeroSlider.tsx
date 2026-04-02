@@ -41,7 +41,7 @@ const HeroSlider = () => {
 
   return (
     <section className="bg-[#efefef]">
-      <div className="relative aspect-[16/9] w-full overflow-hidden bg-[#e7e7e7]">
+      <div className="relative aspect-[5/6] min-h-[440px] w-full overflow-hidden bg-[#e7e7e7] sm:aspect-[16/9] sm:min-h-0">
         {heroBanners.map((banner, index) => {
           const isActive = index === activeBanner;
 
@@ -54,9 +54,9 @@ const HeroSlider = () => {
 
         {/* Overlay Text */}
         <div className="absolute inset-0 z-10">
-          <div className="mx-auto flex h-full w-[92%] max-w-[1400px] items-center">
-            <div className="max-w-[580px]">
-              <span className="text-xs font-medium uppercase tracking-[0.32em] text-[#e53935] sm:text-sm">
+          <div className="mx-auto flex h-full w-[92%] max-w-[1400px] items-end pb-12 sm:items-center sm:pb-0">
+            <div className="max-w-[620px]">
+              <span className="text-[0.7rem] font-medium uppercase tracking-[0.26em] text-[#e53935] sm:text-sm sm:tracking-[0.32em]">
                 {activeSlide.label}
               </span>
 
@@ -66,11 +66,11 @@ const HeroSlider = () => {
                 {activeSlide.title2}
               </h1>
 
-              <p className="mt-4 text-base italic text-[#4f5a7a] sm:text-lg md:text-xl">
+              <p className="mt-3 text-sm italic text-[#4f5a7a] sm:mt-4 sm:text-lg md:text-xl">
                 {activeSlide.tagline}
               </p>
 
-              <button type="button" className="mt-8 inline-flex items-center gap-2 border border-black px-7 py-3 text-sm font-medium text-black transition-colors duration-200 hover:bg-black hover:text-white">
+              <button type="button" className="mt-6 inline-flex w-full items-center justify-center gap-2 border border-black px-7 py-3 text-sm font-medium text-black transition-colors duration-200 hover:bg-black hover:text-white sm:mt-8 sm:w-auto">
                 Shop Now
                 <span aria-hidden="true">&rarr;</span>
               </button>
@@ -79,7 +79,7 @@ const HeroSlider = () => {
         </div>
 
         {/* Slider Dots */}
-        <div className="absolute bottom-6 left-1/2 z-20 flex -translate-x-1/2 gap-2">
+        <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-2 sm:bottom-6">
           {heroBanners.map((_, index) => (
             <span key={index} className={`h-1.5 w-8 rounded-full transition ${index === activeBanner ? "bg-black" : "bg-black/40"}`}/>
           ))}

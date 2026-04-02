@@ -33,6 +33,19 @@ export type ProfileFormValues = {
   profilePhoto: string;
 };
 
+export type ProfileEditFormProps = {
+  profile: AuthSessionUser | null;
+  userId?: string;
+  profilePhoto: string;
+  isSaving: boolean;
+  isUploadingImage: boolean;
+  isDeletingImage: boolean;
+  editUser: ProfileInfoSectionProps["editUser"];
+  uploadImage: ProfileInfoSectionProps["uploadImage"];
+  deleteUploadedImage: ProfileInfoSectionProps["deleteUploadedImage"];
+  onClose: () => void;
+};
+
 export type ProfilePlaceholderSectionProps = {
   eyebrow: string;
   title: string;

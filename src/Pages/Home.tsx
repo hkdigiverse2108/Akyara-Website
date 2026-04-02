@@ -139,12 +139,12 @@ const Home = () => {
       {showSubscribe && (
         <div className="fixed inset-0 z-[60] grid place-items-center animate-fadeIn">
           <div className="absolute inset-0 bg-black/55" onClick={closeSubscribePopup} />
-          <div className="relative z-[1] w-[min(520px,92vw)] rounded-[22px] bg-white px-8 py-7 text-black shadow-[0_24px_60px_rgba(0,0,0,0.45)] animate-slideUp" role="dialog" aria-modal="true">
+          <div className="relative z-[1] w-[min(520px,92vw)] rounded-[22px] bg-white px-5 py-6 text-black shadow-[0_24px_60px_rgba(0,0,0,0.45)] animate-slideUp sm:px-8 sm:py-7" role="dialog" aria-modal="true">
             <button className="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#1f1f1f] text-[1.2rem] text-[#1f1f1f] hover:bg-black/5" type="button" aria-label="Close subscribe popup" onClick={closeSubscribePopup}>
-              <span aria-hidden="true">×</span>
+              <span aria-hidden="true">x</span>
             </button>
             <img className="mx-auto mb-4 h-10 w-auto" src="/assets/images/logo/logo.png" alt="Akyara" />
-            <h3 className="mb-[10px] text-center font-display text-[1.6rem] text-[#1f1f1f]">Don't Miss Out</h3>
+            <h3 className="mb-[10px] text-center font-display text-[1.35rem] text-[#1f1f1f] sm:text-[1.6rem]">Don't Miss Out</h3>
             <p className="mb-6 text-center text-[#6b6b6b] leading-relaxed">
               Subscribe for exclusive offers, new fragrance launches, and curated scent
               stories delivered to your inbox.
@@ -185,7 +185,7 @@ const Home = () => {
 
       <CategoryHighlights />
 
-      <section className="mt-13 py-[70px] pt-0">
+      <section className="mt-14 py-12 sm:py-16">
         <div className="mx-auto w-[92%] max-w-[1200px]">
           <div className="relative mb-12 text-center">
             <span
@@ -197,7 +197,7 @@ const Home = () => {
             <h2 className="relative z-10 m-0 pt-2 font-display text-2xl sm:text-3xl">Our Trending Products</h2>
           </div>
 
-          <div className="grid grid-cols-2 gap-6 md:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-5 min-[420px]:grid-cols-2 md:grid-cols-3 lg:gap-6 xl:grid-cols-4">
             {products.map((product) => (
               <div
                 className="product-card group relative overflow-hidden rounded-[6px] bg-white shadow-[0_12px_30px_-24px_rgba(0,0,0,0.35)]"
@@ -224,7 +224,7 @@ const Home = () => {
 
                 <div className="relative overflow-hidden bg-[#f1f0ec]">
                   <img
-                    className="card-img-top h-[380px] w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                    className="card-img-top h-[260px] w-full object-cover transition-transform duration-500 group-hover:scale-[1.04] min-[420px]:h-[300px] sm:h-[340px] lg:h-[380px]"
                     src={product.image}
                     alt={product.name}
                     loading="lazy"
@@ -258,7 +258,7 @@ const Home = () => {
           <div className="mt-10 text-center">
             <button
               type="button"
-              className="inline-flex items-center gap-2  border border-black px-7 py-3 text-sm font-medium text-black transition-colors duration-200 hover:bg-black hover:text-white"
+              className="inline-flex w-full items-center justify-center gap-2 border border-black px-7 py-3 text-sm font-medium text-black transition-colors duration-200 hover:bg-black hover:text-white sm:w-auto"
             >
               Explore More
               <span aria-hidden="true">&rarr;</span>
@@ -267,13 +267,13 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="relative mt-16 bg-cover bg-center bg-no-repeat py-[80px]" style={{ backgroundImage: `url(${assetUrl("assets/bg.jpg")})` }}>
+      <section className="relative mt-16 bg-cover bg-center bg-no-repeat py-14 sm:py-[80px]" style={{ backgroundImage: `url(${assetUrl("assets/bg.jpg")})` }}>
         <div className="mx-auto w-[92%] max-w-[750px]">
           <div className="text-center">
             <p className="text-base font-semibold text-[#111111]">Get up to -40% Off</p>
             <h2 className="mt-2 text-2xl font-semibold text-[#111111] sm:text-3xl">Only Summer Collections</h2>
 
-            <div className="mt-8 grid grid-cols-2 gap-6 sm:grid-cols-4">
+            <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-6 sm:grid-cols-4">
               {countdownCards.map((item) => (
                 <div className="bg-[#f1e9e2] px-3 py-5 text-center shadow-[0_10px_22px_-18px_rgba(0,0,0,0.25)]" key={item.label}>
                   <div className="text-2xl font-semibold text-[#d29a70]">{item.value}</div>
@@ -285,7 +285,7 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="mt-16 py-[70px] pt-0">
+      <section className="mt-14 py-12 sm:mt-16 sm:py-16">
         <div className="mx-auto w-[92%] max-w-[1200px]">
           <div className="mb-12">
             <div className="row justify-content-center">
@@ -303,7 +303,7 @@ const Home = () => {
           <div className="relative">
             <button
               type="button"
-              className="absolute left-2 top-1/2 z-10 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white text-black shadow-[0_12px_30px_rgba(0,0,0,0.18)] transition hover:scale-105 lg:-left-4"
+              className="absolute left-2 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white text-black shadow-[0_12px_30px_rgba(0,0,0,0.18)] transition hover:scale-105 md:inline-flex lg:-left-4"
               aria-label="Scroll to previous deals"
               onClick={() => scrollByCard(-1)}
             >
@@ -311,7 +311,7 @@ const Home = () => {
             </button>
             <button
               type="button"
-              className="absolute right-2 top-1/2 z-10 inline-flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white text-black shadow-[0_12px_30px_rgba(0,0,0,0.18)] transition hover:scale-105 lg:-right-4"
+              className="absolute right-2 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white text-black shadow-[0_12px_30px_rgba(0,0,0,0.18)] transition hover:scale-105 md:inline-flex lg:-right-4"
               aria-label="Scroll to next deals"
               onClick={() => scrollByCard(1)}
             >
@@ -320,7 +320,7 @@ const Home = () => {
 
             <div
               ref={dealsSliderRef}
-              className="hide-scrollbar flex gap-6 overflow-x-auto px-6 pb-6 scroll-smooth snap-x snap-mandatory xl:px-0"
+              className="hide-scrollbar flex gap-4 overflow-x-auto px-2 pb-6 scroll-smooth snap-x snap-mandatory sm:gap-6 sm:px-6 xl:px-0"
               onMouseEnter={() => setIsDealsHovered(true)}
               onMouseLeave={() => setIsDealsHovered(false)}
               onTouchStart={() => setIsDealsHovered(true)}
@@ -329,7 +329,7 @@ const Home = () => {
             >
               {deals.map((deal) => (
                 <div
-                  className="product-card group relative min-w-[220px] flex-shrink-0 snap-start overflow-hidden rounded-[6px] bg-white shadow-[0_12px_30px_-24px_rgba(0,0,0,0.35)] sm:min-w-[240px] md:min-w-[250px] lg:min-w-[260px] xl:min-w-0 xl:flex-[0_0_calc((100%-72px)/4)]"
+                  className="product-card group relative min-w-[200px] flex-shrink-0 snap-start overflow-hidden rounded-[6px] bg-white shadow-[0_12px_30px_-24px_rgba(0,0,0,0.35)] min-[420px]:min-w-[220px] sm:min-w-[240px] md:min-w-[250px] lg:min-w-[260px] xl:min-w-0 xl:flex-[0_0_calc((100%-72px)/4)]"
                   key={deal.name}
                   data-product-card="true"
                 >
@@ -352,7 +352,7 @@ const Home = () => {
                       </svg>
                     </button>
                     <img
-                      className="card-img-top h-[380px] w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                      className="card-img-top h-[260px] w-full object-cover transition-transform duration-500 group-hover:scale-[1.04] min-[420px]:h-[300px] sm:h-[340px] lg:h-[380px]"
                       src={deal.image}
                       alt={deal.name}
                       loading="lazy"
@@ -385,7 +385,7 @@ const Home = () => {
         </div>
       </section>
 
-      <section className=" py-[70px] pt-0">
+      <section className="py-12 sm:py-16">
         <div className="mx-auto w-[92%] max-w-[1200px]">
           <div className="relative mb-10 text-center">
             <span className="pointer-events-none absolute mt-5 left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-[clamp(2.4rem,6vw,4rem)] font-semibold italic text-black/10">
@@ -470,5 +470,7 @@ const Home = () => {
 };
 
 export default Home;
+
+
 
 

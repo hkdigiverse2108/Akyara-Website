@@ -1,13 +1,6 @@
 import { KEYS, URL_KEYS } from "../Constants";
 import type { PolicyType } from "../Constants";
-import type {
-  ApiResponse,
-  AboutApiResponse,
-  FaqApiResponse,
-  Params,
-  PolicyApiResponse,
-  UserProfileResponse,
-} from "../Types";
+import type {ApiResponse,AboutApiResponse,FaqApiResponse,Params,PolicyApiResponse,UserProfileResponse,} from "../Types";
 import { Get } from "./Methods/Get";
 import { useQueries } from "./ReactQuery/useQueries";
 

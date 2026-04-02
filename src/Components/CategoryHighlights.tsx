@@ -10,9 +10,9 @@ const categories = [
 
 export default function CategoryHighlights() {
   return (
-    <section className="py-8">
-      <div className="mx-auto w-[100%] max-w-[1400px] pb-[50px] pt-5">
-        <div className="grid grid-cols-1 gap-5 lg:grid-cols-[2fr_1fr] lg:auto-rows-fr">
+    <section className="py-8 sm:py-10">
+      <div className="mx-auto w-[92%] max-w-[1400px] pb-8 pt-4 sm:pb-12 sm:pt-5">
+        <div className="grid grid-cols-1 gap-4 sm:gap-5 lg:grid-cols-[2fr_1fr] lg:auto-rows-fr">
           {categories.map((item, index) => (
             <CategoryCard key={item.title} title={item.title} count={item.count} image={item.image} background={item.background} contentClass={item.contentClass} imageWrapClass={item.imageWrapClass} imageClass={item.imageClass} imageAlignClass={item.imageAlignClass} isLarge={index === 0} useImageAsBackground={item.useImageAsBackground}/>
           ))}
