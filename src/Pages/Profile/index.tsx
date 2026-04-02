@@ -8,13 +8,15 @@ import GuestProfileState from "./GuestProfileState";
 import ProfileInfoSection from "./ProfileInfoSection";
 import ProfilePlaceholderSection from "./ProfilePlaceholderSection";
 import ProfileSidebar from "./ProfileSidebar";
-import type { ProfileProps } from "./types";
+import type { ProfileProps } from "./types/index";
 
 const Profile = ({ section = "info" }: ProfileProps) => {
   const { user, isAuthenticated } = useAppSelector((state) => state.auth);
   const userId = user?._id;
   const profileQuery = Queries.useGetSingleUser(userId);
   const editUserMutation = Mutations.useEditUser();
+  const uploadImageMutation = Mutations.useUploadImage();
+  const deleteUploadedImageMutation = Mutations.useDeleteUploadedImage();
 
   const profile = useMemo<AuthSessionUser | null>(() => {
     return (profileQuery.data?.data as AuthSessionUser | undefined) ?? user ?? null;
@@ -41,10 +43,12 @@ const Profile = ({ section = "info" }: ProfileProps) => {
         return (
           <ProfilePlaceholderSection eyebrow="Payment Methode" title="Payment Preferences" description="Saved cards, preferred payment options, and billing settings will appear here." emptyMessage="No payment method has been added yet."/>
         );
+      case "change-password":
+        return (<ProfilePlaceholderSection eyebrow="Change Password" title="Change Password" description="Update your account password securely from this section." emptyMessage="Change password form will appear here."/>);
       case "info":
       default:
         return (
-          <ProfileInfoSection editUser={editUserMutation.mutateAsync} isRefreshing={profileQuery.isLoading} isSaving={editUserMutation.isPending} profile={profile? {...profile,phoneNumber:getPhoneNumber(profile) === "Not available" ? "" : getPhoneNumber(profile),}: null}userId={userId}/>
+          <ProfileInfoSection editUser={editUserMutation.mutateAsync} uploadImage={uploadImageMutation.mutateAsync} deleteUploadedImage={deleteUploadedImageMutation.mutateAsync} isRefreshing={profileQuery.isLoading} isSaving={editUserMutation.isPending} isUploadingImage={uploadImageMutation.isPending} isDeletingImage={deleteUploadedImageMutation.isPending} profile={profile? {...profile,phoneNumber:getPhoneNumber(profile) === "Not available" ? "" : getPhoneNumber(profile),}: null}userId={userId}/>
         );
     }
   };

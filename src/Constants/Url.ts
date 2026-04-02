@@ -24,6 +24,9 @@ export const URL_KEYS = {
     BASE: "/faq",
     ALL: "/faq/all",
   },
+  UPLOAD: {
+    IMAGE: "/upload/image",
+  },
   NEWSLETTER: {
     SUBSCRIBE: "/newsletter/subscribe",
   },

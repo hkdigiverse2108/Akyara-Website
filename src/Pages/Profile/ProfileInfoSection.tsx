@@ -1,67 +1,186 @@
 import { CloseOutlined, EditOutlined, UploadOutlined } from "@ant-design/icons";
 import { Form, Formik } from "formik";
-import { type ChangeEvent, useState } from "react";
-import { ErrorMessage } from "../../Attribute";
+import { type ChangeEvent, type ReactNode, useEffect, useMemo, useState } from "react";
+import { ErrorMessage as AppErrorMessage } from "../../Attribute";
 import CommonInput from "../../Components/CommonInput";
+import { URL_KEYS } from "../../Constants";
 import { useAppDispatch } from "../../Store/Hooks";
 import { setUser } from "../../Store/Slices/AuthSlice";
-import type { ApiResponse, AuthSessionUser } from "../../Types";
+import type { AuthSessionUser } from "../../Types";
 import { ProfileSchema } from "../../Utils/ValidationSchemas";
 import { getInitials, getPhoneNumber } from "./helpers";
+import type { ProfileFormValues, ProfileInfoSectionProps } from "./types/index";
 
-type ProfileInfoSectionProps = {
-  editUser: (input: {
-    userId: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    contact: { phoneNo?: string };
-    profilePhoto?: string;
-  }) => Promise<ApiResponse>;
-  isSaving: boolean;
-  isRefreshing: boolean;
-  profile: AuthSessionUser | null;
-  userId?: string;
+const getApiBaseUrl = () => (import.meta.env.VITE_API_BASE_URL || "").replace(/\/+$/, "");
+
+const isAbsoluteImageUrl = (value: string) => /^(https?:\/\/|data:image\/|blob:)/i.test(value);
+
+const buildProfilePhotoCandidates = (value?: string) => {
+  const trimmed = typeof value === "string" ? value.trim() : "";
+  if (!trimmed) {
+    return [] as string[];
+  }
+
+  if (isAbsoluteImageUrl(trimmed)) {
+    return [trimmed];
+  }
+
+  const baseUrl = getApiBaseUrl();
+  const normalized = trimmed.replace(/^\/+/, "");
+  const candidates: string[] = [];
+
+  if (baseUrl && trimmed.startsWith("/")) {
+    candidates.push(`${baseUrl}${trimmed}`);
+  }
+
+  if (baseUrl) {
+    const queryKeys = ["image", "fileName", "filename", "path", "key", "profilePhoto", "name"];
+    for (const key of queryKeys) {
+      candidates.push(`${baseUrl}${URL_KEYS.UPLOAD.IMAGE}?${key}=${encodeURIComponent(normalized)}`);
+    }
+
+    if (normalized.includes("/")) {
+      candidates.push(`${baseUrl}/${normalized}`);
+    }
+  }
+
+  if (!candidates.length) {
+    candidates.push(trimmed);
+  }
+
+  return candidates.filter((item, index, arr) => arr.indexOf(item) === index);
 };
 
-type ProfileFormValues = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phoneNumber: string;
-  profilePhoto: string;
-};
+const getImageIdentifier = (value: string) => {
+  const trimmed = value.trim();
+  if (!trimmed) {
+    return "";
+  }
 
-const readFileAsDataUrl = (file: File) =>
-  new Promise<string>((resolve, reject) => {
-    const reader = new FileReader();
+  const queryKeys = ["image", "fileName", "filename", "path", "key", "profilePhoto", "name"];
 
-    reader.onload = () => {
-      if (typeof reader.result === "string") {
-        resolve(reader.result);
-      } else {
-        reject(new Error("Invalid file data"));
+  try {
+    if (isAbsoluteImageUrl(trimmed)) {
+      const parsed = new URL(trimmed);
+      for (const key of queryKeys) {
+        const current = parsed.searchParams.get(key);
+        if (current?.trim()) {
+          return current.trim();
+        }
       }
-    };
 
-    reader.onerror = () => reject(new Error("Unable to read file"));
-    reader.readAsDataURL(file);
-  });
+      const pathPart = parsed.pathname.split("/").filter(Boolean).pop();
+      if (pathPart) {
+        return pathPart;
+      }
+    }
+  } catch {
+    // ignore URL parse errors
+  }
+
+  if (trimmed.includes("?")) {
+    const query = trimmed.split("?")[1] || "";
+    const params = new URLSearchParams(query);
+    for (const key of queryKeys) {
+      const current = params.get(key);
+      if (current?.trim()) {
+        return current.trim();
+      }
+    }
+  }
+
+  return trimmed.replace(/^\/+/, "");
+};
+
+type ProfileImageProps = {
+  value?: string;
+  alt: string;
+  className: string;
+  fallback: ReactNode;
+};
+
+const ProfileImage = ({ value, alt, className, fallback }: ProfileImageProps) => {
+  const candidates = useMemo(() => buildProfilePhotoCandidates(value), [value]);
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    setIndex(0);
+  }, [value]);
+
+  const currentUrl = candidates[index];
+
+  if (!currentUrl) {
+    return <>{fallback}</>;
+  }
+
+  return (
+    <img
+      src={currentUrl}
+      alt={alt}
+      className={className}
+      onError={() => {
+        setIndex((prev) => (prev + 1 < candidates.length ? prev + 1 : candidates.length));
+      }}
+    />
+  );
+};
+
+const extractUploadedImageValue = (response: unknown) => {
+  const pickString = (value: unknown) => (typeof value === "string" && value.trim() ? value.trim() : undefined);
+
+  if (!response || typeof response !== "object") {
+    return undefined;
+  }
+
+  const root = response as Record<string, unknown>;
+  const directRoot =
+    pickString(root.image) ??
+    pickString(root.url) ??
+    pickString(root.path) ??
+    pickString(root.location) ??
+    pickString(root.key) ??
+    pickString(root.fileName) ??
+    pickString(root.filename);
+
+  if (directRoot) {
+    return directRoot;
+  }
+
+  if (typeof root.data === "string") {
+    return pickString(root.data);
+  }
+
+  if (!root.data || typeof root.data !== "object") {
+    return undefined;
+  }
+
+  const data = root.data as Record<string, unknown>;
+  return (
+    pickString(data.image) ??
+    pickString(data.url) ??
+    pickString(data.path) ??
+    pickString(data.location) ??
+    pickString(data.key) ??
+    pickString(data.fileName) ??
+    pickString(data.filename)
+  );
+};
 
 const ProfileInfoSection = ({
   editUser,
+  uploadImage,
+  deleteUploadedImage,
   isRefreshing,
   isSaving,
+  isUploadingImage,
+  isDeletingImage,
   profile,
   userId,
 }: ProfileInfoSectionProps) => {
   const dispatch = useAppDispatch();
   const [isEditingProfile, setIsEditingProfile] = useState(false);
 
-  const profilePhoto =
-    typeof profile?.profilePhoto === "string" && profile.profilePhoto.trim()
-      ? profile.profilePhoto.trim()
-      : "";
+  const profilePhoto = typeof profile?.profilePhoto === "string" ? profile.profilePhoto.trim() : "";
 
   return (
     <div className="overflow-hidden rounded-[10px] border border-[#ece6db] bg-white shadow-[0_24px_60px_rgba(17,17,17,0.08)]">
@@ -118,7 +237,7 @@ const ProfileInfoSection = ({
                 lastName: values.lastName.trim(),
                 email: values.email.trim(),
                 contact: trimmedPhone ? { phoneNo: trimmedPhone } : {},
-                ...(trimmedPhoto ? { profilePhoto: trimmedPhoto } : {}),
+                profilePhoto: trimmedPhoto,
               };
               const data = await editUser(payload);
               const responseUser =
@@ -134,7 +253,7 @@ const ProfileInfoSection = ({
                   ...(profile?.contact ?? {}),
                   ...(payload.contact ?? {}),
                 },
-                profilePhoto: trimmedPhoto || responseUser.profilePhoto || profile?.profilePhoto,
+                profilePhoto: trimmedPhoto || responseUser.profilePhoto || "",
                 _id: userId,
               } as AuthSessionUser;
 
@@ -143,7 +262,7 @@ const ProfileInfoSection = ({
               resetForm({ values });
               setIsEditingProfile(false);
             } catch (error) {
-              setStatus({ error: ErrorMessage(error, "Profile update failed") });
+              setStatus({ error: AppErrorMessage(error, "Profile update failed") });
             } finally {
               setSubmitting(false);
             }
@@ -163,13 +282,45 @@ const ProfileInfoSection = ({
               }
 
               try {
-                const dataUrl = await readFileAsDataUrl(file);
-                setFieldValue("profilePhoto", dataUrl);
+                const formData = new FormData();
+                formData.append("image", file);
+                const uploadResponse = await uploadImage(formData);
+                const uploadedImageValue = extractUploadedImageValue(uploadResponse);
+
+                if (!uploadedImageValue) {
+                  setStatus({ error: "Image upload response is invalid." });
+                  return;
+                }
+
+                setFieldValue("profilePhoto", uploadedImageValue);
                 setStatus(undefined);
-              } catch {
-                setStatus({ error: "Unable to read selected image." });
+              } catch (error) {
+                setStatus({ error: AppErrorMessage(error, "Unable to upload image.") });
               } finally {
                 event.currentTarget.value = "";
+              }
+            };
+
+            const handlePhotoRemove = async () => {
+              const currentPhoto = values.profilePhoto.trim();
+              if (!currentPhoto) {
+                return;
+              }
+
+              try {
+                const imageIdentifier = getImageIdentifier(currentPhoto);
+                await deleteUploadedImage({
+                  image: imageIdentifier || currentPhoto,
+                  path: imageIdentifier || currentPhoto,
+                  key: imageIdentifier || currentPhoto,
+                  fileName: imageIdentifier || currentPhoto,
+                  filename: imageIdentifier || currentPhoto,
+                  profilePhoto: imageIdentifier || currentPhoto,
+                });
+                setFieldValue("profilePhoto", "");
+                setStatus({ success: "Profile image removed. Click Save Changes to update profile." });
+              } catch (error) {
+                setStatus({ error: AppErrorMessage(error, "Unable to remove image.") });
               }
             };
 
@@ -180,31 +331,35 @@ const ProfileInfoSection = ({
                     Profile Photo
                   </p>
                   <div className="flex flex-wrap items-center gap-4">
-                    {values.profilePhoto ? (
-                      <img
-                        src={values.profilePhoto}
-                        alt="Profile preview"
-                        className="h-16 w-16 rounded-full border border-[#e6ded2] object-cover"
-                      />
-                    ) : (
-                      <div className="inline-grid h-16 w-16 place-items-center rounded-full border border-[#e6ded2] bg-white text-xl font-semibold text-[#777777]">
-                        {getInitials(profile)}
-                      </div>
-                    )}
+                    <ProfileImage
+                      value={values.profilePhoto}
+                      alt="Profile preview"
+                      className="h-24 w-24 rounded-full border border-[#e6ded2] object-cover"
+                      fallback={
+                        <div className="inline-grid h-24 w-24 place-items-center rounded-full border border-[#e6ded2] bg-white text-xl font-semibold text-[#777777]">
+                          {getInitials(profile)}
+                        </div>
+                      }
+                    />
 
                     <div className="flex flex-wrap gap-2">
-                      <label className="inline-flex cursor-pointer items-center gap-2 rounded-full border border-[#d9d9d9] px-4 py-2 text-sm font-semibold text-[#111111] transition hover:border-black">
+                      <label
+                        className={`inline-flex cursor-pointer items-center gap-2 rounded-full border border-[#d9d9d9] px-4 py-2 text-sm font-semibold text-[#111111] transition hover:border-black ${
+                          isUploadingImage ? "pointer-events-none opacity-70" : ""
+                        }`}
+                      >
                         <UploadOutlined />
-                        Upload Photo
+                        {isUploadingImage ? "Uploading..." : "Upload Photo"}
                         <input type="file" accept="image/*" className="hidden" onChange={handlePhotoUpload} />
                       </label>
                       {values.profilePhoto ? (
                         <button
                           type="button"
-                          onClick={() => setFieldValue("profilePhoto", "")}
+                          onClick={handlePhotoRemove}
+                          disabled={isDeletingImage}
                           className="rounded-full border border-[#d9d9d9] px-4 py-2 text-sm font-semibold text-[#111111] transition hover:border-black"
                         >
-                          Remove
+                          {isDeletingImage ? "Removing..." : "Remove"}
                         </button>
                       ) : null}
                     </div>
@@ -230,7 +385,7 @@ const ProfileInfoSection = ({
                 <div className="flex flex-wrap gap-3 md:col-span-2">
                   <button
                     type="submit"
-                    disabled={isSubmitting || isSaving || !dirty}
+                    disabled={isSubmitting || isSaving || isUploadingImage || isDeletingImage || !dirty}
                     className="rounded-full bg-black px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#111111] disabled:cursor-not-allowed disabled:opacity-70"
                   >
                     {isSubmitting || isSaving ? "Saving..." : "Save Changes"}
@@ -255,17 +410,16 @@ const ProfileInfoSection = ({
           <div className="md:col-span-2 rounded-[10px] border border-[#efe7dd] bg-[#faf7f2] p-5">
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#8c8c8c]">Profile Photo</p>
             <div className="mt-3 flex items-center gap-4">
-              {profilePhoto ? (
-                <img
-                  src={profilePhoto}
-                  alt="Profile"
-                  className="h-16 w-16 rounded-full border border-[#e6ded2] object-cover"
-                />
-              ) : (
-                <div className="inline-grid h-16 w-16 place-items-center rounded-full border border-[#e6ded2] bg-white text-xl font-semibold text-[#777777]">
-                  {getInitials(profile)}
-                </div>
-              )}
+              <ProfileImage
+                value={profilePhoto}
+                alt="Profile"
+                className="h-24 w-24 rounded-full border border-[#e6ded2] object-cover"
+                fallback={
+                  <div className="inline-grid h-24 w-24 place-items-center rounded-full border border-[#e6ded2] bg-white text-xl font-semibold text-[#777777]">
+                    {getInitials(profile)}
+                  </div>
+                }
+              />
               <p className="text-sm font-medium text-[#555555]">
                 {profilePhoto ? "Profile photo uploaded" : "No profile photo uploaded"}
               </p>

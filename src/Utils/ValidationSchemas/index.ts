@@ -33,11 +33,7 @@ export const ProfileSchema = Yup.object({
       "Enter a valid phone number",
       (value) => !value || (value.replace(/\D/g, "").length ?? 0) >= 6,
     ),
-  profilePhoto: Yup.string().trim().test(
-    "valid-profile-photo-url",
-    "Please upload a valid image",
-    (value) => !value || /^(https?:\/\/|data:image\/)/i.test(value),
-  ),
+  profilePhoto: Yup.string().trim(),
 });
 
 export const ForgotPasswordSchema = Yup.object({

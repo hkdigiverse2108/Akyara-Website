@@ -20,6 +20,9 @@ export const KEYS = {
   FAQ: {
     ALL: "faq.all",
   },
+  UPLOAD: {
+    IMAGE: "upload.image",
+  },
   NEWSLETTER: {
     SUBSCRIBE: "newsletter.subscribe",
   },
