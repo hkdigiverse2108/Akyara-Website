@@ -1,4 +1,4 @@
-import type { ProfilePlaceholderSectionProps } from "./types";
+import type { ProfilePlaceholderSectionProps } from "../../Types";
 
 const ProfilePlaceholderSection = ({eyebrow,title,description,emptyMessage,}: ProfilePlaceholderSectionProps) => {
   return (

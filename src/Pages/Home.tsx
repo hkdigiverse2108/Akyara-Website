@@ -165,85 +165,36 @@ const Home = () => {
               stories delivered to your inbox.
             </p>
             <form className="grid gap-4" onSubmit={handleSubscribe}>
-              <input
-                className="w-full rounded-[14px] border border-[#e1e1e1] px-4 py-3 text-[#2b2b2b] placeholder:text-[#b7b7b7] outline-none transition focus:border-black"
-                type="email"
-                placeholder="Enter your email address"
-                value={subscribeEmail}
-                onChange={(event) => {
-                  setSubscribeEmail(event.target.value);
-                  if (subscribeStatus) {
-                    setSubscribeStatus(null);
-                  }
-                }}
-                disabled={newsletterMutation.isPending}
-              />
-              {subscribeStatus?.error && (
-                <p className="rounded-[10px] bg-[#ffecec] px-3 py-2 text-sm text-[#e53935]">{subscribeStatus.error}</p>
-              )}
-              {subscribeStatus?.success && (
-                <p className="rounded-[10px] bg-[#ecfff0] px-3 py-2 text-sm text-[#1b7f3a]">{subscribeStatus.success}</p>
-              )}
-              <button
-                type="submit"
-                disabled={newsletterMutation.isPending}
-                className="w-full rounded-full bg-black py-3 font-semibold text-white shadow-[0_10px_24px_rgba(0,0,0,0.25)] transition hover:bg-[#111111] disabled:cursor-not-allowed disabled:opacity-70"
-              >
-                {newsletterMutation.isPending ? "Subscribing..." : "Subscribe"}
-              </button>
+              <input className="w-full rounded-[14px] border border-[#e1e1e1] px-4 py-3 text-[#2b2b2b] placeholder:text-[#b7b7b7] outline-none transition focus:border-black" type="email" placeholder="Enter your email address" value={subscribeEmail} onChange={(event) => {   setSubscribeEmail(event.target.value);   if (subscribeStatus) {     setSubscribeStatus(null);   } }} disabled={newsletterMutation.isPending}/>
+              {subscribeStatus?.error && (<p className="rounded-[10px] bg-[#ffecec] px-3 py-2 text-sm text-[#e53935]">{subscribeStatus.error}</p>)}
+              {subscribeStatus?.success && (<p className="rounded-[10px] bg-[#ecfff0] px-3 py-2 text-sm text-[#1b7f3a]">{subscribeStatus.success}</p>)}
+              <button type="submit" disabled={newsletterMutation.isPending} className="w-full rounded-full bg-black py-3 font-semibold text-white shadow-[0_10px_24px_rgba(0,0,0,0.25)] transition hover:bg-[#111111] disabled:cursor-not-allowed disabled:opacity-70">{newsletterMutation.isPending ? "Subscribing..." : "Subscribe"}</button>
             </form>
           </div>
         </div>
       )}
-
       <HeroSlider />
-
       <CategoryHighlights />
-
       <section className="mt-12 py-10 sm:mt-14 sm:py-16">
         <div className="mx-auto w-[92%] max-w-[1200px]">
           <div className="relative mb-10 text-center sm:mb-12">
-            <span
-              className="pointer-events-none absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-[70%] whitespace-nowrap text-[clamp(2.2rem,6vw,3.5rem)] font-semibold italic text-black/10 md:block"
-              aria-hidden="true"
-            >
-              Trendy Products
-            </span>
+            <span className="pointer-events-none absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-[70%] whitespace-nowrap text-[clamp(2.2rem,6vw,3.5rem)] font-semibold italic text-black/10 md:block" aria-hidden="true">Trendy Products</span>
             <h2 className="relative z-10 m-0 pt-2 font-display text-2xl sm:text-3xl">Our Trending Products</h2>
           </div>
 
           <div className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2 md:grid-cols-3 lg:gap-6 xl:grid-cols-4">
             {products.map((product) => (
-              <div
-                className="product-card group relative overflow-hidden rounded-[6px] bg-white shadow-[0_12px_30px_-24px_rgba(0,0,0,0.35)]"
-                key={product.name}
-              >
+              <div className="product-card group relative overflow-hidden rounded-[6px] bg-white shadow-[0_12px_30px_-24px_rgba(0,0,0,0.35)]" key={product.name}>
                 {product.badge && (
-                  <span
-                    className={`absolute left-4 top-4 z-10 rounded-[6px] px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-white ${badgeStyles[product.badge] ?? "bg-black"
-                      }`}
-                  >
-                    {product.badge}
-                  </span>
-                )}
-
-                <button
-                  type="button"
-                  className="absolute right-4 top-4 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#111111] shadow-[0_10px_26px_rgba(0,0,0,0.12)] transition hover:scale-105"
-                  aria-label={`Save ${product.name}`}
-                >
+                  <span className={`absolute left-4 top-4 z-10 rounded-[6px] px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-white ${badgeStyles[product.badge] ?? "bg-black"}`}>{product.badge}</span>)}
+                <button type="button" className="absolute right-4 top-4 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#111111] shadow-[0_10px_26px_rgba(0,0,0,0.12)] transition hover:scale-105" aria-label={`Save ${product.name}`}>
                   <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.5">
                     <path d="M12 20.5l-1.45-1.32C5.4 14.36 2 11.28 2 7.5 2 5 4 3 6.5 3c1.74 0 3.41.9 4.22 2.28C11.53 3.9 13.2 3 14.94 3 17.44 3 19.44 5 19.44 7.5c0 3.78-3.4 6.86-8.55 11.68L12 20.5z" />
                   </svg>
                 </button>
 
                 <div className="relative overflow-hidden bg-[#f1f0ec]">
-                  <img
-                    className="card-img-top h-[220px] w-full object-cover transition-transform duration-500 group-hover:scale-[1.04] min-[420px]:h-[260px] sm:h-[300px] lg:h-[360px]"
-                    src={product.image}
-                    alt={product.name}
-                    loading="lazy"
-                  />
+                  <img className="card-img-top h-[220px] w-full object-cover transition-transform duration-500 group-hover:scale-[1.04] min-[420px]:h-[260px] sm:h-[300px] lg:h-[360px]" src={product.image} alt={product.name} loading="lazy"/>
                   <div className="absolute inset-x-0 bottom-0 translate-y-full bg-black/90 px-4 py-3 text-center text-sm text-white transition-transform duration-300 group-hover:translate-y-0">
                     <span className="inline-flex items-center gap-2 font-semibold uppercase tracking-wide">
                       <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -333,14 +284,7 @@ const Home = () => {
               <span aria-hidden="true">&rarr;</span>
             </button>
 
-            <div
-              ref={dealsSliderRef}
-              className="hide-scrollbar flex gap-4 overflow-x-auto px-2 pb-6 scroll-smooth snap-x snap-mandatory sm:gap-6 sm:px-6 xl:px-0"
-              onMouseEnter={() => setIsDealsHovered(true)}
-              onMouseLeave={() => setIsDealsHovered(false)}
-              onTouchStart={() => setIsDealsHovered(true)}
-              onTouchEnd={() => setIsDealsHovered(false)}
-              onTouchCancel={() => setIsDealsHovered(false)}
+            <div ref={dealsSliderRef} className="hide-scrollbar flex gap-4 overflow-x-auto px-2 pb-6 scroll-smooth snap-x snap-mandatory sm:gap-6 sm:px-6 xl:px-0" onMouseEnter={() => setIsDealsHovered(true)} onMouseLeave={() => setIsDealsHovered(false)} onTouchStart={() => setIsDealsHovered(true)} onTouchEnd={() => setIsDealsHovered(false)} onTouchCancel={() => setIsDealsHovered(false)}
             >
               {deals.map((deal) => (
                 <div
@@ -422,7 +366,3 @@ const Home = () => {
 };
 
 export default Home;
-
-
-
-

@@ -1,11 +1,4 @@
-import type { ReactNode } from "react";
-
-type AuthShellProps = {
-  title: string;
-  subtitle?: string;
-  children: ReactNode;
-  footer?: ReactNode;
-};
+import type { AuthShellProps } from "../Types";
 
 const AuthShell = ({ title, subtitle, children, footer }: AuthShellProps) => {
   return (

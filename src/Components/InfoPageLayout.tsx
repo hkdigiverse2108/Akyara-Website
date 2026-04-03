@@ -1,10 +1,5 @@
-type InfoPageLayoutProps = {
-  title: string;
-  content?: string;
-  isLoading?: boolean;
-  showContentCard?: boolean;
-  emptyMessage: string;
-};
+import type { InfoPageLayoutProps } from "../Types";
+
 
 const HTML_TAG_PATTERN = /<\/?[a-z][\s\S]*>/i;
 

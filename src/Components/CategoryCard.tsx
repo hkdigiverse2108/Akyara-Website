@@ -1,26 +1,7 @@
-type CategoryCardProps = {
-  title: string;
-  count: string;
-  image: string;
-  contentClass: string;
-  imageWrapClass: string;
-  imageClass?: string;
-  imageAlignClass?: string;
-  isLarge?: boolean;
-  useImageAsBackground?: boolean;
-};
+import type { CategoryCardProps } from "../Types";
 
-const CategoryCard = ({
-  title,
-  count,
-  image,
-  contentClass,
-  imageWrapClass,
-  imageClass,
-  imageAlignClass,
-  isLarge = false,
-  useImageAsBackground = false,
-}: CategoryCardProps) => {
+
+const CategoryCard = ({title,count,image,contentClass,imageWrapClass,imageClass,imageAlignClass,isLarge = false,useImageAsBackground = false,}: CategoryCardProps) => {
   const imageSizeClass = "h-full max-h-none";
 
   return (
@@ -61,14 +42,7 @@ const CategoryCard = ({
           } ${imageWrapClass}`}
         >
           {!useImageAsBackground && (
-            <img
-              src={image}
-              alt={title}
-              loading="lazy"
-              className={`h-full w-full object-contain object-right object-bottom transition-transform duration-500 ${imageSizeClass} ${
-                imageClass ?? ""
-              }`}
-            />
+            <img src={image} alt={title} loading="lazy" className={`h-full w-full object-contain object-right object-bottom transition-transform duration-500 ${imageSizeClass} ${   imageClass ?? "" }`}/>
           )}
         </div>
       </div>

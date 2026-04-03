@@ -26,15 +26,7 @@ const Footer = () => {
 
           <div className="mt-3 flex gap-3 text-base">
             {socialLinks.map(({ label, href, icon }) => (
-              <a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noreferrer"
-                className="transition hover:text-white"
-              >
-                {icon}
-              </a>
+              <a key={label} href={href} target="_blank" rel="noreferrer" className="transition hover:text-white">{icon}</a>
             ))}
           </div>
         </div>
@@ -44,9 +36,7 @@ const Footer = () => {
           <ul className="space-y-1 text-sm">
             {companyLinks.map(({ label, to }) => (
               <li key={label}>
-                <Link to={to} className="transition hover:text-white">
-                  {label}
-                </Link>
+                <Link to={to} className="transition hover:text-white">{label}</Link>
               </li>
             ))}
           </ul>
@@ -57,9 +47,7 @@ const Footer = () => {
           <ul className="space-y-1 text-sm">
             {supportLinks.map(({ label, to }) => (
               <li key={label}>
-                <Link to={to} className="transition hover:text-white">
-                  {label}
-                </Link>
+                <Link to={to} className="transition hover:text-white">{label}</Link>
               </li>
             ))}
           </ul>

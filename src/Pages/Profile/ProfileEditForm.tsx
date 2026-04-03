@@ -9,7 +9,7 @@ import type { AuthSessionUser } from "../../Types";
 import { ProfileSchema } from "../../Utils/ValidationSchemas";
 import { getInitials, getPhoneNumber } from "./helpers";
 import { buildProfilePhotoCandidates, extractUploadedImageValue, getImageIdentifier, isAbsoluteImageUrl, ProfileImage,} from "./profileImageUtils";
-import type { ProfileEditFormProps, ProfileFormValues } from "./types/index";
+import type { ProfileEditFormProps, ProfileFormValues } from "../../Types";
 
 const ProfileEditForm = ({ profile, userId, profilePhoto, isSaving, isUploadingImage, isDeletingImage, editUser, uploadImage, deleteUploadedImage, onClose,}: ProfileEditFormProps) => {
   const dispatch = useAppDispatch();
