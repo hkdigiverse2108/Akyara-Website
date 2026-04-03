@@ -3,7 +3,7 @@ import {useMutation,useQueryClient,type InvalidateQueryFilters,type QueryKey,typ
 import { useNavigate } from "react-router-dom";
 import { useAppDispatch } from "../../Store/Hooks";
 import { HTTP_STATUS, ROUTES } from "../../Constants";
-import { ErrorMessage, ShowNotification } from "../../Attribute";
+import { ErrorMessage, ShowNotification } from "../../Attribute/Notification";
 import type { CombinedErrorResponse } from "../../Types";
 import { setSignOut } from "../../Store/Slices/AuthSlice";
 

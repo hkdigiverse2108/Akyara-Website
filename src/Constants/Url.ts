@@ -28,6 +28,9 @@ export const URL_KEYS = {
     BASE: "/blog",
     ALL: "/blog/all",
   },
+  SETTINGS: {
+    BASE: "/settings",
+  },
   UPLOAD: {
     IMAGE: "/upload/image",
   },

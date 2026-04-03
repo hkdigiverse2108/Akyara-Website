@@ -6,3 +6,6 @@ export * from "./Faq";
 export * from "./About";
 export * from "./Contact";
 export * from "./Blog";
+export * from './Settings';
+export * from "./Order";
+

@@ -1,7 +1,7 @@
 ﻿import { Form, Formik } from "formik";
 import { Link, useNavigate } from "react-router-dom";
 import { Mutations } from "../../Api/Mutations";
-import { ErrorMessage } from "../../Attribute";
+import { ErrorMessage } from "../../Attribute/Notification";
 import CommonInput from "../../Components/CommonInput";
 import AuthShell from "../../Components/AuthShell";
 import { useAppDispatch } from "../../Store/Hooks";

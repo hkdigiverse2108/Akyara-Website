@@ -1,7 +1,7 @@
 import { UploadOutlined } from "@ant-design/icons";
 import { Form, Formik } from "formik";
 import { type ChangeEvent } from "react";
-import { ErrorMessage as AppErrorMessage } from "../../Attribute";
+import { ErrorMessage as AppErrorMessage } from "../../Attribute/Notification";
 import CommonInput from "../../Components/CommonInput";
 import { useAppDispatch } from "../../Store/Hooks";
 import { setUser } from "../../Store/Slices/AuthSlice";

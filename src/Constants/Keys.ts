@@ -25,6 +25,9 @@ export const KEYS = {
     ALL: "blog.all",
     DETAIL: "blog.detail",
   },
+  SETTINGS: {
+    ALL: "settings.all",
+  },
   UPLOAD: {
     IMAGE: "upload.image",
   },
@@ -35,4 +38,3 @@ export const KEYS = {
     ADD: "contact.add",
   },
 } as const;
-

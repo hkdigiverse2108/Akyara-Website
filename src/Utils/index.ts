@@ -14,3 +14,6 @@ export const getToken = () => {
   const token = Storage.getItem(STORAGE_KEYS.TOKEN);
   return token;
 };
+
+export * from './settings';
+

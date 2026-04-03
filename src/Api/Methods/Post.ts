@@ -1,7 +1,7 @@
 import axios, { AxiosError, type AxiosRequestConfig } from "axios";
 import { getToken } from "../../Utils";
 import { HTTP_STATUS } from "../../Constants";
-import { ShowNotification } from "../../Attribute";
+import { ShowNotification } from "../../Attribute/Notification";
 
 export async function Post<TInput, TResponse>(url: string, data?: TInput, isToken: boolean = true): Promise<TResponse> {
   const authToken = getToken();

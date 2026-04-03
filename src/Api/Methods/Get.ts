@@ -1,5 +1,5 @@
 import axios, { AxiosError, type AxiosRequestConfig } from "axios";
-import { ErrorMessage, ShowNotification } from "../../Attribute";
+import { ErrorMessage, ShowNotification } from "../../Attribute/Notification";
 import { HTTP_STATUS, ROUTES } from "../../Constants";
 import type { Params } from "../../Types";
 import { getToken, Storage } from "../../Utils";

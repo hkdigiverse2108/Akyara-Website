@@ -1,6 +1,6 @@
 import { LockOutlined, SafetyOutlined } from "@ant-design/icons";
 import { Form, Formik } from "formik";
-import { ErrorMessage as AppErrorMessage } from "../../Attribute";
+import { ErrorMessage as AppErrorMessage } from "../../Attribute/Notification";
 import { Mutations } from "../../Api/Mutations";
 import CommonInput from "../../Components/CommonInput";
 import { ChangePasswordSchema } from "../../Utils/ValidationSchemas";

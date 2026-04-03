@@ -7,8 +7,10 @@ import { getPhoneNumber } from "./helpers";
 import GuestProfileState from "./GuestProfileState";
 import ProfileChangePasswordSection from "./ProfileChangePasswordSection";
 import ProfileInfoSection from "./ProfileInfoSection";
+import ProfileOrdersSection from "./ProfileOrdersSection";
 import ProfilePlaceholderSection from "./ProfilePlaceholderSection";
 import ProfileSidebar from "./ProfileSidebar";
+import ProfileWishlistSection from "./ProfileWishlistSection";
 import type { ProfileProps } from "../../Types";
 
 const Profile = ({ section = "info" }: ProfileProps) => {
@@ -31,8 +33,8 @@ const Profile = ({ section = "info" }: ProfileProps) => {
 
   /* -------------------- Section Mapping (better than switch) -------------------- */
   const sections = {
-    orders: (<ProfilePlaceholderSection eyebrow="My Order" title="Order Summary" description="Your recent orders, delivery progress, and purchase history will appear here." emptyMessage="No order data connected yet."/>),
-    wishlist: ( <ProfilePlaceholderSection eyebrow="Wishlist" title="Saved Products" description="Products you save for later will be listed here for quick access." emptyMessage="Your wishlist is currently empty."/>),
+    orders: (<ProfileOrdersSection />),
+    wishlist: (<ProfileWishlistSection />),
     addresses: (<ProfilePlaceholderSection eyebrow="Addresses" title="Saved Address Book" description="Shipping and billing addresses can be managed from this section." emptyMessage="No saved addresses available right now."/>),
     payment: (<ProfilePlaceholderSection eyebrow="Payment Method" title="Payment Preferences" description="Saved cards, preferred payment options, and billing settings will appear here." emptyMessage="No payment method has been added yet."/>),
     "change-password": (<ProfileChangePasswordSection />),
