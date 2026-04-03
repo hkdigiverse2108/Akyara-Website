@@ -1,2 +1,1 @@
-export { ErrorMessage } from "./ErrorMessage";
-export { ShowNotification, SubscribeNotification } from "./Notification";
+export { ShowNotification, SubscribeNotification } from "./Notification/Notification";

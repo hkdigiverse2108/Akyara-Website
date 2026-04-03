@@ -1,4 +1,4 @@
-import type { NotificationType } from "../Types";
+import type { NotificationType } from "../../Types";
 
 let listener: ((msg: string, type: NotificationType) => void) | null = null;
 
