@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { Queries } from "../../Api/Queries";
-import type { FaqItem, FaqValue } from "../../Types";
+import { Queries } from "../../../Api/Queries";
+import type { FaqItem, FaqValue } from "../../../Types";
 
 type FaqRecord = Record<string, unknown>;
 
@@ -156,3 +156,4 @@ const FAQPage = () => {
 };
 
 export default FAQPage;
+

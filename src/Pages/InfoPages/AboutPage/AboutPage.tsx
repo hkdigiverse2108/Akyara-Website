@@ -1,40 +1,7 @@
-import { Queries } from "../../Api/Queries";
-import type { AboutSection, AboutValue } from "../../Types";
-
-type AboutRecord = Record<string, unknown>;
-
-const COLLECTION_KEYS = ["data", "docs", "items", "rows", "results", "records"] as const;
-
-const isRecord = (value: unknown): value is AboutRecord => typeof value === "object" && value !== null;
-
-const toAboutSection = (value: unknown): AboutSection | undefined => {
-  if (!isRecord(value)) { return undefined; }
-
-  const title = typeof value.title === "string" ? value.title.trim() : undefined;
-  const subtitle = typeof value.subtitle === "string" ? value.subtitle.trim() : undefined;
-  const description = typeof value.description === "string" ? value.description.trim() : undefined;
-  const image = typeof value.image === "string" ? value.image.trim() : undefined;
-
-  if (!title && !subtitle && !description && !image) { return undefined; }
-
-  return { _id: typeof value._id === "string" ? value._id : undefined, title, subtitle, description, image, priority: typeof value.priority === "number" ? value.priority : 0, isActive: typeof value.isActive === "boolean" ? value.isActive : undefined, isDeleted: typeof value.isDeleted === "boolean" ? value.isDeleted : undefined, };
-};
-
-const normalizeAboutSections = (value: unknown, visited = new WeakSet<object>()): AboutSection[] => {
-  if (!value) return [];
-  if (Array.isArray(value)) return value.flatMap((item) => normalizeAboutSections(item, visited));
-  if (!isRecord(value)) return [];
-  if (visited.has(value)) return [];
-
-  visited.add(value);
-
-  const directSection = toAboutSection(value);
-  if (directSection) return [directSection];
-  const fromCollectionKeys = COLLECTION_KEYS.flatMap((key) => normalizeAboutSections(value[key], visited),);
-
-  if (fromCollectionKeys.length) return fromCollectionKeys;
-  return Object.values(value).flatMap((nestedValue) => normalizeAboutSections(nestedValue, visited));
-};
+import { Queries } from "../../../Api/Queries";
+import { Link } from "react-router-dom";
+import type { AboutValue } from "../../../Types";
+import { getAboutDetailPath, normalizeAboutSections } from "./AboutData";
 
 const AboutPage = () => {
   const aboutQuery = Queries.useGetAboutSections(undefined, true);
@@ -63,7 +30,14 @@ const AboutPage = () => {
 
                     {section.description && (<p className="mt-5 max-w-[650px] whitespace-pre-line text-[0.98rem] leading-7 text-[#5f6774] sm:mt-7 sm:text-[1.08rem] sm:leading-8">  {section.description}</p>)}
 
-                    <button type="button" className="mt-6 inline-flex h-11 w-full items-center justify-center rounded-md bg-[#070b14] px-8 text-[0.95rem] font-medium text-white transition-all hover:bg-[#00060f] sm:mt-8 sm:h-12 sm:w-auto">See More Info</button>
+                    {section._id ? (
+                      <Link
+                        to={getAboutDetailPath(section._id)}
+                        className="mt-6 inline-flex h-11 w-full items-center justify-center rounded-md bg-[#070b14] px-8 text-[0.95rem] font-medium text-white transition-all hover:bg-[#00060f] sm:mt-8 sm:h-12 sm:w-auto"
+                      >
+                        See More Info
+                      </Link>
+                    ) : null}
                   </div>
 
                   {section.image && (
@@ -87,3 +61,4 @@ const AboutPage = () => {
 };
 
 export default AboutPage;
+

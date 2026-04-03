@@ -16,6 +16,7 @@ export const ROUTES = {
   INFO: {
     CONTACT: "/contact-us",
     ABOUT: "/about-us",
+    ABOUT_DETAIL: "/about-us/:id",
     TRACKING: "/tracking-order",
     BLOG: "/blog",
     BLOG_DETAIL: "/blog/:id",
@@ -34,4 +35,5 @@ export const ROUTES = {
     VERIFY_OTP: "/auth/verify-otp",
   },
 } as const;
+
 

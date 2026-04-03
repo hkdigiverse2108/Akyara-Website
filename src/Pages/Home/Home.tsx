@@ -1,9 +1,9 @@
 import { CloseOutlined } from "@ant-design/icons";
 import { useEffect, useRef, useState, type FormEvent } from "react";
-import { Mutations } from "../Api/Mutations";
-import CategoryHighlights from "../Components/CategoryHighlights";
-import HeroSlider from "../Components/HeroSlider";
-import { useAppSelector } from "../Store/Hooks";
+import { Mutations } from "../../Api/Mutations";
+import CategoryHighlights from "../../Components/CategoryHighlights";
+import HeroSlider from "../../Components/HeroSlider";
+import { useAppSelector } from "../../Store/Hooks";
 
 const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 
@@ -366,3 +366,4 @@ const Home = () => {
 };
 
 export default Home;
+

@@ -1,8 +1,8 @@
 import { ArrowLeftOutlined, ClockCircleOutlined } from "@ant-design/icons";
 import { useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
-import { Queries } from "../../Api/Queries";
-import { ROUTES } from "../../Constants";
+import { Queries } from "../../../Api/Queries";
+import { ROUTES } from "../../../Constants";
 import BlogThumbnailImage from "./BlogThumbnailImage";
 import {getBlogDescription,getBlogIdentifier,getBlogTitle,normalizeBlogItems,resolveBlogDate,} from "./blogData";
 
@@ -63,7 +63,7 @@ const BlogDetailPage = () => {
             <p className="mt-3 whitespace-pre-line text-[0.95rem] leading-7 text-[#374151]">{getBlogDescription(post)}</p>
             {post.tags?.length ? (
               <div className="mt-5 flex flex-wrap gap-2">
-                {post.tags.map((tag) => (
+                {post.tags.map((tag: string) => (
                   <span key={`${postId}-${tag}`} className="rounded-full border border-[#e5e7eb] bg-[#f9fafb] px-3 py-1 text-xs font-medium text-[#4b5563]">#{tag}</span>
                 ))}
               </div>
@@ -76,3 +76,4 @@ const BlogDetailPage = () => {
 };
 
 export default BlogDetailPage;
+

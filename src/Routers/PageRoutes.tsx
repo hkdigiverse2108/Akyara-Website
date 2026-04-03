@@ -1,23 +1,11 @@
 import type { RouteObject } from "react-router-dom";
 import { ROUTES } from "../Constants";
-import ForgotPassword from "../Pages/Auth/ForgotPassword";
-import Login from "../Pages/Auth/Login";
-import ResetPassword from "../Pages/Auth/ResetPassword";
-import Signup from "../Pages/Auth/Signup";
-import VerifyOtp from "../Pages/Auth/VerifyOtp";
-import AboutPage from "../Pages/InfoPages/AboutPage";
-import BlogDetailPage from "../Pages/InfoPages/BlogDetailPage";
-import BlogPage from "../Pages/InfoPages/BlogPage";
-import CancellationPolicyPage from "../Pages/InfoPages/CancellationPolicyPage";
-import ContactPage from "../Pages/InfoPages/ContactPage";
-import FAQPage from "../Pages/InfoPages/FAQPage";
-import Home from "../Pages/Home";
+import { ForgotPassword, Login, ResetPassword, Signup, VerifyOtp } from "../Pages/Auth";
+import Home from "../Pages/Home/Home";
 import InfoPage from "../Pages/InfoPage";
-import PrivacyPolicyPage from "../Pages/InfoPages/PrivacyPolicyPage";
+import {AboutDetailPage,AboutPage,BlogDetailPage,BlogPage,CancellationPolicyPage,ContactPage,FAQPage,PrivacyPolicyPage,ReturnRefundPolicyPage,TermsConditionPage,} from "../Pages/InfoPages";
 import NotFound from "../Pages/NotFound";
 import Profile from "../Pages/Profile/index";
-import ReturnRefundPolicyPage from "../Pages/InfoPages/ReturnRefundPolicyPage";
-import TermsConditionPage from "../Pages/InfoPages/TermsConditionPage";
 
 export const PageRoutes: RouteObject[] = [
   { path: ROUTES.HOME, element: <Home /> },
@@ -30,6 +18,7 @@ export const PageRoutes: RouteObject[] = [
   { path: ROUTES.ACCOUNT.CHANGE_PASSWORD, element: <Profile section="change-password" /> },
   { path: ROUTES.INFO.CONTACT, element: <ContactPage /> },
   { path: ROUTES.INFO.ABOUT, element: <AboutPage /> },
+  { path: ROUTES.INFO.ABOUT_DETAIL, element: <AboutDetailPage /> },
   { path: ROUTES.INFO.TRACKING, element: <InfoPage title="Tracking Order" /> },
   { path: ROUTES.INFO.BLOG, element: <BlogPage /> },
   { path: ROUTES.INFO.BLOG_DETAIL, element: <BlogDetailPage /> },

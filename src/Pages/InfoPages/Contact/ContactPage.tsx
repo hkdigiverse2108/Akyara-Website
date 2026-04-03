@@ -1,8 +1,8 @@
 import { ErrorMessage as FormikErrorMessage, Field, Form, Formik } from "formik";
-import { Mutations } from "../../Api/Mutations";
-import { ErrorMessage as AppErrorMessage } from "../../Attribute";
-import { ContactSchema } from "../../Utils/ValidationSchemas";
-import type { ContactFormValues, ContactPayload } from "../../Types";
+import { Mutations } from "../../../Api/Mutations";
+import { ErrorMessage as AppErrorMessage } from "../../../Attribute";
+import { ContactSchema } from "../../../Utils/ValidationSchemas";
+import type { ContactFormValues, ContactPayload } from "../../../Types";
 
 const ContactPage = () => {
   const contactMutation = Mutations.useAddContact();

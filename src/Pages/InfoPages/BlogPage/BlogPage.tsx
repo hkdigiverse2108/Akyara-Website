@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { Queries } from "../../Api/Queries";
+import { Queries } from "../../../Api/Queries";
 import BlogThumbnailImage from "./BlogThumbnailImage";
 import {getBlogDetailPath,getBlogExcerpt,getBlogIdentifier,getBlogTitle,normalizeBlogItems,resolveBlogDate,} from "./blogData";
 
