@@ -94,7 +94,7 @@ export type UserProfileResponse = ApiResponse<AuthSessionUser>;
 export type ChangePasswordPayload = {
   currentPassword?: string;
   newPassword: string;
-  confirmPassword?: string;
+  confirmNewPassword?: string;
   [key: string]: unknown;
 };
 

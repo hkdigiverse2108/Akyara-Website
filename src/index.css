@@ -11,12 +11,19 @@
 
   html {
     scroll-behavior: smooth;
+    scrollbar-width: none;
   }
 
   body {
     margin: 0;
     min-height: 100vh;
+    scrollbar-width: none;
     @apply font-sans text-black bg-white;
+  }
+
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar {
+    display: none;
   }
 
   button,

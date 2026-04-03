@@ -1,4 +1,12 @@
-import { CloseOutlined, HeartOutlined, LogoutOutlined, MenuOutlined, SearchOutlined, ShoppingCartOutlined, UserOutlined, } from "@ant-design/icons";
+import {
+  CloseOutlined,
+  HeartOutlined,
+  LogoutOutlined,
+  MenuOutlined,
+  SearchOutlined,
+  ShoppingCartOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import { Dropdown } from "antd";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -39,9 +47,26 @@ const Header = () => {
   }, [dispatch, singleUserQuery.data?.data]);
 
   useEffect(() => {
-    setMobileMenuOpen(false);
-    setAccountOpen(false);
+    const closeMenusTimer = window.setTimeout(() => {
+      setMobileMenuOpen(false);
+      setAccountOpen(false);
+    }, 0);
+
+    return () => {
+      window.clearTimeout(closeMenusTimer);
+    };
   }, [location.pathname, location.search, location.hash]);
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    }
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [mobileMenuOpen]);
 
   const handleLogout = () => {
     setAccountOpen(false);
@@ -91,66 +116,194 @@ const Header = () => {
   );
 
   return (
-    <header className="sticky top-0 z-20 border-b border-[#e5e5e5] bg-white">
-      <div className="mx-auto w-full max-w-[1400px] px-4 sm:px-6 lg:px-8">
-        <div className="flex min-h-[68px] items-center gap-2 sm:gap-3 lg:min-h-[78px]">
-
+    <header className="fixed left-0 right-0 top-0 z-40 border-b border-[#e7ebf2] bg-white/95 backdrop-blur">
+      <div className="mx-auto w-full max-w-[1400px] px-3 sm:px-5 lg:px-8">
+        <div className="flex min-h-[64px] items-center gap-2 sm:min-h-[70px] lg:min-h-[78px]">
           <div className="shrink-0">
             <Link to={ROUTES.HOME} aria-label="Home">
-              <img className="block h-8 w-auto object-contain sm:h-9 md:h-10 lg:h-11" src="/assets/images/logo/logo.png" alt="Kumo logo" />
+              <img
+                className="block h-7 w-auto object-contain sm:h-8 md:h-9 lg:h-11"
+                src="/assets/images/logo/logo.png"
+                alt="Kumo logo"
+              />
             </Link>
           </div>
 
-          <nav className="ml-6 hidden items-center gap-3 sm:gap-4 md:gap-5 lg:gap-6 xl:gap-6 md:flex">
+          <nav className="ml-7 hidden items-center gap-4 lg:flex xl:gap-6">
             {navLinks.map(({ label, to }) => {
-              const isActive = location.pathname === to;
-              return (<Link key={label} to={to} className={`relative whitespace-nowrap text-[0.92rem] font-medium transition duration-200 xl:text-[0.96rem] ${isActive ? "text-black after:w-full" : "text-[#444] hover:text-black after:w-0 hover:after:w-full"}after:absolute after:left-0 after:-bottom-[7px] after:h-[2px] after:bg-black after:transition-all after:duration-300`}>{label}</Link>);
+              return (
+                <Link
+                  key={label}
+                  to={to}
+                  className="whitespace-nowrap text-[0.92rem] font-medium text-[#444] transition duration-200 hover:text-black xl:text-[0.96rem]"
+                >
+                  {label}
+                </Link>
+              );
             })}
           </nav>
 
-          <div className="ml-auto flex items-center gap-1 sm:gap-2">
-            <button type="button" aria-label="Search" className="hidden h-9 w-9 place-items-center rounded-full text-[#111] transition hover:bg-[#f3f4f6] sm:grid md:h-10 md:w-10"><SearchOutlined className="text-[1rem]" /></button>
+          <div className="ml-auto flex items-center gap-0.5 sm:gap-1 lg:gap-2">
+            <button
+              type="button"
+              aria-label="Search"
+              className="hidden h-9 w-9 place-items-center rounded-full text-[#111] transition hover:bg-[#f3f4f6] lg:grid lg:h-10 lg:w-10"
+            >
+              <SearchOutlined className="text-[1rem]" />
+            </button>
             {isAuthenticated ? (
-              <Dropdown trigger={["click"]} placement="bottomRight" open={accountOpen} onOpenChange={setAccountOpen} destroyOnHidden popupRender={() => accountDropdown}>
-                <button type="button" aria-label="Account" className="grid h-9 w-9 place-items-center rounded-full text-[#111] transition hover:bg-[#f3f4f6] lg:h-10 lg:w-10"><UserOutlined className="text-[1rem]" /></button>
+              <Dropdown
+                trigger={["click"]}
+                placement="bottomRight"
+                open={accountOpen}
+                onOpenChange={setAccountOpen}
+                destroyOnHidden
+                popupRender={() => accountDropdown}
+              >
+                <button
+                  type="button"
+                  aria-label="Account"
+                  className="hidden h-10 w-10 place-items-center rounded-full bg-[#111827] text-[0.72rem] font-semibold text-white transition hover:bg-black lg:grid"
+                >
+                  {initials || "A"}
+                </button>
               </Dropdown>
             ) : (
-              <Link to={ROUTES.AUTH.LOGIN} aria-label="Login" className="grid h-9 w-9 place-items-center rounded-full text-[#111] transition hover:bg-[#f3f4f6] lg:h-10 lg:w-10"><UserOutlined className="text-[1rem]" /></Link>
+              <Link
+                to={ROUTES.AUTH.LOGIN}
+                aria-label="Login"
+                className="hidden h-9 w-9 place-items-center rounded-full text-[#111] transition hover:bg-[#f3f4f6] lg:grid lg:h-10 lg:w-10"
+              >
+                <UserOutlined className="text-[1rem]" />
+              </Link>
             )}
-            <button type="button" aria-label="Wishlist" className="relative hidden h-9 w-9 place-items-center rounded-full text-[#111] transition hover:bg-[#f3f4f6] sm:grid lg:h-10 lg:w-10">
+            <button
+              type="button"
+              aria-label="Wishlist"
+              className="relative hidden h-9 w-9 place-items-center rounded-full text-[#111] transition hover:bg-[#f3f4f6] lg:grid lg:h-10 lg:w-10"
+            >
               <HeartOutlined className="text-[1rem]" />
-              <span className="absolute -right-1 -top-1 rounded-full bg-black px-1.5 py-[1px] text-[10px] font-medium text-white">2</span>
+              <span className="absolute -right-1 -top-1 rounded-full bg-black px-1.5 py-[1px] text-[10px] font-medium text-white">
+                2
+              </span>
             </button>
-            <button type="button" aria-label="Cart" className="relative hidden h-9 w-9 place-items-center rounded-full text-[#111] transition hover:bg-[#f3f4f6] sm:grid lg:h-10 lg:w-10">
+            <button
+              type="button"
+              aria-label="Cart"
+              className="relative hidden h-9 w-9 place-items-center rounded-full text-[#111] transition hover:bg-[#f3f4f6] lg:grid lg:h-10 lg:w-10"
+            >
               <ShoppingCartOutlined className="text-[1rem]" />
-              <span className="absolute -right-1 -top-1 rounded-full bg-black px-1.5 py-[1px] text-[10px] font-medium text-white">3</span>
+              <span className="absolute -right-1 -top-1 rounded-full bg-black px-1.5 py-[1px] text-[10px] font-medium text-white">
+                3
+              </span>
             </button>
-            <button type="button" aria-label={mobileMenuOpen ? "Close menu" : "Open menu"} onClick={() => setMobileMenuOpen((prev) => !prev)} className="grid h-9 w-9 place-items-center rounded-full border border-[#e5e7eb] text-[#111] transition hover:bg-[#f3f4f6] md:hidden">
-              {mobileMenuOpen ? (<CloseOutlined className="text-[1rem]" />) : (<MenuOutlined className="text-[1rem]" />)}
+            <button
+              type="button"
+              aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+              aria-expanded={mobileMenuOpen}
+              aria-controls="mobile-header-menu"
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              className="grid h-9 w-9 place-items-center rounded-full border border-[#e5e7eb] text-[#111] transition hover:bg-[#f3f4f6] lg:hidden"
+            >
+              {mobileMenuOpen ? (
+                <CloseOutlined className="text-[1rem]" />
+              ) : (
+                <MenuOutlined className="text-[1rem]" />
+              )}
             </button>
           </div>
         </div>
 
-        <div className={`overflow-hidden transition-all duration-300 md:hidden ${mobileMenuOpen ? "max-h-[500px] pb-4 opacity-100" : "max-h-0 opacity-0"}`}>
-          <div className="rounded-2xl border border-[#ececec] bg-white p-2 shadow-sm">
+        <div
+          id="mobile-header-menu"
+          className={`overflow-hidden transition-all duration-300 lg:hidden ${
+            mobileMenuOpen ? "max-h-[680px] border-t border-[#e7ebf2] pb-2.5 pt-2.5 opacity-100 sm:pb-3" : "max-h-0 opacity-0"
+          }`}
+        >
+          <div className="rounded-xl border border-[#e5e9f0] bg-[linear-gradient(145deg,#ffffff_0%,#f8fbff_65%,#fff7f1_100%)] p-2.5 shadow-[0_10px_24px_rgba(15,23,42,0.08)]">
+            <div className="rounded-lg border border-[#e6ebf2] bg-white p-2.5">
+              <p className="text-[0.64rem] font-semibold uppercase tracking-[0.18em] text-[#ef6b4a]">
+                Shop Categories
+              </p>
+              <nav className="mt-1.5 flex flex-col gap-2 px-1 py-1">
+                {navLinks.map(({ label, to }) => {
+                  return (
+                    <Link
+                      key={label}
+                      to={to}
+                      className="inline-flex w-fit pb-1 text-[1.05rem] font-semibold text-[#444b56] transition hover:text-[#111111]"
+                    >
+                      {label}
+                    </Link>
+                  );
+                })}
+              </nav>
+            </div>
 
-            <nav className="flex flex-col">
-              {navLinks.map(({ label, to }) => {
-                const isActive = location.pathname === to;
-                return (<Link key={label} to={to} className={`rounded-xl px-4 py-3 text-sm font-medium transition ${isActive ? "bg-black text-white" : "text-[#111] hover:bg-[#f5f5f5]"}`}>{label}</Link>);
-              })}
-            </nav>
+            <div className="mt-2.5 rounded-lg border border-[#e6ebf2] bg-white p-2.5">
+              <div className="flex items-center justify-between">
+                <p className="text-[0.64rem] font-semibold uppercase tracking-[0.18em] text-[#8a95a5]">
+                  Quick Actions
+                </p>
+                {isAuthenticated ? (
+                  <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[#111827] text-[0.68rem] font-semibold text-white">
+                    {initials || "A"}
+                  </span>
+                ) : null}
+              </div>
 
-            <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
-              <button type="button" className="rounded-xl border border-[#e5e7eb] px-3 py-2.5 text-sm font-medium text-[#111] transition hover:bg-[#f5f5f5]">Search</button>
-              <button type="button" className="rounded-xl border border-[#e5e7eb] px-3 py-2.5 text-sm font-medium text-[#111] transition hover:bg-[#f5f5f5]">Wishlist</button>
-              <button type="button" className="rounded-xl border border-[#e5e7eb] px-3 py-2.5 text-sm font-medium text-[#111] transition hover:bg-[#f5f5f5]"> Cart</button>
+              <div className="mt-1.5 grid grid-cols-2 gap-1.5">
+                <button
+                  type="button"
+                  className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-[#e5e7eb] bg-[#f9fafb] px-2.5 py-2 text-[0.95rem] font-semibold text-[#111] transition hover:bg-white"
+                >
+                  <SearchOutlined />
+                  Search
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-[#e5e7eb] bg-[#f9fafb] px-2.5 py-2 text-[0.95rem] font-semibold text-[#111] transition hover:bg-white"
+                >
+                  <HeartOutlined />
+                  Wishlist (2)
+                </button>
+                <button
+                  type="button"
+                  className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-[#e5e7eb] bg-[#f9fafb] px-2.5 py-2 text-[0.95rem] font-semibold text-[#111] transition hover:bg-white"
+                >
+                  <ShoppingCartOutlined />
+                  Cart (3)
+                </button>
 
-              {isAuthenticated ? (
-                <button type="button" onClick={handleProfileOpen} className="rounded-xl bg-black px-3 py-2.5 text-sm font-medium text-white transition hover:bg-[#222]">Profile</button>
-              ) : (
-                <Link to={ROUTES.AUTH.LOGIN} className="rounded-xl bg-black px-3 py-2.5 text-center text-sm font-medium text-white transition hover:bg-[#222]">Login</Link>
-              )}
+                {isAuthenticated ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={handleProfileOpen}
+                      className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#111827] px-2.5 py-2 text-[0.95rem] font-semibold text-white transition hover:bg-black"
+                    >
+                      <UserOutlined />
+                      Profile
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleLogout}
+                      className="col-span-2 inline-flex items-center justify-center gap-1.5 rounded-lg border border-[#ffd7d7] bg-[#fff4f4] px-2.5 py-2 text-[0.95rem] font-semibold text-[#c62828] transition hover:bg-[#ffe8e8]"
+                    >
+                      <LogoutOutlined />
+                      Logout
+                    </button>
+                  </>
+                ) : (
+                  <Link
+                    to={ROUTES.AUTH.LOGIN}
+                    className="inline-flex items-center justify-center gap-1.5 rounded-lg bg-[#111827] px-2.5 py-2 text-[0.95rem] font-semibold text-white transition hover:bg-black"
+                  >
+                    <UserOutlined />
+                    Login
+                  </Link>
+                )}
+              </div>
             </div>
           </div>
         </div>

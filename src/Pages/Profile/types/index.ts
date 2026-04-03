@@ -52,3 +52,18 @@ export type ProfilePlaceholderSectionProps = {
   description: string;
   emptyMessage: string;
 };
+
+export type ChangePasswordFormValues = {
+  currentPassword: string;
+  newPassword: string;
+  confirmNewPassword: string;
+};
+
+export type ProfileChangePasswordSectionProps = {
+  changePassword: (input: {
+    currentPassword: string;
+    newPassword: string;
+    confirmPassword: string;
+  }) => Promise<ApiResponse>;
+  isChangingPassword: boolean;
+};

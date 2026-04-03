@@ -1,3 +1,4 @@
+import { CloseOutlined } from "@ant-design/icons";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Mutations } from "../Api/Mutations";
 import CategoryHighlights from "../Components/CategoryHighlights";
@@ -46,7 +47,8 @@ const Home = () => {
   const dealsSliderRef = useRef<HTMLDivElement | null>(null);
   const isDealsHoveredRef = useRef(false);
   const newsletterMutation = Mutations.useSubscribeNewsletter();
-  const sessionEmail = useAppSelector((state) => state.auth.user?.email ?? "");
+  const { isAuthenticated, user } = useAppSelector((state) => state.auth);
+  const sessionEmail = user?.email ?? "";
 
   const scrollByCard = (direction: 1 | -1) => {
     const container = dealsSliderRef.current;
@@ -59,21 +61,34 @@ const Home = () => {
     container.scrollBy({ left: direction * scrollAmount, behavior: "smooth" });
   };
   useEffect(() => {
+    if (isAuthenticated) {
+      const closeTimer = window.setTimeout(() => {
+        setShowSubscribe(false);
+      }, 0);
+      return () => window.clearTimeout(closeTimer);
+    }
+
     const timer = window.setTimeout(() => {
       setShowSubscribe(true);
     }, 2000);
 
     return () => window.clearTimeout(timer);
-  }, []);
+  }, [isAuthenticated]);
 
   useEffect(() => {
     isDealsHoveredRef.current = isDealsHovered;
   }, [isDealsHovered]);
 
   useEffect(() => {
-    if (!subscribeEmail && sessionEmail) {
-      setSubscribeEmail(sessionEmail);
-    }
+    if (subscribeEmail || !sessionEmail) return;
+
+    const syncEmailTimer = window.setTimeout(() => {
+      setSubscribeEmail((previous) => previous || sessionEmail);
+    }, 0);
+
+    return () => {
+      window.clearTimeout(syncEmailTimer);
+    };
   }, [sessionEmail, subscribeEmail]);
 
   useEffect(() => {
@@ -139,9 +154,9 @@ const Home = () => {
       {showSubscribe && (
         <div className="fixed inset-0 z-[60] grid place-items-center animate-fadeIn">
           <div className="absolute inset-0 bg-black/55" onClick={closeSubscribePopup} />
-          <div className="relative z-[1] w-[min(520px,92vw)] rounded-[22px] bg-white px-5 py-6 text-black shadow-[0_24px_60px_rgba(0,0,0,0.45)] animate-slideUp sm:px-8 sm:py-7" role="dialog" aria-modal="true">
+          <div className="relative z-[1] w-[min(520px,92vw)] rounded-[15px] bg-white px-5 py-6 text-black shadow-[0_24px_60px_rgba(0,0,0,0.45)] animate-slideUp sm:px-8 sm:py-7" role="dialog" aria-modal="true">
             <button className="absolute right-4 top-4 inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#1f1f1f] text-[1.2rem] text-[#1f1f1f] hover:bg-black/5" type="button" aria-label="Close subscribe popup" onClick={closeSubscribePopup}>
-              <span aria-hidden="true">x</span>
+              <CloseOutlined className="text-[0.95rem] leading-none" aria-hidden="true" />
             </button>
             <img className="mx-auto mb-4 h-10 w-auto" src="/assets/images/logo/logo.png" alt="Akyara" />
             <h3 className="mb-[10px] text-center font-display text-[1.35rem] text-[#1f1f1f] sm:text-[1.6rem]">Don't Miss Out</h3>
@@ -185,11 +200,11 @@ const Home = () => {
 
       <CategoryHighlights />
 
-      <section className="mt-14 py-12 sm:py-16">
+      <section className="mt-12 py-10 sm:mt-14 sm:py-16">
         <div className="mx-auto w-[92%] max-w-[1200px]">
-          <div className="relative mb-12 text-center">
+          <div className="relative mb-10 text-center sm:mb-12">
             <span
-              className="pointer-events-none absolute mt-1.5 left-1/2 top-1/2 -translate-x-1/2 -translate-y-[70%] whitespace-nowrap text-[clamp(2.2rem,6vw,3.5rem)] font-semibold italic text-black/10"
+              className="pointer-events-none absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-[70%] whitespace-nowrap text-[clamp(2.2rem,6vw,3.5rem)] font-semibold italic text-black/10 md:block"
               aria-hidden="true"
             >
               Trendy Products
@@ -197,7 +212,7 @@ const Home = () => {
             <h2 className="relative z-10 m-0 pt-2 font-display text-2xl sm:text-3xl">Our Trending Products</h2>
           </div>
 
-          <div className="grid grid-cols-1 gap-5 min-[420px]:grid-cols-2 md:grid-cols-3 lg:gap-6 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2 md:grid-cols-3 lg:gap-6 xl:grid-cols-4">
             {products.map((product) => (
               <div
                 className="product-card group relative overflow-hidden rounded-[6px] bg-white shadow-[0_12px_30px_-24px_rgba(0,0,0,0.35)]"
@@ -224,7 +239,7 @@ const Home = () => {
 
                 <div className="relative overflow-hidden bg-[#f1f0ec]">
                   <img
-                    className="card-img-top h-[260px] w-full object-cover transition-transform duration-500 group-hover:scale-[1.04] min-[420px]:h-[300px] sm:h-[340px] lg:h-[380px]"
+                    className="card-img-top h-[220px] w-full object-cover transition-transform duration-500 group-hover:scale-[1.04] min-[420px]:h-[260px] sm:h-[300px] lg:h-[360px]"
                     src={product.image}
                     alt={product.name}
                     loading="lazy"
@@ -285,16 +300,16 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="mt-14 py-12 sm:mt-16 sm:py-16">
+      <section className="mt-12 py-10 sm:mt-16 sm:py-16">
         <div className="mx-auto w-[92%] max-w-[1200px]">
-          <div className="mb-12">
+          <div className="mb-10 sm:mb-12">
             <div className="row justify-content-center">
               <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
                 <div className="sec_title relative text-center">
-                  <h2 className="off_title pointer-events-none mt-2 absolute left-1/2 top-0 z-0 -translate-x-1/2 whitespace-nowrap text-[clamp(2.6rem,6vw,4.5rem)] font-semibold italic leading-none text-black/10">
+                  <h2 className="off_title pointer-events-none absolute left-1/2 top-0 z-0 hidden -translate-x-1/2 whitespace-nowrap text-[clamp(2.6rem,6vw,4.5rem)] font-semibold italic leading-none text-black/10 md:block">
                     Good Deals
                   </h2>
-                  <h3 className="ft-bold relative z-10 pt-10 font-display text-2xl font-semibold sm:text-3xl">Deals of The Day</h3>
+                  <h3 className="ft-bold relative z-10 pt-2 font-display text-2xl font-semibold sm:pt-10 sm:text-3xl">Deals of The Day</h3>
                 </div>
               </div>
             </div>
@@ -329,7 +344,7 @@ const Home = () => {
             >
               {deals.map((deal) => (
                 <div
-                  className="product-card group relative min-w-[200px] flex-shrink-0 snap-start overflow-hidden rounded-[6px] bg-white shadow-[0_12px_30px_-24px_rgba(0,0,0,0.35)] min-[420px]:min-w-[220px] sm:min-w-[240px] md:min-w-[250px] lg:min-w-[260px] xl:min-w-0 xl:flex-[0_0_calc((100%-72px)/4)]"
+                  className="product-card group relative min-w-[180px] flex-shrink-0 snap-start overflow-hidden rounded-[6px] bg-white shadow-[0_12px_30px_-24px_rgba(0,0,0,0.35)] min-[420px]:min-w-[210px] sm:min-w-[230px] md:min-w-[250px] lg:min-w-[260px] xl:min-w-0 xl:flex-[0_0_calc((100%-72px)/4)]"
                   key={deal.name}
                   data-product-card="true"
                 >
@@ -352,7 +367,7 @@ const Home = () => {
                       </svg>
                     </button>
                     <img
-                      className="card-img-top h-[260px] w-full object-cover transition-transform duration-500 group-hover:scale-[1.04] min-[420px]:h-[300px] sm:h-[340px] lg:h-[380px]"
+                      className="card-img-top h-[220px] w-full object-cover transition-transform duration-500 group-hover:scale-[1.04] min-[420px]:h-[250px] sm:h-[300px] lg:h-[340px]"
                       src={deal.image}
                       alt={deal.name}
                       loading="lazy"
@@ -388,7 +403,7 @@ const Home = () => {
       <section className="py-12 sm:py-16">
         <div className="mx-auto w-[92%] max-w-[1200px]">
           <div className="relative mb-10 text-center">
-            <span className="pointer-events-none absolute mt-5 left-1/2 top-0 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-[clamp(2.4rem,6vw,4rem)] font-semibold italic text-black/10">
+            <span className="pointer-events-none absolute left-1/2 top-0 hidden -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-[clamp(2.4rem,6vw,4rem)] font-semibold italic text-black/10 md:block">
               Instagram Gallery
             </span>
             <p className="relative z-10 m-0 pt-2 text-lg font-semibold text-[#e53935]">@mahak_71</p>
@@ -402,69 +417,6 @@ const Home = () => {
         </div>
       </section>
 
-      <section className="py-[40px]">
-        <div className="mx-auto w-[92%] max-w-[1200px]">
-          <div className="grid gap-8 text-sm sm:grid-cols-2 lg:grid-cols-4">
-            <div className="flex items-center gap-4">
-              <div className="text-[#e53935]">
-                <svg viewBox="0 0 24 24" className="h-9 w-9" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M4 7h16l-1.8 8.5a2 2 0 0 1-2 1.5H7.8a2 2 0 0 1-2-1.5L4 7z" />
-                  <path d="M7 7a5 5 0 0 1 10 0" />
-                  <path d="M9.2 20a.8.8 0 1 0 0-1.6.8.8 0 0 0 0 1.6z" fill="currentColor" stroke="none" />
-                  <path d="M14.8 20a.8.8 0 1 0 0-1.6.8.8 0 0 0 0 1.6z" fill="currentColor" stroke="none" />
-                </svg>
-              </div>
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[0.15em] text-[#111111]">Free Shipping</p>
-                <p className="mt-1 text-sm text-[#667085]">Capped at $10 per order</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <div className="text-[#e53935]">
-                <svg viewBox="0 0 24 24" className="h-9 w-9" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <rect x="2.5" y="5" width="19" height="14" rx="2.4" />
-                  <path d="M2.5 9h19" />
-                  <rect x="6" y="13" width="6" height="3" rx="0.8" />
-                </svg>
-              </div>
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[0.15em] text-[#111111]">Secure Payments</p>
-                <p className="mt-1 text-sm text-[#667085]">Up to 6 months installments</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <div className="text-[#e53935]">
-                <svg viewBox="0 0 24 24" className="h-9 w-9" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M12 3l7 3v6c0 4.2-3 7.9-7 9-4-1.1-7-4.8-7-9V6z" />
-                  <path d="M12 6v12" />
-                </svg>
-              </div>
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[0.15em] text-[#111111]">15-Days Returns</p>
-                <p className="mt-1 text-sm text-[#667085]">Shop with full confidence</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-4">
-              <div className="text-[#e53935]">
-                <svg viewBox="0 0 24 24" className="h-9 w-9" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M4 12a8 8 0 0 1 16 0" />
-                  <path d="M7 20a3 3 0 0 1-3-3v-3a2 2 0 0 1 2-2h1" />
-                  <path d="M17 20a3 3 0 0 0 3-3v-3a2 2 0 0 0-2-2h-1" />
-                  <rect x="2" y="12" width="4" height="6" rx="2" />
-                  <rect x="18" y="12" width="4" height="6" rx="2" />
-                </svg>
-              </div>
-              <div>
-                <p className="text-xs font-bold uppercase tracking-[0.15em] text-[#111111]">24x7 Fully Support</p>
-                <p className="mt-1 text-sm text-[#667085]">Get friendly support</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
     </div>
   );
 };

@@ -90,11 +90,11 @@ const ProfileEditForm = ({ profile, userId, profilePhoto, isSaving, isUploadingI
         };
 
         return (
-          <Form className="grid gap-4 px-4 py-5 sm:gap-5 sm:px-6 sm:py-6 md:grid-cols-2 lg:px-8 lg:py-7">
-            <div className="md:col-span-2 rounded-[10px] border border-[#efe7dd] bg-[#faf7f2] p-4 sm:p-5">
+          <Form className="grid gap-4 px-4 py-5 sm:gap-5 sm:px-5 sm:py-6 lg:grid-cols-2 lg:px-7 lg:py-7">
+            <div className="lg:col-span-2 rounded-[10px] border border-[#e8edf4] bg-white p-4 sm:p-5">
               <p className="mb-3 text-xs font-semibold uppercase tracking-[0.22em] text-[#8c8c8c]">Profile Photo</p>
               <div className="flex flex-wrap items-center gap-4">
-                <ProfileImage value={values.profilePhoto} alt="Profile preview" className="h-20 w-20 rounded-full border border-[#e6ded2] object-cover sm:h-24 sm:w-24" fallback={<div className="inline-grid h-20 w-20 place-items-center rounded-full border border-[#e6ded2] bg-white text-lg font-semibold text-[#777777] sm:h-24 sm:w-24 sm:text-xl"> {getInitials(profile)}</div>}/>
+                <ProfileImage value={values.profilePhoto} alt="Profile preview" className="h-20 w-20 rounded-full border border-[#dbe1eb] object-cover sm:h-24 sm:w-24" fallback={<div className="inline-grid h-20 w-20 place-items-center rounded-full border border-[#dbe1eb] bg-white text-lg font-semibold text-[#777777] sm:h-24 sm:w-24 sm:text-xl"> {getInitials(profile)}</div>}/>
                 <div className="flex flex-wrap gap-2">
                   <label className={`inline-flex cursor-pointer items-center gap-2 rounded-full border border-[#d9d9d9] px-4 py-2 text-sm font-semibold text-[#111111] transition hover:border-black ${isUploadingImage ? "pointer-events-none opacity-70" : ""}`}>
                     <UploadOutlined />
@@ -113,10 +113,10 @@ const ProfileEditForm = ({ profile, userId, profilePhoto, isSaving, isUploadingI
             <CommonInput label="Email Address" name="email" type="email" placeholder="you@example.com" />
             <CommonInput label="Phone Number" name="phoneNumber" placeholder="Enter phone number" />
 
-            {status?.error ? (<p className="rounded-[10px] bg-[#ffecec] px-4 py-3 text-sm text-[#e53935] md:col-span-2">{status.error}</p>) : null}
-            {status?.success ? (<p className="rounded-[10px] bg-[#ecfff0] px-4 py-3 text-sm text-[#1b7f3a] md:col-span-2">{status.success}</p>) : null}
+            {status?.error ? (<p className="rounded-[10px] bg-[#ffecec] px-4 py-3 text-sm text-[#e53935] lg:col-span-2">{status.error}</p>) : null}
+            {status?.success ? (<p className="rounded-[10px] bg-[#ecfff0] px-4 py-3 text-sm text-[#1b7f3a] lg:col-span-2">{status.success}</p>) : null}
 
-            <div className="flex flex-col gap-3 sm:flex-row md:col-span-2">
+            <div className="flex flex-col gap-3 sm:flex-row lg:col-span-2">
               <button type="submit" disabled={isSubmitting || isSaving || isUploadingImage || isDeletingImage || !dirty} className="w-full rounded-full bg-black px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#111111] disabled:cursor-not-allowed disabled:opacity-70 sm:w-auto">{isSubmitting || isSaving ? "Saving..." : "Save Changes"}</button>
               <button type="button" onClick={() => {   resetForm();   onClose(); }} className="w-full rounded-full border border-[#d9d9d9] px-6 py-3 text-sm font-semibold text-[#111111] transition hover:border-black sm:w-auto">Cancel</button>
             </div>

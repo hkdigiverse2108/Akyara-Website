@@ -41,36 +41,41 @@ const HeroSlider = () => {
 
   return (
     <section className="bg-[#efefef]">
-      <div className="relative aspect-[5/6] min-h-[440px] w-full overflow-hidden bg-[#e7e7e7] sm:aspect-[16/9] sm:min-h-0">
+      <div className="relative isolate h-[calc(100vh-64px)] min-h-[420px] w-full overflow-hidden bg-[#e7e7e7] sm:h-[calc(100vh-70px)] lg:h-[calc(100vh-78px)] lg:min-h-[560px]">
         {heroBanners.map((banner, index) => {
           const isActive = index === activeBanner;
 
           return (
             <div key={banner.src} className={`absolute inset-0 transition-opacity duration-700 ${isActive ? "opacity-100" : "opacity-0"}`}>
-              <div className="h-full w-full bg-cover bg-no-repeat bg-center " style={{ backgroundImage: `url(${banner.src})` }}/>
+              <img
+                src={banner.src}
+                alt={banner.label}
+                className="h-full w-full object-cover object-[72%_center] sm:object-center lg:object-contain lg:object-right"
+              />
             </div>
           );
         })}
 
-        {/* Overlay Text */}
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.88)_0%,rgba(255,255,255,0.65)_30%,rgba(255,255,255,0.12)_62%,rgba(255,255,255,0)_100%)] sm:bg-[linear-gradient(90deg,rgba(255,255,255,0.86)_0%,rgba(255,255,255,0.48)_38%,rgba(255,255,255,0)_72%)]" />
+
         <div className="absolute inset-0 z-10">
-          <div className="mx-auto flex h-full w-[92%] max-w-[1400px] items-end pb-12 sm:items-center sm:pb-0">
+          <div className="mx-auto flex h-full w-[92%] max-w-[1400px] items-end pb-10 pt-16 sm:items-center sm:pb-0 sm:pt-0">
             <div className="max-w-[620px]">
-              <span className="text-[0.7rem] font-medium uppercase tracking-[0.26em] text-[#e53935] sm:text-sm sm:tracking-[0.32em]">
+              <span className="text-[0.65rem] font-medium uppercase tracking-[0.24em] text-[#e53935] sm:text-sm sm:tracking-[0.32em]">
                 {activeSlide.label}
               </span>
 
-              <h1 className="mt-3 text-[clamp(1.7rem,3.8vw,4rem)] font-medium leading-tight text-black">
+              <h1 className="mt-2.5 text-[clamp(1.6rem,7vw,4rem)] font-medium leading-[1.08] text-black sm:mt-3">
                 {activeSlide.title}
                 <br />
                 {activeSlide.title2}
               </h1>
 
-              <p className="mt-3 text-sm italic text-[#4f5a7a] sm:mt-4 sm:text-lg md:text-xl">
+              <p className="mt-2.5 text-[0.95rem] italic text-[#4f5a7a] sm:mt-4 sm:text-lg md:text-xl">
                 {activeSlide.tagline}
               </p>
 
-              <button type="button" className="mt-6 inline-flex w-full items-center justify-center gap-2 border border-black px-7 py-3 text-sm font-medium text-black transition-colors duration-200 hover:bg-black hover:text-white sm:mt-8 sm:w-auto">
+              <button type="button" className="mt-5 inline-flex w-full items-center justify-center gap-2 border border-black px-6 py-2.5 text-sm font-medium text-black transition-colors duration-200 hover:bg-black hover:text-white sm:mt-7 sm:w-auto sm:px-7 sm:py-3">
                 Shop Now
                 <span aria-hidden="true">&rarr;</span>
               </button>
@@ -78,10 +83,9 @@ const HeroSlider = () => {
           </div>
         </div>
 
-        {/* Slider Dots */}
-        <div className="absolute bottom-4 left-1/2 z-20 flex -translate-x-1/2 gap-2 sm:bottom-6">
+        <div className="absolute bottom-3 left-1/2 z-20 flex -translate-x-1/2 gap-1.5 sm:bottom-6 sm:gap-2">
           {heroBanners.map((_, index) => (
-            <span key={index} className={`h-1.5 w-8 rounded-full transition ${index === activeBanner ? "bg-black" : "bg-black/40"}`}/>
+            <span key={index} className={`h-1.5 w-6 rounded-full transition sm:w-8 ${index === activeBanner ? "bg-black" : "bg-black/40"}`}/>
           ))}
         </div>
       </div>

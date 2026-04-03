@@ -6,11 +6,14 @@ import ResetPassword from "../Pages/Auth/ResetPassword";
 import Signup from "../Pages/Auth/Signup";
 import VerifyOtp from "../Pages/Auth/VerifyOtp";
 import AboutPage from "../Pages/InfoPages/AboutPage";
+import BlogDetailPage from "../Pages/InfoPages/BlogDetailPage";
+import BlogPage from "../Pages/InfoPages/BlogPage";
 import CancellationPolicyPage from "../Pages/InfoPages/CancellationPolicyPage";
 import FAQPage from "../Pages/InfoPages/FAQPage";
 import Home from "../Pages/Home";
 import InfoPage from "../Pages/InfoPage";
 import PrivacyPolicyPage from "../Pages/InfoPages/PrivacyPolicyPage";
+import NotFound from "../Pages/NotFound";
 import Profile from "../Pages/Profile/index";
 import ReturnRefundPolicyPage from "../Pages/InfoPages/ReturnRefundPolicyPage";
 import TermsConditionPage from "../Pages/InfoPages/TermsConditionPage";
@@ -27,12 +30,14 @@ export const PageRoutes: RouteObject[] = [
   { path: ROUTES.INFO.CONTACT, element: <InfoPage title="Contact Us" /> },
   { path: ROUTES.INFO.ABOUT, element: <AboutPage /> },
   { path: ROUTES.INFO.TRACKING, element: <InfoPage title="Tracking Order" /> },
-  { path: ROUTES.INFO.BLOG, element: <InfoPage title="Blog" /> },
+  { path: ROUTES.INFO.BLOG, element: <BlogPage /> },
+  { path: ROUTES.INFO.BLOG_DETAIL, element: <BlogDetailPage /> },
   { path: ROUTES.INFO.FAQ, element: <FAQPage /> },
   { path: ROUTES.INFO.REFUND, element: <ReturnRefundPolicyPage /> },
   { path: ROUTES.INFO.PRIVACY, element: <PrivacyPolicyPage /> },
   { path: ROUTES.INFO.TERMS, element: <TermsConditionPage /> },
   { path: ROUTES.INFO.CANCELLATION, element: <CancellationPolicyPage /> },
+  { path: "*", element: <NotFound /> },
 ];
 
 export const AuthRoutes: RouteObject[] = [

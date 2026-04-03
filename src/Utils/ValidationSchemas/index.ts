@@ -53,3 +53,11 @@ export const VerifyOtpSchema = Yup.object({
   email: Yup.string().email("Enter a valid email").required("Email is required"),
   otp: Yup.string().required("OTP is required"),
 });
+
+export const ChangePasswordSchema = Yup.object({
+  currentPassword: Yup.string().required("Current password is required"),
+  newPassword: Yup.string().min(6, "Minimum 6 characters").required("New password is required"),
+  confirmNewPassword: Yup.string()
+    .oneOf([Yup.ref("newPassword")], "Passwords must match")
+    .required("Confirm your new password"),
+});

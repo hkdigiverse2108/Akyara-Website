@@ -72,7 +72,7 @@ const Footer = () => {
       </div>
 
       <div className="mx-auto mt-8 w-[92%] max-w-[1200px] border-t border-gray-700 pt-3 text-center text-xs text-gray-400 sm:text-sm">
-        � {new Date().getFullYear()} Kumo. All rights reserved.
+        © {new Date().getFullYear()} Kumo. All rights reserved.
       </div>
     </footer>
   );

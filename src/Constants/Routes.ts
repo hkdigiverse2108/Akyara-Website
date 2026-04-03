@@ -18,6 +18,7 @@ export const ROUTES = {
     ABOUT: "/about-us",
     TRACKING: "/tracking-order",
     BLOG: "/blog",
+    BLOG_DETAIL: "/blog/:slug",
     FAQ: "/faq",
     REFUND: "/return-refund-policy",
     PRIVACY: "/privacy-policy",
