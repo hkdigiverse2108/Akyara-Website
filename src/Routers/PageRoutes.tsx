@@ -9,6 +9,7 @@ import AboutPage from "../Pages/InfoPages/AboutPage";
 import BlogDetailPage from "../Pages/InfoPages/BlogDetailPage";
 import BlogPage from "../Pages/InfoPages/BlogPage";
 import CancellationPolicyPage from "../Pages/InfoPages/CancellationPolicyPage";
+import ContactPage from "../Pages/InfoPages/ContactPage";
 import FAQPage from "../Pages/InfoPages/FAQPage";
 import Home from "../Pages/Home";
 import InfoPage from "../Pages/InfoPage";
@@ -27,7 +28,7 @@ export const PageRoutes: RouteObject[] = [
   { path: ROUTES.ACCOUNT.ADDRESSES, element: <Profile section="addresses" /> },
   { path: ROUTES.ACCOUNT.PAYMENT, element: <Profile section="payment" /> },
   { path: ROUTES.ACCOUNT.CHANGE_PASSWORD, element: <Profile section="change-password" /> },
-  { path: ROUTES.INFO.CONTACT, element: <InfoPage title="Contact Us" /> },
+  { path: ROUTES.INFO.CONTACT, element: <ContactPage /> },
   { path: ROUTES.INFO.ABOUT, element: <AboutPage /> },
   { path: ROUTES.INFO.TRACKING, element: <InfoPage title="Tracking Order" /> },
   { path: ROUTES.INFO.BLOG, element: <BlogPage /> },

@@ -4,3 +4,5 @@ export * from "./Auth";
 export * from "./Policy";
 export * from "./Faq";
 export * from "./About";
+export * from "./Contact";
+export * from "./Blog";

@@ -18,7 +18,7 @@ export const ROUTES = {
     ABOUT: "/about-us",
     TRACKING: "/tracking-order",
     BLOG: "/blog",
-    BLOG_DETAIL: "/blog/:slug",
+    BLOG_DETAIL: "/blog/:id",
     FAQ: "/faq",
     REFUND: "/return-refund-policy",
     PRIVACY: "/privacy-policy",
@@ -34,3 +34,4 @@ export const ROUTES = {
     VERIFY_OTP: "/auth/verify-otp",
   },
 } as const;
+

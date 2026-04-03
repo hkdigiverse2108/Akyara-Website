@@ -20,10 +20,17 @@ export const KEYS = {
   FAQ: {
     ALL: "faq.all",
   },
+  BLOG: {
+    ALL: "blog.all",
+    DETAIL: "blog.detail",
+  },
   UPLOAD: {
     IMAGE: "upload.image",
   },
   NEWSLETTER: {
     SUBSCRIBE: "newsletter.subscribe",
+  },
+  CONTACT: {
+    ADD: "contact.add",
   },
 } as const;

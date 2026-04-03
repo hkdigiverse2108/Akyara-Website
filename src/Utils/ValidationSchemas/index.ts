@@ -61,3 +61,11 @@ export const ChangePasswordSchema = Yup.object({
     .oneOf([Yup.ref("newPassword")], "Passwords must match")
     .required("Confirm your new password"),
 });
+
+export const ContactSchema = Yup.object({
+  name: Yup.string().trim().required("Name is required"),
+  email: Yup.string().trim().email("Enter a valid email").required("Email is required"),
+  mobileNumber: Yup.string().trim().required("Mobile number is required"),
+  subject: Yup.string().trim(),
+  message: Yup.string().trim().required("Message is required"),
+});

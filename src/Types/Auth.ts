@@ -57,6 +57,15 @@ export type NewsletterSubscriptionPayload = {
   [key: string]: unknown;
 };
 
+export type ContactPayload = {
+  name: string;
+  email: string;
+  mobileNumber: string;
+  subject?: string;
+  message: string;
+  [key: string]: unknown;
+};
+
 export type EditUserPayload = {
   userId: string;
   firstName?: string;

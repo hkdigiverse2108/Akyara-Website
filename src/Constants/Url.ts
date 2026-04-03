@@ -24,10 +24,17 @@ export const URL_KEYS = {
     BASE: "/faq",
     ALL: "/faq/all",
   },
+  BLOG: {
+    BASE: "/blog",
+    ALL: "/blog/all",
+  },
   UPLOAD: {
     IMAGE: "/upload/image",
   },
   NEWSLETTER: {
     SUBSCRIBE: "/newsletter/subscribe",
+  },
+  CONTACT: {
+    ADD: "/contact/add",
   },
 } as const;

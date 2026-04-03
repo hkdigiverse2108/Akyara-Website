@@ -9,7 +9,7 @@ import ProfileChangePasswordSection from "./ProfileChangePasswordSection";
 import ProfileInfoSection from "./ProfileInfoSection";
 import ProfilePlaceholderSection from "./ProfilePlaceholderSection";
 import ProfileSidebar from "./ProfileSidebar";
-import type { ProfileProps } from "./types/index";
+import type { ProfileProps } from "../../Types";
 
 const Profile = ({ section = "info" }: ProfileProps) => {
   const { user, isAuthenticated } = useAppSelector((state) => state.auth);
