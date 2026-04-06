@@ -16,7 +16,7 @@ const AboutDetailPage = () => {
 
   if (aboutDetailQuery.isLoading) {
     return (
-      <section className="mx-auto w-[92%] max-w-[1300px] py-10 sm:py-14 lg:py-20">
+      <section className="site-container py-10 sm:py-14 lg:py-20">
         <div className="h-[420px] animate-pulse rounded-[14px] border border-[#e3e3e3] bg-[#f1f2f4]" />
       </section>
     );
@@ -24,8 +24,8 @@ const AboutDetailPage = () => {
 
   if (!section) {
     return (
-      <section className="mx-auto w-[92%] max-w-[900px] py-10 sm:py-14 lg:py-20">
-        <div className="rounded-[14px] border border-dashed border-[#d9d9d9] bg-[#f3f4f6] px-5 py-10 text-center sm:px-8">
+      <section className="site-container py-10 sm:py-14 lg:py-20">
+        <div className="mx-auto max-w-[900px] rounded-[14px] border border-dashed border-[#d9d9d9] bg-[#f3f4f6] px-5 py-10 text-center sm:px-8">
           <h1 className="text-2xl font-semibold text-[#0b0b0b] sm:text-3xl">About section not found</h1>
           <p className="mt-3 text-base leading-7 text-[#666666]">This section is unavailable right now.</p>
           <Link
@@ -44,7 +44,7 @@ const AboutDetailPage = () => {
   const subtitle = section.subtitle && section.subtitle !== title ? section.subtitle : undefined;
 
   return (
-    <section className="mx-auto w-[92%] max-w-[1300px] py-10 sm:py-14 lg:py-20">
+      <section className="site-container py-10 sm:py-14 lg:py-20">
       <div className="rounded-[14px] bg-white p-3 sm:p-6 lg:p-8">
         <Link
           to={ROUTES.INFO.ABOUT}

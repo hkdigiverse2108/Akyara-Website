@@ -8,7 +8,7 @@ const featureCards = [
 const SupportHighlights = () => {
   return (
     <section className=" bg-white py-7">
-      <div className="mx-auto grid w-[92%] max-w-[1200px] gap-6 text-sm sm:grid-cols-2 xl:grid-cols-4">
+      <div className="site-container grid gap-6 text-sm sm:grid-cols-2 xl:grid-cols-4">
         {featureCards.map((item) => (
           <div key={item.title} className="flex items-center gap-4">
             <div className="text-[#e53935]">{item.icon}</div>

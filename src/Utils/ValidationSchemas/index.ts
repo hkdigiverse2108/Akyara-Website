@@ -1,4 +1,4 @@
-﻿import * as Yup from "yup";
+import * as Yup from "yup";
 import { Validation } from "./Validation";
 
 // Signin
@@ -68,4 +68,25 @@ export const ContactSchema = Yup.object({
   mobileNumber: Yup.string().trim().required("Mobile number is required"),
   subject: Yup.string().trim(),
   message: Yup.string().trim().required("Message is required"),
+});
+
+export const AddressSchema = Yup.object({
+  firstName: Yup.string().trim().required("First name is required"),
+  lastName: Yup.string().trim().required("Last name is required"),
+  email: Yup.string().trim().email("Enter a valid email").required("Email is required"),
+  company: Yup.string().trim(),
+  mobileNumber: Yup.string()
+    .trim()
+    .required("Mobile number is required")
+    .test(
+      "valid-address-mobile",
+      "Enter a valid mobile number",
+      (value) => (value?.replace(/\D/g, "").length ?? 0) >= 6,
+    ),
+  address1: Yup.string().trim().required("Address line 1 is required"),
+  address2: Yup.string().trim(),
+  city: Yup.string().trim().required("City is required"),
+  zipCode: Yup.string().trim().required("ZIP code is required"),
+  country: Yup.string().trim().required("Country is required"),
+  isDefault: Yup.boolean().default(false),
 });

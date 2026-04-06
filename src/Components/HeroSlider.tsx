@@ -59,7 +59,7 @@ const HeroSlider = () => {
         <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.88)_0%,rgba(255,255,255,0.65)_30%,rgba(255,255,255,0.12)_62%,rgba(255,255,255,0)_100%)] sm:bg-[linear-gradient(90deg,rgba(255,255,255,0.86)_0%,rgba(255,255,255,0.48)_38%,rgba(255,255,255,0)_72%)]" />
 
         <div className="absolute inset-0 z-10">
-          <div className="mx-auto flex h-full w-[92%] max-w-[1400px] items-end pb-10 pt-16 sm:items-center sm:pb-0 sm:pt-0">
+          <div className="site-container flex h-full items-end pb-10 pt-16 sm:items-center sm:pb-0 sm:pt-0">
             <div className="max-w-[620px]">
               <span className="text-[0.65rem] font-medium uppercase tracking-[0.24em] text-[#e53935] sm:text-sm sm:tracking-[0.32em]">
                 {activeSlide.label}

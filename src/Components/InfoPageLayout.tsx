@@ -13,7 +13,7 @@ const InfoPageLayout = ({
   const shouldRenderHtml = !!content && HTML_TAG_PATTERN.test(content);
 
   return (
-    <section className="mx-auto w-[92%] max-w-[1300px] py-10 sm:py-14 lg:py-20">
+    <section className="site-container py-10 sm:py-14 lg:py-20">
       <div className="rounded-[12px] bg-[#ffffff] px-4 py-6 sm:px-8 sm:py-9 lg:px-14 lg:py-12">
         <h1 className="text-[1.65rem] font-semibold leading-tight text-[#0b0b0b] sm:text-[2.1rem] lg:text-[2.75rem]">{title}</h1>
         {showContentCard

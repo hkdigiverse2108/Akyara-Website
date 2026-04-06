@@ -3,16 +3,36 @@ import { ROUTES } from "../Constants";
 import { ForgotPassword, Login, ResetPassword, Signup, VerifyOtp } from "../Pages/Auth";
 import Home from "../Pages/Home/Home";
 import InfoPage from "../Pages/InfoPage";
-import {AboutDetailPage,AboutPage,BlogDetailPage,BlogPage,CancellationPolicyPage,ContactPage,FAQPage,PrivacyPolicyPage,ReturnRefundPolicyPage,TermsConditionPage,} from "../Pages/InfoPages";
+import {
+  AboutDetailPage,
+  AboutPage,
+  BlogDetailPage,
+  BlogPage,
+  CancellationPolicyPage,
+  ContactPage,
+  FAQPage,
+  PrivacyPolicyPage,
+  ReturnRefundPolicyPage,
+  TermsConditionPage,
+} from "../Pages/InfoPages";
 import NotFound from "../Pages/NotFound";
-import Profile from "../Pages/Profile/index";
+import Profile, { ProfileAddAddressPage, ProfileEditAddressPage } from "../Pages/Profile";
+import ProductDetailPage from "../Pages/Products/ProductDetailPage";
+import ProductsPage from "../Pages/Products/ProductsPage";
 
 export const PageRoutes: RouteObject[] = [
   { path: ROUTES.HOME, element: <Home /> },
+  { path: ROUTES.PRODUCTS, element: <ProductsPage /> },
+  { path: "/products/:id", element: <ProductDetailPage /> },
+  { path: ROUTES.SHIRTS, element: <ProductsPage initialCategory="Shirts" /> },
+  { path: ROUTES.TSHIRTS, element: <ProductsPage initialCategory="T-Shirts" /> },
+  { path: ROUTES.JEANS, element: <ProductsPage initialCategory="Jeans" /> },
   { path: ROUTES.PROFILE, element: <Profile section="info" /> },
   { path: ROUTES.ACCOUNT.INFO, element: <Profile section="info" /> },
   { path: ROUTES.ACCOUNT.ORDERS, element: <Profile section="orders" /> },
   { path: ROUTES.ACCOUNT.WISHLIST, element: <Profile section="wishlist" /> },
+  { path: ROUTES.ACCOUNT.ADD_ADDRESS, element: <ProfileAddAddressPage /> },
+  { path: ROUTES.ACCOUNT.EDIT_ADDRESS, element: <ProfileEditAddressPage /> },
   { path: ROUTES.ACCOUNT.ADDRESSES, element: <Profile section="addresses" /> },
   { path: ROUTES.ACCOUNT.PAYMENT, element: <Profile section="payment" /> },
   { path: ROUTES.ACCOUNT.CHANGE_PASSWORD, element: <Profile section="change-password" /> },

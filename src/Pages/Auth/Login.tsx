@@ -38,7 +38,7 @@ const Login = () => {
             <CommonInput label="Password" name="password" type="password" placeholder="Enter password" />
 
             <div className="text-right">
-              <Link className="text-sm font-semibold text-black" to="/forgot-password">Forgot password?</Link>
+              <Link className="text-sm font-semibold text-black" to={ROUTES.AUTH.FORGOT_PASSWORD}>Forgot password?</Link>
             </div>
 
             {status?.error && <p className="rounded-[10px] bg-[#ffecec] px-3 py-2 text-sm text-[#e53935]">{status.error}</p>}

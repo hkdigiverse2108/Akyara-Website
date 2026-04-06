@@ -1,8 +1,15 @@
-import {CreditCardOutlined,EnvironmentOutlined,HeartOutlined,LogoutOutlined,ShoppingOutlined,UserOutlined,} from "@ant-design/icons";
+import {
+  CreditCardOutlined,
+  EnvironmentOutlined,
+  HeartOutlined,
+  LogoutOutlined,
+  ShoppingOutlined,
+  UserOutlined,
+} from "@ant-design/icons";
 import { NavLink, useNavigate } from "react-router-dom";
-import { ROUTES } from "../../Constants";
-import { useAppDispatch } from "../../Store/Hooks";
-import { setSignOut } from "../../Store/Slices/AuthSlice";
+import { ROUTES } from "../../../Constants";
+import { useAppDispatch } from "../../../Store/Hooks";
+import { setSignOut } from "../../../Store/Slices/AuthSlice";
 import { profileSections } from "./constants";
 
 const ProfileSidebar = () => {
@@ -38,10 +45,27 @@ const ProfileSidebar = () => {
       <nav className="px-3 py-3 lg:px-4 lg:py-5">
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:flex lg:flex-col lg:gap-2">
           {profileSections.map(({ label, to }) => (
-            <NavLink key={label} to={to} end={to === ROUTES.ACCOUNT.INFO} className={({ isActive }) =>   `group flex min-w-0 items-center justify-start gap-2.5 rounded-[12px] border px-2.5 py-2.5 text-xs font-semibold transition sm:px-3 sm:text-sm lg:justify-between lg:gap-3 lg:px-4 lg:py-3 ${     isActive       ? "border-[#d8e0ec] bg-white text-[#0f172a] shadow-[0_8px_20px_rgba(15,23,42,0.06)] lg:border-l-[3px] lg:border-l-[#ef6b4a]"       : "border-[#dfe5ee] bg-white text-[#4b5563] hover:border-[#d0d8e4] hover:bg-[#fafbfd]"   }` }>
+            <NavLink
+              key={label}
+              to={to}
+              end={to === ROUTES.ACCOUNT.INFO}
+              className={({ isActive }) =>
+                `group flex min-w-0 items-center justify-start gap-2.5 rounded-[12px] border px-2.5 py-2.5 text-xs font-semibold transition sm:px-3 sm:text-sm lg:justify-between lg:gap-3 lg:px-4 lg:py-3 ${
+                  isActive
+                    ? "border-[#d8e0ec] bg-white text-[#0f172a] shadow-[0_8px_20px_rgba(15,23,42,0.06)] lg:border-l-[3px] lg:border-l-[#ef6b4a]"
+                    : "border-[#dfe5ee] bg-white text-[#4b5563] hover:border-[#d0d8e4] hover:bg-[#fafbfd]"
+                }`
+              }
+            >
               {({ isActive }) => (
                 <span className="flex min-w-0 items-center gap-2.5">
-                  <span className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm transition ${   isActive ? "bg-white text-[#ef6b4a]" : "bg-white text-[#7b8797] group-hover:text-[#ef6b4a]" }`}>{iconMap[to]}</span>
+                  <span
+                    className={`inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm transition ${
+                      isActive ? "bg-white text-[#ef6b4a]" : "bg-white text-[#7b8797] group-hover:text-[#ef6b4a]"
+                    }`}
+                  >
+                    {iconMap[to]}
+                  </span>
                   <span className="truncate whitespace-nowrap">{label}</span>
                 </span>
               )}
@@ -50,7 +74,13 @@ const ProfileSidebar = () => {
         </div>
 
         <div className="mt-3 lg:mt-4">
-          <button type="button" onClick={handleLogout} className="inline-flex w-full items-center justify-center gap-2 rounded-[12px] border border-[#ffdada] bg-[#fff5f5] px-3 py-2.5 text-sm font-semibold text-[#c62828] transition hover:bg-[#ffecec] lg:justify-start lg:px-4 lg:py-3"><LogoutOutlined />Logout</button>
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="inline-flex w-full items-center justify-center gap-2 rounded-[12px] border border-[#ffdada] bg-[#fff5f5] px-3 py-2.5 text-sm font-semibold text-[#c62828] transition hover:bg-[#ffecec] lg:justify-start lg:px-4 lg:py-3"
+          >
+            <LogoutOutlined />Logout
+          </button>
         </div>
       </nav>
     </aside>

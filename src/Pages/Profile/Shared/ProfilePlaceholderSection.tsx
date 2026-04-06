@@ -1,6 +1,6 @@
-import type { ProfilePlaceholderSectionProps } from "../../Types";
+import type { ProfilePlaceholderSectionProps } from "../../../Types";
 
-const ProfilePlaceholderSection = ({eyebrow,title,description,emptyMessage,}: ProfilePlaceholderSectionProps) => {
+const ProfilePlaceholderSection = ({ eyebrow, title, description, emptyMessage }: ProfilePlaceholderSectionProps) => {
   return (
     <div className="overflow-hidden rounded-[12px] border border-[#ece6db] bg-white shadow-[0_14px_36px_rgba(17,17,17,0.06)]">
       <div className="border-b border-[#efe7dd] px-4 py-5 sm:px-6 sm:py-6 lg:px-8 lg:py-7">

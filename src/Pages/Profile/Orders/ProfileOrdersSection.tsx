@@ -1,8 +1,8 @@
 import { CheckCircleFilled, ClockCircleOutlined, CloseCircleFilled, ShoppingOutlined, TruckOutlined } from "@ant-design/icons";
 import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
-import { ROUTES } from "../../Constants";
-import type { OrderCard, OrderStatus } from "../../Types";
+import { ROUTES } from "../../../Constants";
+import type { OrderCard, OrderStatus } from "../../../Types";
 
 
 

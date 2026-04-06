@@ -16,7 +16,9 @@ export interface FieldOptions<T> {
   minItems?: number;
 }
 
-export type FieldSchemaArgs<K extends keyof FieldTypeMap> = [type: K, options?: FieldOptions<FieldTypeMap[K]>] | [type: K, label: string, options?: FieldOptions<FieldTypeMap[K]>];
+export type FieldSchemaArgs<K extends keyof FieldTypeMap> =
+  | [type: K, options?: FieldOptions<FieldTypeMap[K]>]
+  | [type: K, label: string, options?: FieldOptions<FieldTypeMap[K]>];
 export type FieldTypeMap = {
   string: Yup.StringSchema<string | null | undefined>;
   number: Yup.NumberSchema<number | null | undefined>;
@@ -31,8 +33,6 @@ export type InfoPageLayoutProps = {
   showContentCard?: boolean;
   emptyMessage: string;
 };
-
-
 
 export type AccountSection = "orders" | "wishlist" | "info" | "addresses" | "payment" | "change-password";
 
@@ -101,7 +101,6 @@ export type ProfileChangePasswordSectionProps = {
   }) => Promise<ApiResponse>;
   isChangingPassword: boolean;
 };
-
 
 export type CategoryCardProps = {
   title: string;

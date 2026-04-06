@@ -1,8 +1,8 @@
 import { DeleteOutlined, HeartFilled, ShoppingCartOutlined, TagOutlined } from "@ant-design/icons";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import { ROUTES } from "../../Constants";
-import type { WishlistItem } from "../../Types/Wishlist";
+import { ROUTES } from "../../../Constants";
+import type { WishlistItem } from "../../../Types/Wishlist";
 
 
 

@@ -2,6 +2,7 @@ import { KEYS, URL_KEYS } from "../Constants";
 import type { PolicyType } from "../Constants";
 import type {
   AboutApiResponse,
+  AddressApiResponse,
   ApiResponse,
   BlogApiResponse,
   FaqApiResponse,
@@ -17,6 +18,14 @@ export const Queries = {
   useGetSingleUser: (id?: string) =>
     useQueries<UserProfileResponse>([KEYS.USER.BASE, id], () => Get(`${URL_KEYS.USER.BASE}/${id}`), {
       enabled: !!id,
+    }),
+
+  useGetAllAddresses: (enabled = true) =>
+    useQueries<AddressApiResponse>([KEYS.ADDRESS.ALL], () => Get(URL_KEYS.ADDRESS.ALL), { enabled }),
+
+  useGetAddressById: (id?: string, enabled = true) =>
+    useQueries<AddressApiResponse>([KEYS.ADDRESS.DETAIL, id], () => Get(`${URL_KEYS.ADDRESS.BASE}/${id}`), {
+      enabled: enabled && !!id,
     }),
 
   useGetUserDropdown: (params?: Params, enabled?: boolean) =>

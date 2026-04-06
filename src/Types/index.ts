@@ -8,4 +8,6 @@ export * from "./Contact";
 export * from "./Blog";
 export * from './Settings';
 export * from "./Order";
+export * from "./Address";
+export * from "./Product";
 

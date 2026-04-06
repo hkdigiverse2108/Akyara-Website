@@ -12,6 +12,12 @@ export const URL_KEYS = {
     EDIT: "/user/edit",
     DROPDOWN: "/user/dropdown",
   },
+  ADDRESS: {
+    BASE: "/address",
+    ADD: "/address/add",
+    EDIT: "/address/edit",
+    ALL: "/address/all",
+  },
   POLICY: {
     BASE: "/policy",
     ALL: "/policy/all",

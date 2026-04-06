@@ -1,4 +1,4 @@
-import { URL_KEYS } from "../../Constants";
+import { URL_KEYS } from "../../../Constants";
 import { type ReactNode, useEffect, useMemo, useState } from "react";
 
 const getApiBaseUrl = () => (import.meta.env.VITE_API_BASE_URL || "").replace(/\/+$/, "");
@@ -78,12 +78,7 @@ export const extractUploadedImageValue = (response: unknown) => {
   return (pickString(data.imageUrl) ??pickString(data.imageURL) ??pickString(data.url) ??pickString(data.imagePath) ??pickString(data.path) ??pickString(data.filePath) ??pickString(data.location) ??pickString(data.publicUrl) ??pickString(data.image) ??pickString(data.key) ??pickString(data.fileName) ??pickString(data.filename));
 };
 
-type ProfileImageProps = {
-  value?: string;
-  alt: string;
-  className: string;
-  fallback: ReactNode;
-};
+type ProfileImageProps = {value?: string;alt: string;className: string;fallback: ReactNode;};
 
 export const ProfileImage = ({ value, alt, className, fallback }: ProfileImageProps) => {
   const candidates = useMemo(() => buildProfilePhotoCandidates(value), [value]);

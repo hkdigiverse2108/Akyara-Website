@@ -108,7 +108,7 @@ const FAQPage = () => {
   };
 
   return (
-    <section className="mx-auto w-[92%] max-w-[1300px] py-10 sm:py-14 lg:py-20">
+    <section className="site-container py-10 sm:py-14 lg:py-20">
       <div className="relative text-center">
         <p className="pointer-events-none absolute left-1/2 top-0 -z-10 -translate-x-1/2 whitespace-nowrap text-[2rem] font-semibold italic tracking-wide text-[#d7d9dd] opacity-60 sm:text-[3rem] lg:text-[4.4rem]">FAQs Section</p>
         <h1 className="text-[1.8rem] font-semibold leading-tight text-[#0b0b0b] sm:text-[2.2rem] lg:text-[2.75rem]">Frequently Asked Questions</h1>

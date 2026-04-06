@@ -1,4 +1,5 @@
 import { ErrorMessage as FormikErrorMessage, Field, Form, Formik } from "formik";
+import { useLocation } from "react-router-dom";
 import { Mutations } from "../../../Api/Mutations";
 import { Queries } from "../../../Api/Queries";
 import { ErrorMessage as AppErrorMessage } from "../../../Attribute/Notification";
@@ -7,6 +8,8 @@ import { getPrimarySettings } from "../../../Utils/settings";
 import { ContactSchema } from "../../../Utils/ValidationSchemas";
 
 const ContactPage = () => {
+  const location = useLocation();
+  const state = location.state as { productId?: string; productName?: string } | null;
   const contactMutation = Mutations.useAddContact();
   const settingsQuery = Queries.useGetSettings(true);
   const settings = getPrimarySettings(settingsQuery.data?.data);
@@ -16,47 +19,69 @@ const ContactPage = () => {
 
   return (
     <section className="bg-[#f8f9fb] py-10 sm:py-12 lg:py-16">
-      <div className="mx-auto w-[92%] max-w-[1260px] rounded-[12px] bg-white p-5 shadow-sm sm:p-8 lg:p-10">
-        <div className="relative mb-8 text-center sm:mb-10">
-          <p className="pointer-events-none absolute left-1/2 top-0 hidden -translate-x-1/2 -translate-y-[35%] whitespace-nowrap text-[clamp(2.5rem,6vw,4.5rem)] font-semibold italic leading-none text-[#d9dde4]/60 md:block">Contact Us</p>
-          <h1 className="relative z-10 text-2xl font-semibold text-[#0b0b0b] sm:text-3xl">Get In Touch</h1>
-        </div>
-        <div className="grid gap-8 lg:grid-cols-[360px_minmax(0,1fr)] lg:gap-10">
-          <aside className="space-y-6">
-            <div className="rounded-[10px] border border-[#e5e9ef] p-5">
-              <h2 className="text-[1.4rem] font-semibold text-[#ef4444]">Address</h2>
-              <p className="mt-3 text-[0.95rem] leading-7 text-[#5f6774]">{address || "Address not available"}</p>
-              <p className="mt-3 text-[0.95rem] text-[#1f2937]">
-                <span className="font-semibold">Email:</span>{" "}
-                {email ? (<a href={`mailto:${email}`} className="transition hover:text-black">  {email}</a>) : (
-                  <span>Not available</span>
+      <div className="site-container">
+        <div className="rounded-[12px] bg-white p-5 shadow-sm sm:p-8 lg:p-10">
+          <div className="relative mb-8 text-center sm:mb-10">
+            <p className="pointer-events-none absolute left-1/2 top-0 hidden -translate-x-1/2 -translate-y-[35%] whitespace-nowrap text-[clamp(2.5rem,6vw,4.5rem)] font-semibold italic leading-none text-[#d9dde4]/60 md:block">Contact Us</p>
+            <h1 className="relative z-10 text-2xl font-semibold text-[#0b0b0b] sm:text-3xl">Get In Touch</h1>
+          </div>
+          <div className="grid gap-8 lg:grid-cols-[360px_minmax(0,1fr)] lg:gap-10">
+            <aside className="space-y-6">
+              <div className="rounded-[10px] border border-[#e5e9ef] p-5">
+                <h2 className="text-[1.4rem] font-semibold text-[#ef4444]">Address</h2>
+                <p className="mt-3 text-[0.95rem] leading-7 text-[#5f6774]">{address || "Address not available"}</p>
+                <p className="mt-3 text-[0.95rem] text-[#1f2937]">
+                  <span className="font-semibold">Email:</span>{" "}
+                  {email ? (<a href={`mailto:${email}`} className="transition hover:text-black">  {email}</a>) : (
+                    <span>Not available</span>
+                  )}
+                </p>
+              </div>
+
+              <div className="rounded-[10px] border border-[#e5e9ef] p-5">
+                <h2 className="text-[1.4rem] font-semibold text-[#ef4444]">Make a Call</h2>
+                <p className="mt-3 text-[1rem] font-semibold text-[#0b0b0b]">Customer Care:</p>
+                {contact ? (<a href={`tel:${contact}`} className="mt-1 block text-[0.95rem] text-[#5f6774] transition hover:text-black">  {contact}</a>
+                ) : (<p className="mt-1 text-[0.95rem] text-[#5f6774]">Not available</p>)}
+              </div>
+
+              <div className="rounded-[10px] border border-[#e5e9ef] p-5">
+                <h2 className="text-[1.4rem] font-semibold text-[#ef4444]">Drop A Mail</h2>
+                <p className="mt-3 text-[0.95rem] leading-7 text-[#5f6774]">
+                  Fill out our form and we will contact you within 24 hours.
+                </p>
+                {email ? (<a href={`mailto:${email}`} className="mt-3 block text-[0.95rem] text-[#111827] transition hover:text-black">  {email}</a>) : (
+                  <p className="mt-3 text-[0.95rem] text-[#111827]">Not available</p>
                 )}
-              </p>
-            </div>
+              </div>
+            </aside>
 
-            <div className="rounded-[10px] border border-[#e5e9ef] p-5">
-              <h2 className="text-[1.4rem] font-semibold text-[#ef4444]">Make a Call</h2>
-              <p className="mt-3 text-[1rem] font-semibold text-[#0b0b0b]">Customer Care:</p>
-              {contact ? (<a href={`tel:${contact}`} className="mt-1 block text-[0.95rem] text-[#5f6774] transition hover:text-black">  {contact}</a>
-              ) : (<p className="mt-1 text-[0.95rem] text-[#5f6774]">Not available</p>)}
-            </div>
+            <div>
+            {state?.productName ? (
+              <div className="mb-6 rounded-[10px] border border-[#e5e9ef] bg-[#f8fafc] p-4 text-sm text-[#1f2937]">
+                Contact request prefilled for <strong>{state.productName}</strong>.
+              </div>
+            ) : null}
 
-            <div className="rounded-[10px] border border-[#e5e9ef] p-5">
-              <h2 className="text-[1.4rem] font-semibold text-[#ef4444]">Drop A Mail</h2>
-              <p className="mt-3 text-[0.95rem] leading-7 text-[#5f6774]">
-                Fill out our form and we will contact you within 24 hours.
-              </p>
-              {email ? (<a href={`mailto:${email}`} className="mt-3 block text-[0.95rem] text-[#111827] transition hover:text-black">  {email}</a>) : (
-                <p className="mt-3 text-[0.95rem] text-[#111827]">Not available</p>
-              )}
-            </div>
-          </aside>
-
-          <div>
-            <Formik<ContactFormValues> initialValues={{ name: "", email: "", mobileNumber: "", subject: "", message: "" }}validationSchema={ContactSchema}onSubmit={async (values, { setSubmitting, setStatus, resetForm }) => {
+            <Formik<ContactFormValues>
+              initialValues={{
+                name: "",
+                email: "",
+                mobileNumber: "",
+                subject: state?.productName ? `Inquiry about ${state.productName}` : "",
+                message: state?.productName ? `I would like to know more about ${state.productName}.` : "",
+              }}
+              validationSchema={ContactSchema}
+              onSubmit={async (values, { setSubmitting, setStatus, resetForm }) => {
                 setStatus(undefined);
                 try {
-                  const payload: ContactPayload = {name: values.name.trim(),email: values.email.trim(),mobileNumber: values.mobileNumber.trim(),message: values.message.trim(),...(values.subject.trim() ? { subject: values.subject.trim() } : {}),};
+                  const payload: ContactPayload = {
+                    name: values.name.trim(),
+                    email: values.email.trim(),
+                    mobileNumber: values.mobileNumber.trim(),
+                    message: values.message.trim(),
+                    ...(values.subject.trim() ? { subject: values.subject.trim() } : {}),
+                  };
 
                   const data = await contactMutation.mutateAsync(payload);
                   setStatus({ success: data?.message ?? "Message sent successfully." });
@@ -94,6 +119,7 @@ const ContactPage = () => {
                 </Form>
               )}
             </Formik>
+            </div>
           </div>
         </div>
       </div>

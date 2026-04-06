@@ -100,15 +100,15 @@ const Header = () => {
 
   return (
     <header className="fixed left-0 right-0 top-0 z-40 border-b border-[#e7ebf2] bg-white/95 backdrop-blur">
-      <div className="mx-auto w-full max-w-[1400px] px-3 sm:px-5 lg:px-8">
-        <div className="flex min-h-[64px] items-center gap-2 sm:min-h-[70px] lg:min-h-[78px]">
+      <div className="site-container">
+        <div className="flex min-h-[64px] m items-center gap-2 sm:min-h-[70px] lg:min-h-[78px]">
           <div className="shrink-0">
             <Link to={ROUTES.HOME} aria-label="Home">
               <img className="block h-7 w-auto object-contain sm:h-8 md:h-9 lg:h-11" src="/assets/images/logo/logo.png" alt="Kumo logo"/>
             </Link>
           </div>
 
-          <nav className="ml-7 hidden items-center gap-4 lg:flex xl:gap-6">
+          <nav className="ml-7 hidden items-center md- gap-4 lg:flex xl:gap-6">
             {navLinks.map(({ label, to }) => {
               return (
                 <Link key={label} to={to} className="whitespace-nowrap text-[0.92rem] font-medium text-[#444] transition duration-200 hover:text-black xl:text-[0.96rem]">{label}</Link>

@@ -6,6 +6,8 @@ export const ROUTES = {
     WISHLIST: "/profile/wishlist",
     INFO: "/profile",
     ADDRESSES: "/profile/addresses",
+    ADD_ADDRESS: "/profile/addresses/add",
+    EDIT_ADDRESS: "/profile/addresses/edit/:id",
     PAYMENT: "/profile/payment-method",
     CHANGE_PASSWORD: "/profile/change-password",
   },
@@ -35,5 +37,3 @@ export const ROUTES = {
     VERIFY_OTP: "/auth/verify-otp",
   },
 } as const;
-
-

@@ -1,4 +1,4 @@
-import type { AuthSessionUser } from "../../Types";
+import type { AuthSessionUser } from "../../../Types";
 
 export const getDisplayName = (user: AuthSessionUser | null) => {
   const fullName = [user?.firstName, user?.lastName].filter(Boolean).join(" ").trim();

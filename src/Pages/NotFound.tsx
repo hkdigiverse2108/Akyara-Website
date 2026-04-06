@@ -5,7 +5,7 @@ const NotFound = () => {
   return (
     <section className="bg-[#f8f9fb]">
 
-      <div className="mx-auto grid min-h-[58vh] w-[92%] max-w-[1200px] place-items-center py-14 sm:py-16">
+      <div className="site-container grid min-h-[58vh] place-items-center py-14 sm:py-16">
         <div className="max-w-[760px] text-center">
           <div className="mx-auto mb-8 inline-grid h-20 w-20 place-items-center rounded-full bg-[#fdeef0] text-3xl text-[#ef6b4a]">
             :)

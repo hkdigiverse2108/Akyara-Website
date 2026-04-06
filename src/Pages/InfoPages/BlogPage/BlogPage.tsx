@@ -24,7 +24,7 @@ const BlogPage = () => {
 
   return (
     <section className="bg-white py-10 sm:py-12 lg:py-14">
-      <div className="mx-auto w-[92%] max-w-[1400px]">
+      <div className="site-container">
         <div className="relative mb-8 text-center sm:mb-10">
           <p className="pointer-events-none absolute left-1/2 top-0 hidden -translate-x-1/2 -translate-y-[35%] whitespace-nowrap text-[clamp(2.5rem,6vw,4.5rem)] font-semibold italic leading-none text-[#d9dde4]/60 md:block">
             Latest News

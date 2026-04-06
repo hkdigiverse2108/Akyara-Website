@@ -8,37 +8,35 @@ const companyLinks = [{ label: "Contact Us", to: ROUTES.INFO.CONTACT },{ label: 
 
 const supportLinks = [{ label: "Return & Refund Policy", to: ROUTES.INFO.REFUND },{ label: "Privacy Policy", to: ROUTES.INFO.PRIVACY },{ label: "Terms & Condition", to: ROUTES.INFO.TERMS },{ label: "Cancellation Policy", to: ROUTES.INFO.CANCELLATION },];
 
-const toAddressLines = (value?: string) =>
-  value? value    .split(/\r?\n|,/)    .map((item) => item.trim())    .filter(Boolean): [];
+const toAddressLine = (value?: string) =>
+  value? value    .split(/\r?\n|,/)    .map((item) => item.trim())    .filter(Boolean)    .join(", "): "";
 
 const Footer = () => {
   const settingsQuery = Queries.useGetSettings(true);
   const settings = getPrimarySettings(settingsQuery.data?.data);
 
-  const addressLines = toAddressLines(settings?.address);
+  const addressLine = toAddressLine(settings?.address);
   const contact = settings?.contact?.trim() ;
   const email = settings?.email?.trim();
   const socialLinks = [{label: "Facebook",href: normalizeExternalLink(settings?.facebook || "https://facebook.com"),icon: <FacebookFilled />,},{label: "Twitter",href: normalizeExternalLink(settings?.twitter || "https://twitter.com"),icon: <TwitterOutlined />,},{label: "Youtube",href: normalizeExternalLink(settings?.youtube || "https://youtube.com"),icon: <YoutubeFilled />,},{label: "Instagram",href: normalizeExternalLink(settings?.instagram || "https://instagram.com"),icon: <InstagramFilled />,},].filter((item) => !!item.href);
   const securePaymentImages = (settings?.securePaymentImages ?? []).map((item) => resolveSettingsImageUrl(item)).filter(Boolean);
 
-  return (
-    <footer className="bg-[#1f2937] py-10 text-[#d1d5db] sm:py-12">
-      <div className="mx-auto grid w-[92%] max-w-[1200px] gap-8 text-center sm:grid-cols-2 sm:text-left lg:grid-cols-4">
-        <div className="flex flex-col items-center sm:items-start">
+    return (
+      <footer className="bg-[#1f2937] py-10 text-[#d1d5db] sm:py-12">
+      <div className="site-container grid gap-8 text-center sm:grid-cols-2 sm:text-left lg:grid-cols-[minmax(290px,1.45fr)_minmax(170px,0.85fr)_minmax(220px,1fr)_max-content] lg:items-start xl:gap-10">
+        <div className="flex flex-col items-center sm:items-start lg:pr-6">
           <Link to={ROUTES.HOME}>
             <img className="h-10 object-contain" src="/assets/images/logo/image.png" alt="Logo" />
           </Link>
 
           <div className="mt-3 space-y-1 text-sm leading-6">
-            {addressLines.map((line) => ( <p key={line}>{line}</p>))}
+            {addressLine ? <p>{addressLine}</p> : null}
             <a href={`tel:${contact}`} className="block transition hover:text-white"> {contact}</a>
             <a href={`mailto:${email}`} className="block transition hover:text-white">{email}</a>
           </div>
 
           <div className="mt-3 flex gap-3 text-base">
-            {socialLinks.map(({ label, href, icon }) => (
-              <a key={label} href={href} target="_blank" rel="noreferrer" aria-label={label} className="transition hover:text-white">{icon}</a>
-            ))}
+            {socialLinks.map(({ label, href, icon }) => (<a key={label} href={href} target="_blank" rel="noreferrer" aria-label={label} className="transition hover:text-white">{icon}</a>))}
           </div>
         </div>
 
@@ -70,16 +68,16 @@ const Footer = () => {
           </h3>
 
           {securePaymentImages.length ? (
-            <div className="grid max-w-[200px] grid-cols-3 gap-2 sm:max-w-[220px]">
+            <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start lg:flex-nowrap lg:justify-end">
               {securePaymentImages.map((image, index) => (
-                <img key={`${image}-${index}`} src={image} alt="Secure payment" className="h-10 w-full rounded bg-white object-contain p-1" loading="lazy"/>
+                <img key={`${image}-${index}`} src={image} alt="Secure payment" className="h-10 w-auto rounded bg-white object-contain p-1" loading="lazy"/>
               ))}
             </div>
           ) : (<img src="/assets/images/payment-methods.svg" alt="Payments" className="w-[180px] max-w-full" />)}
         </div>
       </div>
 
-      <div className="mx-auto mt-8 w-[92%] max-w-[1200px] border-t border-gray-700 pt-3 text-center text-xs text-gray-400 sm:text-sm">
+      <div className="site-container mt-8 border-t border-gray-700 pt-3 text-center text-xs text-gray-400 sm:text-sm">
         (c) {new Date().getFullYear()} Kumo. All rights reserved.
       </div>
     </footer>

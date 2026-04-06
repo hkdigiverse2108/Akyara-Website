@@ -1,4 +1,4 @@
-import { ROUTES } from "../../Constants";
+import { ROUTES } from "../../../Constants";
 
 export const profileSections = [
   { label: "My Order", to: ROUTES.ACCOUNT.ORDERS },

@@ -16,7 +16,7 @@ const BlogDetailPage = () => {
   if (detailQuery.isLoading) {
     return (
       <section className="bg-white py-10 sm:py-12">
-        <div className="mx-auto w-[92%] max-w-[1300px]">
+        <div className="site-container">
           <div className="h-[40px] w-[160px] animate-pulse rounded bg-[#eef1f5]" />
           <div className="mt-5 h-[220px] animate-pulse rounded-[12px] bg-[#eef1f5] sm:h-[300px] lg:h-[380px]" />
           <div className="mt-4 h-6 w-[70%] animate-pulse rounded bg-[#eef1f5]" />
@@ -29,18 +29,20 @@ const BlogDetailPage = () => {
   if (!post) {
     return (
       <section className="bg-white py-12 sm:py-14">
-        <div className="mx-auto w-[92%] max-w-[800px] rounded-xl border border-[#e5e7eb] px-5 py-8 text-center">
+        <div className="site-container">
+          <div className="mx-auto max-w-[800px] rounded-xl border border-[#e5e7eb] px-5 py-8 text-center">
           <p className="text-[0.75rem] font-semibold uppercase tracking-[0.2em] text-[#9aa4b2]">Blog Detail</p>
           <h1 className="mt-2 text-xl font-semibold text-[#111827] sm:text-2xl">Article not found</h1>
           <p className="mt-3 text-sm text-[#6b7280]">This blog is not available. Please check other articles.</p>
           <Link to={ROUTES.INFO.BLOG} className="mt-5 inline-flex items-center gap-2 rounded-full bg-black px-5 py-2 text-sm text-white"><ArrowLeftOutlined />Back to Blog</Link>
+          </div>
         </div>
       </section>
     );
   }
   return (
     <section className="bg-white py-10 sm:py-12">
-      <div className="mx-auto w-[92%] max-w-[1300px]">
+      <div className="site-container">
         <div className="mb-5">
           <Link to={ROUTES.INFO.BLOG} className="inline-flex items-center gap-2 text-sm text-[#6b7280] hover:text-black"><ArrowLeftOutlined />Back to Blog</Link>
         </div>

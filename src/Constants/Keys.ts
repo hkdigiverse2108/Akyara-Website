@@ -11,6 +11,11 @@ export const KEYS = {
     BASE: "user.base",
     DROPDOWN: "user.dropdown",
   },
+  ADDRESS: {
+    BASE: "address.base",
+    ALL: "address.all",
+    DETAIL: "address.detail",
+  },
   POLICY: {
     ALL: "policy.all",
   },

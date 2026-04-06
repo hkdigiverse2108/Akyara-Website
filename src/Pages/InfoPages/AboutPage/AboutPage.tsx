@@ -8,7 +8,7 @@ const AboutPage = () => {
   const sections = normalizeAboutSections(aboutQuery.data?.data as AboutValue).filter((item) => item.isDeleted !== true && item.isActive !== false).sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0));
 
   return (
-    <section className="mx-auto w-[92%] max-w-[1300px] py-10 sm:py-14 lg:py-20">
+    <section className="site-container py-10 sm:py-14 lg:py-20">
       <div className="space-y-6 sm:space-y-10 lg:space-y-12">
         {aboutQuery.isLoading ? (
           <>
