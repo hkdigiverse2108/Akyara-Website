@@ -1,12 +1,4 @@
-import {
-  FacebookFilled,
-  HeartOutlined,
-  InstagramOutlined,
-  PinterestFilled,
-  ShoppingCartOutlined,
-  StarFilled,
-  StarOutlined,
-} from "@ant-design/icons";
+import {FacebookFilled,HeartOutlined,InstagramOutlined,PinterestFilled,ShoppingCartOutlined,StarFilled,StarOutlined,} from "@ant-design/icons";
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent, type MouseEvent, type ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
 import ProductCard from "../../Components/ProductCard";
@@ -72,16 +64,10 @@ const formatReviewDate = (value: Date) =>
   }).format(value);
 
 const getReviewInitials = (value: string) =>
-  value
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? "")
-    .join("");
+  value.split(" ").filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase() ?? "").join("");
 
 const ProductDetailPage = () => {
   const { id } = useParams();
-
   const [product, setProduct] = useState<ProductItem | null>(null);
   const [selectedImage, setSelectedImage] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
