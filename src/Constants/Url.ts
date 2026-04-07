@@ -18,6 +18,10 @@ export const URL_KEYS = {
     EDIT: "/address/edit",
     ALL: "/address/all",
   },
+  PRODUCT: {
+    BASE: "/product",
+    ALL: "/product/all",
+  },
   POLICY: {
     BASE: "/policy",
     ALL: "/policy/all",

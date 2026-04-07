@@ -16,6 +16,11 @@ export const KEYS = {
     ALL: "address.all",
     DETAIL: "address.detail",
   },
+  PRODUCT: {
+    BASE: "product.base",
+    ALL: "product.all",
+    DETAIL: "product.detail",
+  },
   POLICY: {
     ALL: "policy.all",
   },

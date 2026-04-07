@@ -1,10 +1,22 @@
-import {FacebookFilled,HeartOutlined,InstagramOutlined,PinterestFilled,ShoppingCartOutlined,StarFilled,StarOutlined,} from "@ant-design/icons";
+import {
+  FacebookFilled,
+  HeartOutlined,
+  InstagramOutlined,
+  PinterestFilled,
+  ShoppingCartOutlined,
+  StarFilled,
+  StarOutlined,
+} from "@ant-design/icons";
 import { useEffect, useRef, useState, type ChangeEvent, type FormEvent, type MouseEvent, type ReactNode } from "react";
 import { Link, useParams } from "react-router-dom";
+import { Queries } from "../../Api";
 import ProductCard from "../../Components/ProductCard";
+import PageLoader from "../../Components/PageLoader";
 import { ROUTES } from "../../Constants";
-import { badgeStyles, getProductById, getProductDetailPath, products, } from "./productData";
 import type { ProductColor, ProductItem, ProductReview, ProductTab, ReviewFormValues } from "../../Types";
+import { getToken } from "../../Utils";
+import { badgeStyles, getProductById as getFallbackProductById, getProductDetailPath, products as fallbackProducts } from "./productData";
+import { normalizeProductDetail, normalizeProductList } from "./productApiUtils";
 
 const initialReviewEntries: ProductReview[] = [
   {
@@ -64,11 +76,23 @@ const formatReviewDate = (value: Date) =>
   }).format(value);
 
 const getReviewInitials = (value: string) =>
-  value.split(" ").filter(Boolean).slice(0, 2).map((part) => part[0]?.toUpperCase() ?? "").join("");
+  value
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
 
 const ProductDetailPage = () => {
   const { id } = useParams();
-  const [product, setProduct] = useState<ProductItem | null>(null);
+  const hasToken = Boolean(getToken());
+  const productDetailQuery = Queries.useGetProductById(id, hasToken && !!id);
+  const productsQuery = Queries.useGetAllProducts(hasToken);
+  const fallbackProduct = getFallbackProductById(id);
+  const product = normalizeProductDetail(productDetailQuery.data, fallbackProduct);
+  const apiProducts = normalizeProductList(productsQuery.data);
+  const catalogProducts = apiProducts.length > 0 ? apiProducts : fallbackProducts;
+
   const [selectedImage, setSelectedImage] = useState("");
   const [selectedColor, setSelectedColor] = useState("");
   const [selectedSize, setSelectedSize] = useState("");
@@ -81,17 +105,6 @@ const ProductDetailPage = () => {
   const [reviewFormMessage, setReviewFormMessage] = useState<string | null>(null);
   const relatedSliderRef = useRef<HTMLDivElement | null>(null);
 
-  // ✅ Fetch product (API ready)
-  useEffect(() => {
-    const fetchProduct = async () => {
-      const data = getProductById(id); // replace with API later
-      setProduct(data);
-    };
-
-    fetchProduct();
-  }, [id]);
-
-  // ✅ Initialize values
   useEffect(() => {
     if (!product) return;
 
@@ -99,6 +112,7 @@ const ProductDetailPage = () => {
     setSelectedColor(product.colors[0]?.name ?? "");
     setSelectedSize(product.sizes[0] ?? "");
     setQuantity(1);
+    setActiveTab("description");
     setReviews(initialReviewEntries);
     setReviewForm(initialReviewFormValues);
     setReviewFormMessage(null);
@@ -109,19 +123,25 @@ const ProductDetailPage = () => {
     setZoomOrigin({ x: 50, y: 50 });
   }, [selectedImage]);
 
-  // ------------------ Handlers ------------------
-
   const handleAddToCart = () => {
     if (!product) return;
 
-    if (!selectedColor || !selectedSize) {
-      alert("Please select color and size");
+    if ((product.colors.length > 0 && !selectedColor) || (product.sizes.length > 0 && !selectedSize)) {
+      alert("Please select required product options");
       return;
     }
 
-    const cartItem = {productId: product.id,name: product.name,price: product.price,image: selectedImage,color: selectedColor,size: selectedSize,quantity,};
+    const cartItem = {
+      productId: product.id,
+      name: product.name,
+      price: product.price,
+      image: selectedImage || product.image,
+      color: selectedColor,
+      size: selectedSize,
+      quantity,
+    };
 
-    console.log("🛒 Add to cart:", cartItem);
+    console.log("Add to cart:", cartItem);
   };
 
   const handleWishlist = () => {
@@ -133,7 +153,7 @@ const ProductDetailPage = () => {
       image: product.image,
     };
 
-    console.log("❤️ Wishlist:", wishlistItem);
+    console.log("Wishlist:", wishlistItem);
   };
 
   const handleQuantityChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -186,7 +206,16 @@ const ProductDetailPage = () => {
       return;
     }
 
-    const newReview: ProductReview = {id: `review-${Date.now()}`,name: fullName,date: formatReviewDate(new Date()),rating: reviewForm.rating,comment: description,avatarLabel: getReviewInitials(fullName) || "R",avatarBackground: "linear-gradient(135deg, #dfe4ea 0%, #b9c3cf 100%)",};
+    const newReview: ProductReview = {
+      id: `review-${Date.now()}`,
+      name: fullName,
+      date: formatReviewDate(new Date()),
+      rating: reviewForm.rating,
+      comment: description,
+      avatarLabel: getReviewInitials(fullName) || "R",
+      avatarBackground: "linear-gradient(135deg, #dfe4ea 0%, #b9c3cf 100%)",
+    };
+
     setReviews((previous) => [newReview, ...previous]);
     setReviewForm(initialReviewFormValues);
     setReviewFormMessage("Review submitted successfully.");
@@ -221,36 +250,61 @@ const ProductDetailPage = () => {
     container.scrollBy({ left: direction * scrollAmount, behavior: "smooth" });
   };
 
-  // ------------------ UI ------------------
-
-  if (!product) {
-    return <div className="p-10 text-center">Loading...</div>;
+  if (productDetailQuery.isLoading && !fallbackProduct) {
+    return <PageLoader />;
   }
 
-  const matchingProducts = products.filter((item) => item.id !== product.id && item.category === product.category);
-  const fillerProducts = products.filter(
+  if (!product) {
+    return (
+      <div className="bg-[#f7f4ef] pb-16 pt-8 sm:pt-10 lg:pb-24">
+        <section className="site-container">
+          <div className="grid min-h-[320px] place-items-center rounded-[18px] border border-dashed border-[#d8dee7] bg-white p-6 text-center shadow-[0_20px_40px_rgba(15,23,42,0.05)]">
+            <div>
+              <p className="text-[0.72rem] font-semibold uppercase tracking-[0.24em] text-[#ef6b4a]">Product</p>
+              <h1 className="mt-3 text-2xl font-semibold text-[#0f172a]">Product not found</h1>
+              <p className="mt-2 text-sm leading-7 text-[#64748b]">
+                This product could not be loaded from the catalog right now.
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
+    );
+  }
+
+  const matchingProducts = catalogProducts.filter((item) => item.id !== product.id && item.category === product.category);
+  const fillerProducts = catalogProducts.filter(
     (item) => item.id !== product.id && !matchingProducts.some((match) => match.id === item.id),
   );
   const relatedProducts = [...matchingProducts, ...fillerProducts].slice(0, 4);
   const pageContainerClass = "site-container";
   const productReferenceId = `#${product.sku.replace(/[^0-9]/g, "").padStart(7, "1").slice(-7)}`;
   const primaryColor = selectedColor || product.colors[0]?.name || "-";
-  const sizeLabel = selectedSize || product.sizes.slice(0, 2).join(", ");
+  const sizeLabel = selectedSize || (product.sizes.length > 0 ? product.sizes.slice(0, 2).join(", ") : "-");
   const productWeight =
     product.category === "Jeans" ? "450 Gr" : product.category === "Shirts" ? "320 Gr" : "220 Gr";
-  const additionalInfoRows = [{ label: "ID", value: productReferenceId },{ label: "SKU", value: product.sku },{ label: "Color", value: primaryColor },{ label: "Size", value: sizeLabel },{ label: "Weight", value: productWeight },];
+  const additionalInfoRows = [
+    { label: "ID", value: productReferenceId },
+    { label: "SKU", value: product.sku },
+    { label: "Color", value: primaryColor },
+    { label: "Size", value: sizeLabel },
+    { label: "Weight", value: productWeight },
+  ];
   const reviewLabel = `${reviewForm.rating} Star${reviewForm.rating > 1 ? "s" : ""}`;
+  const productRating = Math.max(0, Math.min(5, Math.round(product.rating || 0)));
+  const reviewCount = product.reviews || reviews.length;
+  const productDescription = product.longDescription || product.description;
+  const descriptionParagraphs = productDescription
+    .split(/\n+/)
+    .map((entry) => entry.trim())
+    .filter(Boolean);
 
   const tabCopy: Record<ProductTab, ReactNode> = {
     description: (
       <div className="space-y-5">
-        <p>{product.description}</p>
-        <p>
-          Avero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum
-          deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non
-          provident, similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum
-          fuga.
-        </p>
+        {(descriptionParagraphs.length > 0 ? descriptionParagraphs : [product.description]).map((paragraph, index) => (
+          <p key={`${product.id}-description-${index}`}>{paragraph}</p>
+        ))}
       </div>
     ),
     additional: (
@@ -309,7 +363,13 @@ const ProductDetailPage = () => {
                   const isActive = starValue <= reviewForm.rating;
 
                   return (
-                    <button key={starValue} type="button" onClick={() => handleReviewRatingChange(starValue)} className={`transition ${isActive ? "text-[#ff9f0a]" : "text-[#b7bec8] hover:text-[#ff9f0a]"}`} aria-label={`Rate ${starValue} star${starValue > 1 ? "s" : ""}`}>
+                    <button
+                      key={starValue}
+                      type="button"
+                      onClick={() => handleReviewRatingChange(starValue)}
+                      className={`transition ${isActive ? "text-[#ff9f0a]" : "text-[#b7bec8] hover:text-[#ff9f0a]"}`}
+                      aria-label={`Rate ${starValue} star${starValue > 1 ? "s" : ""}`}
+                    >
                       {isActive ? <StarFilled /> : <StarOutlined />}
                     </button>
                   );
@@ -379,16 +439,11 @@ const ProductDetailPage = () => {
   return (
     <div className="overflow-x-hidden bg-white pb-16 pt-8">
       <section className={pageContainerClass}>
-
-        {/* Breadcrumb */}
         <div className="mb-6 text-sm">
-          <Link to={ROUTES.HOME}>Home</Link> /{" "}
-          <Link to={ROUTES.PRODUCTS}>Products</Link> / {product.name}
+          <Link to={ROUTES.HOME}>Home</Link> / <Link to={ROUTES.PRODUCTS}>Products</Link> / {product.name}
         </div>
 
         <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,600px)_minmax(0,1fr)] xl:grid-cols-[minmax(0,640px)_minmax(0,1fr)] xl:gap-12">
-
-          {/* Image Section */}
           <div className="min-w-0 w-full max-w-[640px]">
             <div
               className="mx-auto flex aspect-[4/5] w-full items-center justify-center overflow-hidden rounded-[2px] p-4 sm:aspect-[5/6] sm:p-5"
@@ -407,14 +462,13 @@ const ProductDetailPage = () => {
               />
             </div>
 
-            {/* Thumbnails */}
             <div className="mt-3 grid grid-cols-6 gap-2">
-              {product.gallery.map((img: string, i: number) => {
+              {product.gallery.map((img, index) => {
                 const isActive = selectedImage === img;
 
                 return (
                   <button
-                    key={i}
+                    key={`${img}-${index}`}
                     type="button"
                     onClick={() => setSelectedImage(img)}
                     className={`overflow-hidden rounded-[2px] border bg-white transition ${
@@ -423,7 +477,7 @@ const ProductDetailPage = () => {
                   >
                     <img
                       src={img}
-                      alt={`${product.name} thumbnail ${i + 1}`}
+                      alt={`${product.name} thumbnail ${index + 1}`}
                       className="h-14 w-full object-contain sm:h-16"
                     />
                   </button>
@@ -432,7 +486,6 @@ const ProductDetailPage = () => {
             </div>
           </div>
 
-          {/* Details */}
           <div className="min-w-0 w-full max-w-[560px]">
             <p className="text-[0.82rem] font-medium text-[#7c6cff]">{product.categoryLabel}</p>
 
@@ -442,11 +495,11 @@ const ProductDetailPage = () => {
 
             <div className="mt-2.5 flex flex-wrap items-center gap-2 text-[0.9rem] text-[#5f6774]">
               <span className="inline-flex items-center gap-0.5 text-[#f4a000]">
-                {Array.from({ length: 5 }).map((_, i) => (
-                  <StarFilled key={i} className={i < 4 ? "" : "opacity-30"} />
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <StarFilled key={index} className={index < productRating ? "" : "opacity-30"} />
                 ))}
               </span>
-              <span>({product.reviews} Reviews)</span>
+              <span>({reviewCount} Reviews)</span>
             </div>
 
             <div className="mt-2.5 flex flex-wrap items-center gap-3">
@@ -463,59 +516,61 @@ const ProductDetailPage = () => {
               </span>
             </div>
 
-            <p className="mt-5 max-w-[500px] text-[0.92rem] leading-8 text-[#5f6774]">
-              {product.description}
-            </p>
+            <p className="mt-5 max-w-[500px] text-[0.92rem] leading-8 text-[#5f6774]">{product.description}</p>
 
-            <div className="mt-7">
-              <p className="text-[0.96rem] font-semibold text-[#111827]">Color:</p>
-              <div className="mt-3 flex flex-wrap gap-3">
-                {product.colors.map((c: ProductColor) => {
-                  const isActive = selectedColor === c.name;
+            {product.colors.length > 0 ? (
+              <div className="mt-7">
+                <p className="text-[0.96rem] font-semibold text-[#111827]">Color:</p>
+                <div className="mt-3 flex flex-wrap gap-3">
+                  {product.colors.map((color: ProductColor) => {
+                    const isActive = selectedColor === color.name;
 
-                  return (
-                    <button
-                      key={c.name}
-                      type="button"
-                      onClick={() => setSelectedColor(c.name)}
-                      className={`inline-flex h-11 w-11 items-center justify-center rounded-full border ${
-                        isActive ? "border-[#111827]" : "border-[#d7deea]"
-                      }`}
-                      title={c.name}
-                    >
-                      <span
-                        className="h-7 w-7 rounded-full border border-white shadow-[inset_0_0_0_1px_rgba(0,0,0,0.08)]"
-                        style={{ backgroundColor: c.swatch }}
-                      />
-                    </button>
-                  );
-                })}
+                    return (
+                      <button
+                        key={color.name}
+                        type="button"
+                        onClick={() => setSelectedColor(color.name)}
+                        className={`inline-flex h-11 w-11 items-center justify-center rounded-full border ${
+                          isActive ? "border-[#111827]" : "border-[#d7deea]"
+                        }`}
+                        title={color.name}
+                      >
+                        <span
+                          className="h-7 w-7 rounded-full border border-white shadow-[inset_0_0_0_1px_rgba(0,0,0,0.08)]"
+                          style={{ backgroundColor: color.swatch }}
+                        />
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            ) : null}
 
-            <div className="mt-7">
-              <p className="text-[0.96rem] font-semibold text-[#111827]">Size:</p>
-              <div className="mt-3 flex flex-wrap gap-3">
-                {product.sizes.map((s: string) => {
-                  const isActive = selectedSize === s;
+            {product.sizes.length > 0 ? (
+              <div className="mt-7">
+                <p className="text-[0.96rem] font-semibold text-[#111827]">Size:</p>
+                <div className="mt-3 flex flex-wrap gap-3">
+                  {product.sizes.map((size) => {
+                    const isActive = selectedSize === size;
 
-                  return (
-                    <button
-                      key={s}
-                      type="button"
-                      onClick={() => setSelectedSize(s)}
-                      className={`min-w-[42px] rounded-[4px] border px-3 py-2.5 text-sm font-medium transition ${
-                        isActive
-                          ? "border-[#111827] bg-[#111827] text-white"
-                          : "border-[#dbe2ed] bg-white text-[#1f2937] hover:border-[#111827]"
-                      }`}
-                    >
-                      {s}
-                    </button>
-                  );
-                })}
+                    return (
+                      <button
+                        key={size}
+                        type="button"
+                        onClick={() => setSelectedSize(size)}
+                        className={`min-w-[42px] rounded-[4px] border px-3 py-2.5 text-sm font-medium transition ${
+                          isActive
+                            ? "border-[#111827] bg-[#111827] text-white"
+                            : "border-[#dbe2ed] bg-white text-[#1f2937] hover:border-[#111827]"
+                        }`}
+                      >
+                        {size}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
+            ) : null}
 
             <div className="mt-7 grid gap-3 sm:grid-cols-[150px_minmax(0,1fr)] lg:grid-cols-[150px_minmax(0,1fr)_204px]">
               <input
@@ -585,9 +640,7 @@ const ProductDetailPage = () => {
                   type="button"
                   onClick={() => setActiveTab(tab.key)}
                   className={`border-b pb-3 transition ${
-                    isActive
-                      ? "border-[#111827] text-[#111827]"
-                      : "border-transparent text-[#8b96a8] hover:text-[#111827]"
+                    isActive ? "border-[#111827] text-[#111827]" : "border-transparent text-[#8b96a8] hover:text-[#111827]"
                   }`}
                 >
                   {tab.label}
@@ -598,52 +651,56 @@ const ProductDetailPage = () => {
 
           <div className="mx-auto mt-8 max-w-[980px] text-sm leading-8 text-[#5f6774]">{tabCopy[activeTab]}</div>
 
-          <div className="relative mt-16 text-center">
-            <span
-              className="pointer-events-none absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-[62%] whitespace-nowrap text-[clamp(2.6rem,6vw,4.8rem)] font-semibold italic text-black/5 md:block"
-              aria-hidden="true"
-            >
-              Similar Products
-            </span>
-            <h2 className="relative z-10 text-2xl font-semibold text-[#111827] sm:text-3xl">Matching Products</h2>
-          </div>
+          {relatedProducts.length > 0 ? (
+            <>
+              <div className="relative mt-16 text-center">
+                <span
+                  className="pointer-events-none absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-[62%] whitespace-nowrap text-[clamp(2.6rem,6vw,4.8rem)] font-semibold italic text-black/5 md:block"
+                  aria-hidden="true"
+                >
+                  Similar Products
+                </span>
+                <h2 className="relative z-10 text-2xl font-semibold text-[#111827] sm:text-3xl">Matching Products</h2>
+              </div>
 
-          <div className="relative mt-10">
-            <button
-              type="button"
-              className="absolute left-2 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white text-black shadow-[0_12px_30px_rgba(0,0,0,0.18)] transition hover:scale-105 md:inline-flex lg:-left-4"
-              aria-label="Scroll to previous products"
-              onClick={() => scrollRelatedProducts(-1)}
-            >
-              <span aria-hidden="true">&larr;</span>
-            </button>
-            <button
-              type="button"
-              className="absolute right-2 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white text-black shadow-[0_12px_30px_rgba(0,0,0,0.18)] transition hover:scale-105 md:inline-flex lg:-right-4"
-              aria-label="Scroll to next products"
-              onClick={() => scrollRelatedProducts(1)}
-            >
-              <span aria-hidden="true">&rarr;</span>
-            </button>
+              <div className="relative mt-10">
+                <button
+                  type="button"
+                  className="absolute left-2 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white text-black shadow-[0_12px_30px_rgba(0,0,0,0.18)] transition hover:scale-105 md:inline-flex lg:-left-4"
+                  aria-label="Scroll to previous products"
+                  onClick={() => scrollRelatedProducts(-1)}
+                >
+                  <span aria-hidden="true">&larr;</span>
+                </button>
+                <button
+                  type="button"
+                  className="absolute right-2 top-1/2 z-10 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white text-black shadow-[0_12px_30px_rgba(0,0,0,0.18)] transition hover:scale-105 md:inline-flex lg:-right-4"
+                  aria-label="Scroll to next products"
+                  onClick={() => scrollRelatedProducts(1)}
+                >
+                  <span aria-hidden="true">&rarr;</span>
+                </button>
 
-            <div
-              ref={relatedSliderRef}
-              className="hide-scrollbar flex gap-4 overflow-x-auto px-2 pb-6 scroll-smooth snap-x snap-mandatory sm:gap-6 sm:px-6 xl:px-0"
-            >
-              {relatedProducts.map((item) => (
-                <ProductCard
-                  key={item.id}
-                  {...item}
-                  href={getProductDetailPath(item.id)}
-                  badgeStyles={badgeStyles}
-                  className="min-w-[180px] flex-shrink-0 snap-start min-[420px]:min-w-[210px] sm:min-w-[230px] md:min-w-[250px] lg:min-w-[260px] xl:min-w-0 xl:flex-[0_0_calc((100%-72px)/4)]"
-                  imageClassName="h-[220px] min-[420px]:h-[250px] sm:h-[300px] lg:h-[340px]"
-                  favoriteIcon={<HeartOutlined />}
-                  cardDataAttribute={{ name: "data-related-product-card", value: "true" }}
-                />
-              ))}
-            </div>
-          </div>
+                <div
+                  ref={relatedSliderRef}
+                  className="hide-scrollbar flex gap-4 overflow-x-auto px-2 pb-6 scroll-smooth snap-x snap-mandatory sm:gap-6 sm:px-6 xl:px-0"
+                >
+                  {relatedProducts.map((item: ProductItem) => (
+                    <ProductCard
+                      key={item.id}
+                      {...item}
+                      href={getProductDetailPath(item.id)}
+                      badgeStyles={badgeStyles}
+                      className="min-w-[180px] flex-shrink-0 snap-start min-[420px]:min-w-[210px] sm:min-w-[230px] md:min-w-[250px] lg:min-w-[260px] xl:min-w-0 xl:flex-[0_0_calc((100%-72px)/4)]"
+                      imageClassName="h-[220px] min-[420px]:h-[250px] sm:h-[300px] lg:h-[340px]"
+                      favoriteIcon={<HeartOutlined />}
+                      cardDataAttribute={{ name: "data-related-product-card", value: "true" }}
+                    />
+                  ))}
+                </div>
+              </div>
+            </>
+          ) : null}
         </div>
       </section>
     </div>
