@@ -1,5 +1,5 @@
 import {CloseOutlined,HeartOutlined,LogoutOutlined,MenuOutlined,SearchOutlined,ShoppingCartOutlined,UserOutlined,} from "@ant-design/icons";
-import { Dropdown } from "antd";
+import { Dropdown, message } from "antd";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Queries } from "../Api/Queries";
@@ -7,6 +7,7 @@ import { ROUTES } from "../Constants";
 import { useAppDispatch, useAppSelector } from "../Store/Hooks";
 import { setSignOut, setUser } from "../Store/Slices/AuthSlice";
 import type { AuthSessionUser } from "../Types";
+import { COMMERCE_STORAGE_EVENT, getCartCount, getWishlistCount } from "../Utils/commerceStorage";
 
 const navLinks = [{ label: "Home", to: ROUTES.HOME }, { label: "Products", to: ROUTES.PRODUCTS }, { label: "Shirts", to: ROUTES.SHIRTS }, { label: "Tshirts", to: ROUTES.TSHIRTS }, { label: "Jeans", to: ROUTES.JEANS },];
 
@@ -30,8 +31,23 @@ const Header = () => {
   const { isAuthenticated, user } = useAppSelector((state) => state.auth);
   const [accountOpen, setAccountOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [wishlistCount, setWishlistCount] = useState(0);
+  const [cartCount, setCartCount] = useState(0);
   const userId = user?._id;
   const singleUserQuery = Queries.useGetSingleUser(userId);
+
+  useEffect(() => {
+    const syncCounts = () => {
+      setWishlistCount(getWishlistCount());
+      setCartCount(getCartCount());
+    };
+
+    syncCounts();
+    window.addEventListener(COMMERCE_STORAGE_EVENT, syncCounts);
+    return () => {
+      window.removeEventListener(COMMERCE_STORAGE_EVENT, syncCounts);
+    };
+  }, []);
 
   useEffect(() => {
     if (!singleUserQuery.data?.data) return;
@@ -125,11 +141,17 @@ const Header = () => {
             ) : (
               <Link to={ROUTES.AUTH.LOGIN} aria-label="Login" className="hidden h-9 w-9 place-items-center rounded-full text-[#111] transition hover:bg-[#f3f4f6] lg:grid lg:h-10 lg:w-10"><UserOutlined className="text-[1rem]" /></Link>
             )}
-            <button type="button" aria-label="Wishlist" className="relative hidden h-9 w-9 place-items-center rounded-full text-[#111] transition hover:bg-[#f3f4f6] lg:grid lg:h-10 lg:w-10">
-              <HeartOutlined className="text-[1rem]" /><span className="absolute -right-1 -top-1 rounded-full bg-black px-1.5 py-[1px] text-[10px] font-medium text-white">  2</span>
+            <button type="button" aria-label="Wishlist" onClick={() => navigate(ROUTES.ACCOUNT.WISHLIST)} className="relative hidden h-9 w-9 place-items-center rounded-full text-[#111] transition hover:bg-[#f3f4f6] lg:grid lg:h-10 lg:w-10">
+              <HeartOutlined className="text-[1rem]" />
+              {wishlistCount > 0 ? (
+                <span className="absolute -right-1 -top-1 rounded-full bg-black px-1.5 py-[1px] text-[10px] font-medium text-white">{wishlistCount}</span>
+              ) : null}
             </button>
-            <button type="button" aria-label="Cart" className="relative hidden h-9 w-9 place-items-center rounded-full text-[#111] transition hover:bg-[#f3f4f6] lg:grid lg:h-10 lg:w-10">
-              <ShoppingCartOutlined className="text-[1rem]" /><span className="absolute -right-1 -top-1 rounded-full bg-black px-1.5 py-[1px] text-[10px] font-medium text-white">  3</span>
+            <button type="button" aria-label="Cart" onClick={() => message.info("Cart page is coming soon.")} className="relative hidden h-9 w-9 place-items-center rounded-full text-[#111] transition hover:bg-[#f3f4f6] lg:grid lg:h-10 lg:w-10">
+              <ShoppingCartOutlined className="text-[1rem]" />
+              {cartCount > 0 ? (
+                <span className="absolute -right-1 -top-1 rounded-full bg-black px-1.5 py-[1px] text-[10px] font-medium text-white">{cartCount}</span>
+              ) : null}
             </button>
             <button type="button" aria-label={mobileMenuOpen ? "Close menu" : "Open menu"} aria-expanded={mobileMenuOpen} aria-controls="mobile-header-menu" onClick={() => setMobileMenuOpen((prev) => !prev)} className="grid h-9 w-9 place-items-center rounded-full border border-[#e5e7eb] text-[#111] transition hover:bg-[#f3f4f6] lg:hidden">
               {mobileMenuOpen ? (<CloseOutlined className="text-[1rem]" />) : ( <MenuOutlined className="text-[1rem]" />)}
@@ -162,8 +184,8 @@ const Header = () => {
 
               <div className="mt-1.5 grid grid-cols-2 gap-1.5">
                 <button type="button" className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-[#e5e7eb] bg-[#f9fafb] px-2.5 py-2 text-[0.95rem] font-semibold text-[#111] transition hover:bg-white"><SearchOutlined />Search</button>
-                <button type="button" className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-[#e5e7eb] bg-[#f9fafb] px-2.5 py-2 text-[0.95rem] font-semibold text-[#111] transition hover:bg-white"><HeartOutlined />Wishlist (2)</button>
-                <button type="button" className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-[#e5e7eb] bg-[#f9fafb] px-2.5 py-2 text-[0.95rem] font-semibold text-[#111] transition hover:bg-white"><ShoppingCartOutlined />Cart (3)</button>
+                <button type="button" onClick={() => navigate(ROUTES.ACCOUNT.WISHLIST)} className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-[#e5e7eb] bg-[#f9fafb] px-2.5 py-2 text-[0.95rem] font-semibold text-[#111] transition hover:bg-white"><HeartOutlined />Wishlist ({wishlistCount})</button>
+                <button type="button" onClick={() => message.info("Cart page is coming soon.")} className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-[#e5e7eb] bg-[#f9fafb] px-2.5 py-2 text-[0.95rem] font-semibold text-[#111] transition hover:bg-white"><ShoppingCartOutlined />Cart ({cartCount})</button>
 
                 {isAuthenticated ? (
                   <>

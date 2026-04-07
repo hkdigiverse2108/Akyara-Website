@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Mutations, Queries } from "../../Api";
 import CategoryHighlights from "../../Components/CategoryHighlights";
 import HeroSlider from "../../Components/HeroSlider";
-import ProductCard from "../../Components/ProductCard";
+import {ProductCard} from "../../Components/Product";
 import { ROUTES } from "../../Constants";
 import { badgeStyles, getProductDetailPath } from "../Products/productData";
 import { normalizeProductList } from "../Products/productApiUtils";

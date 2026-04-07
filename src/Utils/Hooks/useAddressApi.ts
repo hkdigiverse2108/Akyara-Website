@@ -1,6 +1,7 @@
 import { Mutations, Queries } from "../../Api";
 import type { AddressFormValues } from "../../Types";
-import { buildAddressPayload, normalizeAddressList } from "../../Pages/Profile/Addresses/addressUtils";
+import {buildAddressPayload,normalizeAddressList,
+} from "../../Pages/Profile/Addresses/addressUtils";
 
 type UseAddressApiOptions = {
   addressId?: string;
@@ -8,41 +9,27 @@ type UseAddressApiOptions = {
   userId?: string;
 };
 
-export const useAddressApi = ({
-  addressId,
-  enabled = true,
-  userId,
-}: UseAddressApiOptions = {}) => {
-  const addressesQuery = Queries.useGetAllAddresses(enabled);
-  const addAddressMutation = Mutations.useAddAddress();
-  const editAddressMutation = Mutations.useEditAddress();
-  const deleteAddressMutation = Mutations.useDeleteAddress();
+export const useAddressApi = ({addressId,enabled = true,userId,}: UseAddressApiOptions = {}) => {
+  const { data, isLoading, isFetching } = Queries.useGetAllAddresses(enabled);
 
-  const addresses = normalizeAddressList(addressesQuery.data).filter(
-    (address) => !userId || !address.userId || address.userId === userId
-  );
-  const selectedAddress = addressId
-    ? addresses.find((address) => address.id === addressId) ?? null
-    : null;
+  const add = Mutations.useAddAddress();
+  const edit = Mutations.useEditAddress();
+  const remove = Mutations.useDeleteAddress();
+  const addresses = normalizeAddressList(data).filter((a) => !userId || !a.userId || a.userId === userId);
 
-  const saveAddress = async (values: AddressFormValues) => {
-    const payload = buildAddressPayload(values);
+  const selectedAddress =addressId ? addresses.find((a) => a.id === addressId) ?? null : null;
 
-    return values.id
-      ? editAddressMutation.mutateAsync(payload)
-      : addAddressMutation.mutateAsync(payload);
-  };
-
-  const deleteAddress = async (id: string) => deleteAddressMutation.mutateAsync(id);
+  const saveAddress = (values: AddressFormValues) => {const payload = buildAddressPayload(values);return values.id ? edit.mutateAsync(payload) : add.mutateAsync(payload);};
+  const deleteAddress = (id: string) => remove.mutateAsync(id);
 
   return {
     addresses,
     selectedAddress,
     saveAddress,
     deleteAddress,
-    isLoading: addressesQuery.isLoading,
-    isFetching: addressesQuery.isFetching,
-    isSaving: addAddressMutation.isPending || editAddressMutation.isPending,
-    isDeleting: deleteAddressMutation.isPending,
+    isLoading,
+    isFetching,
+    isSaving: add.isPending || edit.isPending,
+    isDeleting: remove.isPending,
   };
 };

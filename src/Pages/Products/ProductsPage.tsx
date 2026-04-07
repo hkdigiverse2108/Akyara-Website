@@ -1,5 +1,5 @@
 import { Queries } from "../../Api";
-import ProductCard from "../../Components/ProductCard";
+import {ProductCard} from "../../Components/Product";
 import PageLoader from "../../Components/PageLoader";
 import type { ProductCategory } from "../../Types";
 import { getToken } from "../../Utils";
@@ -38,12 +38,7 @@ const ProductsPage = ({ initialCategory = "All" }: ProductsPageProps) => {
         ) : (
           <div className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2 md:grid-cols-3 lg:gap-6 xl:grid-cols-4">
             {visibleProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                {...product}
-                href={getProductDetailPath(product.id)}
-                badgeStyles={badgeStyles}
-              />
+              <ProductCard key={product.id} {...product} href={getProductDetailPath(product.id)} badgeStyles={badgeStyles}/>
             ))}
           </div>
         )}

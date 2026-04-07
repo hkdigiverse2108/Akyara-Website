@@ -1,141 +1,110 @@
 import type {ProductApiResponse,ProductCategory,ProductColor,ProductItem,ProductRecord,ProductRef,} from "../../Types";
 
-const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path}`;
+const assetUrl = (p: string) => `${import.meta.env.BASE_URL}${p}`;
 const fallbackImage = assetUrl("assets/1.jpg");
 
-const isObject = (value: unknown): value is Record<string, unknown> =>
-  !!value && typeof value === "object" && !Array.isArray(value);
+const isObj = (v: unknown): v is Record<string, unknown> =>
+  !!v && typeof v === "object" && !Array.isArray(v);
 
-const toString = (value: unknown): string =>
-  typeof value === "string"? value.trim(): typeof value === "number"  ? String(value)  : "";
+const str = (v: unknown) =>
+  typeof v === "string" ? v.trim() : typeof v === "number" ? String(v) : "";
 
-const toNumber = (value: unknown): number => {
-  if (typeof value === "number" && Number.isFinite(value)) return value;
-  if (typeof value === "string") {
-    const parsed = Number(value);
-    return Number.isFinite(parsed) ? parsed : 0;
-  }
-  return 0;
+const num = (v: unknown) => {
+  const n = typeof v === "number" ? v : Number(v);
+  return Number.isFinite(n) ? n : 0;
 };
 
-const toArray = <T>(value: unknown): T[] => (Array.isArray(value) ? (value as T[]) : []);
+const arr = <T>(v: unknown): T[] => (Array.isArray(v) ? v : []);
 
-const isObjectIdLike = (value: string) => /^[a-f0-9]{24}$/i.test(value.trim());
+const isId = (v: string) => /^[a-f0-9]{24}$/i.test(v);
 
-const resolveMediaUrl = (value: unknown) => {
-  const mediaPath = toString(value);
-  if (!mediaPath) return "";
-  if (/^https?:\/\//i.test(mediaPath)) return mediaPath;
 
-  const apiBase = toString(import.meta.env.VITE_API_BASE_URL).replace(/\/$/, "");
-  if (mediaPath.startsWith("/")) return apiBase ? `${apiBase}${mediaPath}` : mediaPath;
-  
-  return mediaPath;
+const media = (v: unknown) => {
+  const p = str(v);
+  if (!p) return "";
+  if (/^https?:\/\//i.test(p)) return p;
+
+  const base = str(import.meta.env.VITE_API_BASE_URL).replace(/\/$/, "");
+  return p.startsWith("/") ? (base ? `${base}${p}` : p) : p;
 };
 
-const getRefLabel = (value: unknown) => {
-  if (!isObject(value)) return toString(value);
-  const refValue = value as ProductRef;
-  return (toString(refValue.name) ||toString(refValue.title) ||toString(refValue.label) ||toString(refValue.categoryName) ||toString(refValue.value) ||toString(refValue._id));
+const refLabel = (v: unknown) =>isObj(v)  ? str((v as ProductRef).name ||(v as ProductRef).title ||(v as ProductRef).label ||(v as ProductRef).value || (v as ProductRef)._id    )  : str(v);
+
+const refColor = (v: unknown) =>isObj(v)  ? str((v as ProductRef).colorCode ||(v as ProductRef).hexCode || (v as ProductRef).hexColor)  : "";
+
+const normalizeCategory = (v: string) => {
+  const val = v.trim().toLowerCase();
+  if (!val || isId(val)) return "Products";
+  if (val.includes("t-shirt") || val.includes("t shirt") || val.includes("tee")) return "T-Shirts";
+  if (val.includes("jean") || val.includes("denim")) return "Jeans";
+  if (val.includes("shirt")) return "Shirts";
+  return v.trim();
 };
 
-const getRefColor = (value: unknown) => {
-  if (!isObject(value)) return "";
+const currency = (v: unknown) => `Rs ${num(v).toLocaleString("en-IN")}`;
 
-  const refValue = value as ProductRef;
-  return (toString(refValue.colorCode) ||toString(refValue.colourCode) ||toString(refValue.hexCode) ||toString(refValue.hexColor));
-};
+const swatch = (v: string, i: number) => /^#/.test(v)? v: ["#2d8f80", "#e06d42", "#5a7ec1", "#f3e089"][i % 4];
 
-const normalizeProductCategory = (value: string): string => {
-  const normalized = value.trim().toLowerCase();
-  if (!normalized) return "Products";
-  if (normalized.includes("t-shirt") || normalized.includes("t shirt") || normalized.includes("tee")) return "T-Shirts";
-  if (normalized.includes("jean") || normalized.includes("denim")) {
-    return "Jeans";
-  }
-  if (normalized.includes("shirt")) {
-    return "Shirts";
-  }
-  return value.trim();
-};
+const colors = (v: unknown): ProductColor[] =>
+  arr<string | ProductRef>(v).map((e, i) => {
+    const label = refLabel(e);
+    return {
+      name: label && !isId(label) ? label : `Color ${i + 1}`,
+      swatch: swatch(refColor(e) || label, i),
+    };
+  });
 
-const toCurrency = (value: unknown) => `Rs ${toNumber(value).toLocaleString("en-IN")}`;
+const sizes = (v: unknown) =>
+  arr<string | ProductRef>(v).map((e, i) => {
+    const label = refLabel(e);
+    return label && !isId(label) ? label : `Size ${i + 1}`;
+  });
 
-const getColorSwatch = (value: string, index: number) => {
-  const normalized = value.trim();
-  if (/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(normalized)) {
-    return normalized;
-  }
+const uniqueMedia = (...lists: unknown[][]) =>
+  [...new Set(lists.flat().map(media).filter(Boolean))];
 
-  const fallbacks = ["#2d8f80", "#e06d42", "#5a7ec1", "#f3e089", "#c084fc", "#111827"];
-  return fallbacks[index % fallbacks.length];
-};
+const normalizeSku = (values: unknown[]) =>
+  values.map((entry) => str(entry)).find((entry) => entry && !isId(entry)) || "-";
 
-const toProductColors = (value: unknown): ProductColor[] =>
-  toArray<string | ProductRef>(value)
-    .map((entry, index) => {
-      const label = getRefLabel(entry);
-      const safeLabel = label && !isObjectIdLike(label) ? label : `Color ${index + 1}`;
-      return {name: safeLabel,swatch: getColorSwatch(getRefColor(entry) || label, index),
-      };
-    })
-    .filter((entry) => Boolean(entry.name));
+export const normalizeProduct = (v: unknown): ProductItem | null => {
+  if (!isObj(v)) return null;
 
-const toProductSizes = (value: unknown): string[] =>
-  toArray<string | ProductRef>(value)
-    .map((entry, index) => {
-      const label = getRefLabel(entry);
-      return label && !isObjectIdLike(label) ? label : `Size ${index + 1}`;
-    })
-    .filter(Boolean);
-
-const toUniqueMedia = (...collections: unknown[][]) =>
-  [...new Set(collections.flat().map((entry) => resolveMediaUrl(entry)).filter(Boolean))];
-
-export const normalizeProduct = (value: unknown): ProductItem | null => {
-  if (!isObject(value)) return null;
-
-  const raw = value as ProductRecord;
-  const id = toString(raw._id);
+  const r = v as ProductRecord;
+  const id = str(r._id);
   if (!id) return null;
 
-  const categorySource = getRefLabel(raw.categoryId);
-  const category = normalizeProductCategory(categorySource);
-  const gallery = toUniqueMedia([raw.thumbnail], toArray<string>(raw.images));
-  const sellingPrice = toNumber(raw.sellingPrice || raw.mrp);
-  const mrp = toNumber(raw.mrp);
-  const badge = raw.isDealOfDay? "Sale": raw.isTrending  ? "Best Seller"  : raw.isOurTrendingProduct    ? "Editor Pick"    : toNumber(raw.discount) > 0      ? "Hot"      : undefined;
-  return {id,name: toString(raw.title) || "Untitled Product",category,categoryLabel: categorySource || category,price: toCurrency(sellingPrice),oldPrice: mrp > sellingPrice ? toCurrency(mrp) : undefined,badge,image: gallery[0] || fallbackImage,description: toString(raw.shortDescription) || toString(raw.longDescription) || "No product description available.",longDescription: toString(raw.longDescription) || toString(raw.shortDescription) || "No product description available.",sku: toString(raw.sku) || id,rating: toNumber(raw.rating),reviews: 0,availability: raw.isActive === false ? "Out of Stock" : "In Stock",colors: toProductColors(raw.colorIds),sizes: toProductSizes(raw.sizeIds),gallery: gallery.length > 0 ? gallery : [fallbackImage],};
+  const categoryCandidates = [
+    refLabel(r.categoryId),
+    str((r as any).categoryName),
+    str((r as any).categoryLabel),
+    refLabel((r as any).category),
+  ];
+
+  const categoryLabel = categoryCandidates.find((entry) => entry && !isId(entry)) || "Products";
+  const category = normalizeCategory(categoryLabel);
+
+  const gallery = uniqueMedia([r.thumbnail], arr<string>(r.images));
+  const price = num(r.sellingPrice || r.mrp);
+  const mrp = num(r.mrp);
+
+  return {id,name: str(r.title) || "Untitled Product",category,categoryLabel,price: currency(price),oldPrice: mrp > price ? currency(mrp) : undefined,badge: r.isDealOfDay  ? "Sale"  : r.isTrending  ? "Best Seller"  : num(r.discount) > 0  ? "Hot"  : undefined,image: gallery[0] || fallbackImage,description: str(r.shortDescription || r.longDescription) || "No product description available.",longDescription: str(r.longDescription || r.shortDescription) || "No product description available.",sku: normalizeSku([r.sku, (r as any).skuCode, (r as any).SKU, (r as any).productSku, (r as any).productSKU, (r as any).productCode, (r as any).code]),rating: num(r.rating),reviews: 0,availability: r.isActive === false ? "Out of Stock" : "In Stock",colors: colors(r.colorIds),sizes: sizes(r.sizeIds),gallery: gallery.length ? gallery : [fallbackImage],};
 };
 
-export const normalizeProductList = (response?: ProductApiResponse): ProductItem[] => {
-  if (!isObject(response)) return [];
+export const normalizeProductList = (res?: ProductApiResponse) => {
+  if (!isObj(res)) return [];
 
-  const data = response.data;
-  const dataObject = isObject(data) ? (data as Record<string, unknown>) : null;
-  const list = toArray<ProductRecord>(dataObject?.product_data ?? dataObject?.products ?? data);
+  const data = res.data;
+  const list = arr<ProductRecord>(
+    (data as any)?.product_data || (data as any)?.products || data
+  );
 
-  return list
-    .map((entry) => normalizeProduct(entry))
-    .filter((entry): entry is ProductItem => Boolean(entry));
+  return list.map(normalizeProduct).filter(Boolean) as ProductItem[];
+};
+export const normalizeProductDetail = (res?: ProductApiResponse,fallback?: ProductItem | null) => {
+  if (!isObj(res)) return fallback ?? null;
+
+  const data = (res.data as any)?.product || res.data;
+  return normalizeProduct(data) ?? fallback ?? null;
 };
 
-export const normalizeProductDetail = (
-  response?: ProductApiResponse,
-  fallback?: ProductItem | null
-): ProductItem | null => {
-  if (!isObject(response)) return fallback ?? null;
-
-  const data = response.data;
-  const dataObject = isObject(data) ? (data as Record<string, unknown>) : null;
-  const candidate = dataObject?.product ?? data;
-  return normalizeProduct(candidate) ?? fallback ?? null;
-};
-
-export const filterProductsByCategory = (
-  products: ProductItem[],
-  category: ProductCategory
-) => {
-  if (category === "All") return products;
-  return products.filter((product) => normalizeProductCategory(product.category) === category);
-};
+export const filterProductsByCategory = (products: ProductItem[],category: ProductCategory) => category === "All"? products: products.filter((p) => normalizeCategory(p.category) === category);

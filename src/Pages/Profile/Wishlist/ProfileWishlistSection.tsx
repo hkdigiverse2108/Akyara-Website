@@ -1,40 +1,18 @@
 import { DeleteOutlined, HeartFilled, ShoppingCartOutlined, TagOutlined } from "@ant-design/icons";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ROUTES } from "../../../Constants";
 import type { WishlistItem } from "../../../Types/Wishlist";
+import { COMMERCE_STORAGE_EVENT, clearWishlist as clearStoredWishlist, getWishlistItems, removeFromWishlist } from "../../../Utils/commerceStorage";
 
 
 
-const initialWishlist: WishlistItem[] = [
-  {
-    id: "wl-1",
-    name: "Classic Oxford Shirt",
-    category: "Shirts",
-    price: 1299,
-    originalPrice: 1699,
-    stock: "In stock",
-    accent: "from-[#eef4ff] to-[#dbe7ff]",
-    badge: "Best Seller",
-  },
-  {
-    id: "wl-2",
-    name: "Relaxed Fit Denim",
-    category: "Jeans",
-    price: 1999,
-    originalPrice: 2399,
-    stock: "Low stock",
-    accent: "from-[#effcf6] to-[#d7f7e8]",
-    badge: "Only few left",
-  },
-  {
-    id: "wl-3",
-    name: "Minimal Crew T-Shirt",
-    category: "T-Shirts",
-    price: 799,
-    stock: "Out of stock",
-    accent: "from-[#fff4ef] to-[#ffe7dc]",
-  },
+const accentOptions = [
+  "from-[#eef4ff] to-[#dbe7ff]",
+  "from-[#effcf6] to-[#d7f7e8]",
+  "from-[#fff4ef] to-[#ffe7dc]",
+  "from-[#f3f0ff] to-[#e6dcff]",
+  "from-[#f8fafc] to-[#e2e8f0]",
 ];
 
 const stockClass: Record<WishlistItem["stock"], string> = {
@@ -45,8 +23,56 @@ const stockClass: Record<WishlistItem["stock"], string> = {
 
 const formatPrice = (amount: number) => `Rs ${amount.toLocaleString("en-IN")}`;
 
+const parsePrice = (value?: string) => {
+  if (!value) return 0;
+  const digits = value.replace(/[^\d.]/g, "");
+  const parsed = Number(digits);
+  return Number.isFinite(parsed) ? parsed : 0;
+};
+
+const toStock = (availability?: string): WishlistItem["stock"] => {
+  const normalized = (availability ?? "").toLowerCase();
+  if (normalized.includes("out")) return "Out of stock";
+  if (normalized.includes("low")) return "Low stock";
+  return "In stock";
+};
+
+const getAccent = (id: string) => {
+  const hash = id.split("").reduce((acc, ch) => acc + ch.charCodeAt(0), 0);
+  return accentOptions[hash % accentOptions.length];
+};
+
+const loadStoredWishlist = (): WishlistItem[] =>
+  getWishlistItems()
+    .map((item) => {
+      const id = item.productId?.trim();
+      if (!id) return null;
+
+      const category = (item.categoryLabel || item.category || "Products").trim();
+      const normalized: WishlistItem = {
+        id,
+        name: item.name?.trim() || "Untitled Product",
+        category,
+        price: parsePrice(item.price),
+        ...(item.oldPrice ? { originalPrice: parsePrice(item.oldPrice) } : {}),
+        stock: toStock(item.availability),
+        accent: getAccent(id),
+        badge: item.badge,
+      };
+
+      return normalized;
+    })
+    .filter((entry): entry is WishlistItem => entry !== null);
+
 const ProfileWishlistSection = () => {
-  const [wishlist, setWishlist] = useState<WishlistItem[]>(initialWishlist);
+  const [wishlist, setWishlist] = useState<WishlistItem[]>(() => loadStoredWishlist());
+
+  useEffect(() => {
+    const sync = () => setWishlist(loadStoredWishlist());
+    sync();
+    window.addEventListener(COMMERCE_STORAGE_EVENT, sync);
+    return () => window.removeEventListener(COMMERCE_STORAGE_EVENT, sync);
+  }, []);
 
   const summary = useMemo(() => {
     const savedItems = wishlist.length;
@@ -58,11 +84,11 @@ const ProfileWishlistSection = () => {
   }, [wishlist]);
 
   const removeItem = (id: string) => {
-    setWishlist((previous) => previous.filter((item) => item.id !== id));
+    removeFromWishlist(id);
   };
 
   const clearWishlist = () => {
-    setWishlist([]);
+    clearStoredWishlist();
   };
 
   return (
