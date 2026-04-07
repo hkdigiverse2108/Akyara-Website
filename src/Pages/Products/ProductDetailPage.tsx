@@ -87,7 +87,7 @@ const ProductDetailPage = () => {
   const { id } = useParams();
   const hasToken = Boolean(getToken());
   const productDetailQuery = Queries.useGetProductById(id, hasToken && !!id);
-  const productsQuery = Queries.useGetAllProducts(hasToken);
+  const productsQuery = Queries.useGetAllProducts(undefined, hasToken);
   const fallbackProduct = getFallbackProductById(id);
   const product = normalizeProductDetail(productDetailQuery.data, fallbackProduct);
   const apiProducts = normalizeProductList(productsQuery.data);

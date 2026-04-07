@@ -1,34 +1,18 @@
 import { CloseOutlined } from "@ant-design/icons";
 import { useEffect, useRef, useState, type FormEvent } from "react";
 import { Link } from "react-router-dom";
-import { Mutations } from "../../Api/Mutations";
+import { Mutations, Queries } from "../../Api";
 import CategoryHighlights from "../../Components/CategoryHighlights";
 import HeroSlider from "../../Components/HeroSlider";
 import ProductCard from "../../Components/ProductCard";
 import { ROUTES } from "../../Constants";
 import { badgeStyles, getProductDetailPath } from "../Products/productData";
+import { normalizeProductList } from "../Products/productApiUtils";
 import { useAppSelector } from "../../Store/Hooks";
+import { getToken } from "../../Utils";
 
 const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 
-const products = [
-  { id: "product-1", name: "Half Running Set", price: "$119.00", badge: "Sale", image: assetUrl("assets/1.jpg") },
-  { id: "product-2", name: "Formal Men Lowers", price: "$79.00", oldPrice: "$129.00", badge: "New", image: assetUrl("assets/2.jpg") },
-  { id: "product-3", name: "Half Running Suit", price: "$80.00", image: assetUrl("assets/3.jpg") },
-  { id: "product-4", name: "Half Fancy Lady Dress", price: "$110.00", oldPrice: "$149.00", badge: "Hot", image: assetUrl("assets/4.jpg") },
-  { id: "product-5", name: "Flix Flox Jeans", price: "$49.00", oldPrice: "$90.00", image: assetUrl("assets/5.jpg") },
-  { id: "product-6", name: "Fancy Salwar Suits", price: "$114.00", badge: "Hot", image: assetUrl("assets/6.jpg") },
-  { id: "product-7", name: "Collot Full Dress", price: "$120.00", badge: "Sale", image: assetUrl("assets/7.jpg") },
-  { id: "product-8", name: "Formal Fluex Kurti", price: "$129.00", oldPrice: "$149.00", badge: "New", image: assetUrl("assets/8.jpg") },
-];
-
-const deals = [
-  { id: "product-2", name: "Formal Men Lowers", price: "$79.00", oldPrice: "$129.00", badge: "New", image: assetUrl("assets/2.jpg") },
-  { id: "product-3", name: "Half Running Suit", price: "$80.00", image: assetUrl("assets/3.jpg") },
-  { id: "product-4", name: "Half Fancy Lady Dress", price: "$110.00", oldPrice: "$149.00", badge: "Hot", image: assetUrl("assets/4.jpg") },
-  { id: "product-5", name: "Flix Flox Jeans", price: "$49.00", oldPrice: "$90.00", image: assetUrl("assets/5.jpg") },
-  { id: "product-6", name: "Fancy Salwar Suits", price: "$114.00", badge: "Hot", image: assetUrl("assets/6.jpg") },
-];
 
 const countdownCards = [
   { label: "days", value: "-1614" },
@@ -47,6 +31,14 @@ const Home = () => {
   const newsletterMutation = Mutations.useSubscribeNewsletter();
   const { isAuthenticated, user } = useAppSelector((state) => state.auth);
   const sessionEmail = user?.email ?? "";
+  const hasToken = Boolean(getToken());
+  const { data: trendingData } = Queries.useGetAllProducts({ isTrending: true }, hasToken);
+  const { data: dealsData } = Queries.useGetAllProducts({ isDealOfDay: true }, hasToken);
+  const { data: goodDealsData } = Queries.useGetAllProducts({ isActive: true }, hasToken);
+
+  const trendingProducts = normalizeProductList(trendingData);
+  const dealProducts = normalizeProductList(dealsData);
+  const goodDealProducts = normalizeProductList(goodDealsData);
 
   const scrollByCard = (direction: 1 | -1) => {
     const container = dealsSliderRef.current;
@@ -181,7 +173,7 @@ const Home = () => {
           </div>
 
           <div className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2 md:grid-cols-3 lg:gap-6 xl:grid-cols-4">
-            {products.map((product) => (
+            {trendingProducts.slice(0, 8).map((product) => (
               <ProductCard
                 key={product.id}
                 {...product}
@@ -254,9 +246,8 @@ const Home = () => {
               <span aria-hidden="true">&rarr;</span>
             </button>
 
-            <div ref={dealsSliderRef} className="hide-scrollbar flex gap-4 overflow-x-auto px-2 pb-6 scroll-smooth snap-x snap-mandatory sm:gap-6 sm:px-6 xl:px-0" onMouseEnter={() => setIsDealsHovered(true)} onMouseLeave={() => setIsDealsHovered(false)} onTouchStart={() => setIsDealsHovered(true)} onTouchEnd={() => setIsDealsHovered(false)} onTouchCancel={() => setIsDealsHovered(false)}
-            >
-              {deals.map((deal) => (
+            <div ref={dealsSliderRef} className="hide-scrollbar flex gap-4 overflow-x-auto px-2 pb-6 scroll-smooth snap-x snap-mandatory sm:gap-6 sm:px-6 xl:px-0" onMouseEnter={() => setIsDealsHovered(true)} onMouseLeave={() => setIsDealsHovered(false)} onTouchStart={() => setIsDealsHovered(true)} onTouchEnd={() => setIsDealsHovered(false)} onTouchCancel={() => setIsDealsHovered(false)}>
+              {dealProducts.map((deal) => (
                 <ProductCard
                   key={deal.id}
                   {...deal}
@@ -268,6 +259,34 @@ const Home = () => {
                 />
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="mt-12 py-10 sm:mt-16 sm:py-16">
+        <div className="site-container">
+          <div className="mb-10 sm:mb-12">
+            <div className="row justify-content-center">
+              <div className="col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                <div className="sec_title relative text-center">
+                  <h2 className="off_title pointer-events-none absolute left-1/2 top-0 z-0 hidden -translate-x-1/2 whitespace-nowrap text-[clamp(2.6rem,6vw,4.5rem)] font-semibold italic leading-none text-black/10 md:block">
+                    Good Deals
+                  </h2>
+                  <h3 className="ft-bold relative z-10 pt-2 font-display text-2xl font-semibold sm:pt-10 sm:text-3xl">Good Deals</h3>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2 md:grid-cols-3 lg:gap-6 xl:grid-cols-4">
+            {goodDealProducts.slice(0, 8).map((product) => (
+              <ProductCard
+                key={product.id}
+                {...product}
+                href={getProductDetailPath(product.id)}
+                badgeStyles={badgeStyles}
+              />
+            ))}
           </div>
         </div>
       </section>

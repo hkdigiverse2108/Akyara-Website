@@ -12,7 +12,7 @@ type ProductsPageProps = {
 
 const ProductsPage = ({ initialCategory = "All" }: ProductsPageProps) => {
   const hasToken = Boolean(getToken());
-  const { data, isLoading } = Queries.useGetAllProducts(hasToken);
+  const { data, isLoading } = Queries.useGetAllProducts(undefined, hasToken);
   const apiProducts = normalizeProductList(data);
   const visibleProducts = apiProducts.length > 0
     ? filterProductsByCategory(apiProducts, initialCategory)

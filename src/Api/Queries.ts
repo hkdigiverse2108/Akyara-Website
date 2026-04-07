@@ -29,8 +29,8 @@ export const Queries = {
       enabled: enabled && !!id,
     }),
 
-  useGetAllProducts: (enabled = true) =>
-    useQueries<ProductApiResponse>([KEYS.PRODUCT.ALL], () => Get(URL_KEYS.PRODUCT.ALL), { enabled }),
+  useGetAllProducts: (params?: Params, enabled = true) =>
+    useQueries<ProductApiResponse>([KEYS.PRODUCT.ALL, params], () => Get(URL_KEYS.PRODUCT.ALL, params), { enabled }),
 
   useGetProductById: (id?: string, enabled = true) =>
     useQueries<ProductApiResponse>([KEYS.PRODUCT.DETAIL, id], () => Get(`${URL_KEYS.PRODUCT.BASE}/${id}`), {
