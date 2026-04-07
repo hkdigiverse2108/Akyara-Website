@@ -1,28 +1,21 @@
 import { ErrorMessage, Field } from "formik";
 
-type CommonInputProps = {
-  label: string;
-  name: string;
-  type?: string;
-  placeholder?: string;
-  disabled?: boolean;
-  className?: string;
-};
+type AddressTextFieldProps = {label: string;name: string;placeholder?: string;disabled?: boolean;className?: string;};
 
-const CommonInput = ({ label, name, type = "text", placeholder, disabled, className }: CommonInputProps) => {
+const AddressTextField = ({label,name,placeholder,disabled,className,}: AddressTextFieldProps) => {
   return (
     <label className={`grid gap-2 text-sm font-medium text-[#111111] ${className ?? ""}`}>
       {label}
       <Field
         name={name}
-        type={type}
+        type="text"
         placeholder={placeholder}
         disabled={disabled}
-        className="profile-form-input w-full"
+        className="address-location-input w-full"
       />
       <ErrorMessage name={name} component="span" className="text-xs text-[#e53935]" />
     </label>
   );
 };
 
-export default CommonInput;
+export default AddressTextField;
