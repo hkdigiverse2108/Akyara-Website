@@ -9,6 +9,7 @@ import type {
   Params,
   PolicyApiResponse,
   ProductApiResponse,
+  ReviewApiResponse,
   SettingsApiResponse,
   UserProfileResponse,
 } from "../Types";
@@ -72,6 +73,14 @@ export const Queries = {
 
   useGetBlogById: (id?: string, enabled = true) =>
     useQueries<BlogApiResponse>([KEYS.BLOG.DETAIL, id], () => Get(`${URL_KEYS.BLOG.BASE}/${id}`), {
+      enabled: enabled && !!id,
+    }),
+
+  useGetAllReviews: (enabled = true) =>
+    useQueries<ReviewApiResponse>([KEYS.REVIEW.ALL], () => Get(URL_KEYS.REVIEW.ALL), { enabled }),
+
+  useGetReviewById: (id?: string, enabled = true) =>
+    useQueries<ReviewApiResponse>([KEYS.REVIEW.DETAIL, id], () => Get(`${URL_KEYS.REVIEW.BASE}/${id}`), {
       enabled: enabled && !!id,
     }),
 

@@ -1,5 +1,5 @@
 import { KEYS, URL_KEYS } from "../Constants";
-import type { AddressApiResponse, AddressMutationPayload, ApiResponse, ChangePasswordPayload, ContactPayload, EditUserPayload, ForgotPasswordPayload, LoginPayload, LoginResponse, NewsletterSubscriptionPayload, ResetPasswordPayload, SignupPayload, VerifyOtpPayload, VerifyOtpResponse, } from "../Types";
+import type { AddReviewPayload, AddressApiResponse, AddressMutationPayload, ApiResponse, ChangePasswordPayload, ContactPayload, EditUserPayload, ForgotPasswordPayload, LoginPayload, LoginResponse, NewsletterSubscriptionPayload, ResetPasswordPayload, SignupPayload, VerifyOtpPayload, VerifyOtpResponse, } from "../Types";
 import { Delete, Post } from "./Methods/Index";
 import { Put } from "./Methods/Put";
 import { useMutations } from "./ReactQuery/useMutations";
@@ -19,4 +19,5 @@ export const Mutations = {
   useVerifyOtp: () => useMutations<VerifyOtpPayload, VerifyOtpResponse>([KEYS.AUTH.VERIFY_OTP], (input) => Post(URL_KEYS.AUTH.VERIFY_OTP, input, false),),
   useChangePassword: () => useMutations<ChangePasswordPayload, ApiResponse>([KEYS.AUTH.CHANGE_PASSWORD], (input) => Post(URL_KEYS.AUTH.CHANGE_PASSWORD, input),),
   useAddContact: () => useMutations<ContactPayload, ApiResponse>([KEYS.CONTACT.ADD], (input) => Post(URL_KEYS.CONTACT.ADD, input, false)),
+  useAddReview: () => useMutations<AddReviewPayload, ApiResponse>([KEYS.REVIEW.BASE, KEYS.REVIEW.ALL, KEYS.REVIEW.DETAIL], (input) => Post(URL_KEYS.REVIEW.ADD, input)),
 };

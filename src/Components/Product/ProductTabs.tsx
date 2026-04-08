@@ -4,8 +4,8 @@ import type { ProductItem, ProductReview, ProductTab, ReviewFormValues } from ".
 
 const HTML_TAG_PATTERN = /<\/?[a-z][\s\S]*>/i;
 
-interface ProductTabsProps {product: ProductItem;activeTab: ProductTab;setActiveTab: (tab: ProductTab) => void;reviews: ProductReview[];reviewForm: ReviewFormValues;reviewFormMessage: string | null;handleReviewFieldChange: (field: Exclude<keyof ReviewFormValues, "rating">, event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;handleReviewRatingChange: (rating: number) => void;handleReviewSubmit: (event: FormEvent<HTMLFormElement>) => void;}
-export const ProductTabs = ({product,activeTab,setActiveTab,reviews,reviewForm,reviewFormMessage,handleReviewFieldChange,handleReviewRatingChange,handleReviewSubmit,}: ProductTabsProps) => {
+interface ProductTabsProps {product: ProductItem;activeTab: ProductTab;setActiveTab: (tab: ProductTab) => void;reviews: ProductReview[];isReviewsLoading: boolean;reviewForm: ReviewFormValues;reviewFormMessage: string | null;isReviewSubmitting: boolean;handleReviewFieldChange: (field: Exclude<keyof ReviewFormValues, "rating">, event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;handleReviewRatingChange: (rating: number) => void;handleReviewSubmit: (event: FormEvent<HTMLFormElement>) => void;}
+export const ProductTabs = ({product,activeTab,setActiveTab,reviews,isReviewsLoading,reviewForm,reviewFormMessage,isReviewSubmitting,handleReviewFieldChange,handleReviewRatingChange,handleReviewSubmit,}: ProductTabsProps) => {
   const productReferenceId = `#${product.sku.replace(/[^0-9]/g, "").padStart(7, "0").slice(-7)}`;
   const primaryColor = product.colors[0]?.name || "-";
   const sizeLabel = product.sizes.length > 0 ? product.sizes.slice(0, 2).join(", ") : "-";
@@ -54,7 +54,16 @@ export const ProductTabs = ({product,activeTab,setActiveTab,reviews,reviewForm,r
     reviews: (
       <div className="space-y-12">
         <div className="overflow-hidden border-y border-[#edf1f5]">
-          {reviews.map((review) => (
+          {isReviewsLoading ? (
+            <div className="grid min-h-[140px] place-items-center px-4 py-10 text-sm text-[#8b96a8] sm:px-6">
+              Loading reviews...
+            </div>
+          ) : reviews.length === 0 ? (
+            <div className="grid min-h-[140px] place-items-center px-4 py-10 text-sm text-[#8b96a8] sm:px-6">
+              No reviews yet.
+            </div>
+          ) : (
+            reviews.map((review) => (
             <article
               key={review.id}
               className="flex flex-col gap-5 border-b border-[#edf1f5] py-7 last:border-b-0 sm:py-8 lg:flex-row lg:items-start lg:justify-between"
@@ -80,7 +89,8 @@ export const ProductTabs = ({product,activeTab,setActiveTab,reviews,reviewForm,r
                 ))}
               </div>
             </article>
-          ))}
+            ))
+          )}
         </div>
 
         <div>
@@ -125,8 +135,8 @@ export const ProductTabs = ({product,activeTab,setActiveTab,reviews,reviewForm,r
               <p className={`rounded-[10px] px-4 py-3 text-sm ${   reviewFormMessage === "Review submitted successfully."     ? "bg-[#ecfff0] text-[#1b7f3a]"     : "bg-[#ffecec] text-[#e53935]" }`}>{reviewFormMessage}</p>
             ) : null}
 
-            <button type="submit" className="inline-flex h-[56px] items-center justify-center gap-3 rounded-[6px] bg-[#111111] px-8 text-[1rem] font-semibold text-white transition hover:bg-black">
-              Submit Review
+            <button type="submit" disabled={isReviewSubmitting} className="inline-flex h-[56px] items-center justify-center gap-3 rounded-[6px] bg-[#111111] px-8 text-[1rem] font-semibold text-white transition hover:bg-black disabled:cursor-not-allowed disabled:opacity-70">
+              {isReviewSubmitting ? "Submitting..." : "Submit Review"}
               <span aria-hidden="true">&rarr;</span>
             </button>
           </form>

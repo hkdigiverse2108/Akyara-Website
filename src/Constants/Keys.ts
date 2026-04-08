@@ -21,6 +21,11 @@ export const KEYS = {
     ALL: "product.all",
     DETAIL: "product.detail",
   },
+  REVIEW: {
+    BASE: "review.base",
+    ALL: "review.all",
+    DETAIL: "review.detail",
+  },
   POLICY: {
     ALL: "policy.all",
   },

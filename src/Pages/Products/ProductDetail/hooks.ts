@@ -1,49 +1,73 @@
 import { message } from "antd";
-import {useEffect,useRef,useState,type ChangeEvent,type FormEvent,type MouseEvent,} from "react";
+import {useEffect,useMemo,useRef,useState,type ChangeEvent,type FormEvent,type MouseEvent,} from "react";
 import { useNavigate } from "react-router-dom";
-import type {ProductItem,ProductReview,ProductTab,ReviewFormValues,} from "../../../Types";
+import { Mutations, Queries } from "../../../Api";
+import { ROUTES } from "../../../Constants";
+import type {ProductItem,ProductReview,ProductTab,ReviewFormValues,ReviewRecord,} from "../../../Types";
+import { getToken } from "../../../Utils";
 import { addToCart, addToWishlist } from "../../../Utils/commerceStorage";
 import {initialReviewEntries,initialReviewFormValues,} from "./constants";
 import { formatReviewDate, getReviewInitials } from "./utils";
 
+const isObjectId = (v?: string) => /^[a-f0-9]{24}$/i.test(v ?? "");
+
+const clamp = (n: unknown) =>
+  Math.max(1, Math.min(5, Math.round(Number(n) || 5)));
+
+const gradients = ["linear-gradient(135deg,#d8e6d4,#8eb38a)","linear-gradient(135deg,#f4d8dd,#d7a0a9)","linear-gradient(135deg,#d7e5f5,#8fb4db)","linear-gradient(135deg,#f7d9cb,#dd9e80)","linear-gradient(135deg,#efe7ff,#b8a2ff)","linear-gradient(135deg,#e6f7ff,#7cc6ff)",];
+
+const pickGradient = (seed: string) =>gradients[  [...(seed || "r")].reduce((a, c) => a + c.charCodeAt(0), 0) %    gradients.length];
+
+const normalizeReviews = (data: unknown,productId: string
+): ProductReview[] => {
+  const list = Array.isArray((data as any)?.data)? (data as any).data: Array.isArray(data)? data: [];
+
+  return list.filter((r: ReviewRecord) => {  const id =    typeof r.productId === "string"      ? r.productId      : (r.productId as any)?._id;  return !id || id === productId;}).map((r: ReviewRecord, i: number) => {  const name = (r.personName || "Anonymous").trim();  const date = new Date(r.createdAt || Date.now());
+    return {id: r._id || `r-${i}`,name,date: formatReviewDate(date),rating: clamp(r.rating),comment: r.description || "",avatarLabel: getReviewInitials(name) || "R",avatarBackground: pickGradient(r._id || name),};
+    });
+};
+
 export const useProductDetailState = (product: ProductItem | null) => {
-  const [selectedImage, setSelectedImage] = useState("");
-  const [selectedColor, setSelectedColor] = useState("");
-  const [selectedSize, setSelectedSize] = useState("");
-  const [quantity, setQuantity] = useState(1);
-  const [isImageZoomed, setIsImageZoomed] = useState(false);
-  const [zoomOrigin, setZoomOrigin] = useState({ x: 50, y: 50 });
-  const [activeTab, setActiveTab] = useState<ProductTab>("description");
-  const [reviews, setReviews] = useState<ProductReview[]>(initialReviewEntries);
-  const [reviewForm, setReviewForm] = useState(initialReviewFormValues);
-  const [reviewFormMessage, setReviewFormMessage] = useState<string | null>(null);
-  const relatedSliderRef = useRef<HTMLDivElement>(null);
+  const [state, setState] = useState({image: "",color: "",size: "",qty: 1,zoom: false,zoomOrigin: { x: 50, y: 50 },tab: "description" as ProductTab,form: initialReviewFormValues,msg: null as string | null,});
+
+  const sliderRef = useRef<HTMLDivElement>(null);
+
+  const token = getToken();
+  const productId = isObjectId(product?.id) ? product?.id : "";
+  const canFetch = !!token && !!productId;
+
+  const reviewQuery = Queries.useGetAllReviews(canFetch);
+
+  const reviews = useMemo(() => canFetch? normalizeReviews(reviewQuery.data, productId): initialReviewEntries,[reviewQuery.data, productId]);
 
   useEffect(() => {
     if (!product) return;
 
-    setSelectedImage(product.gallery?.[0] || product.image);
-    setSelectedColor(product.colors?.[0]?.name || "");
-    setSelectedSize(product.sizes?.[0] || "");
-    setQuantity(1);
-    setActiveTab("description");
-    setReviews(initialReviewEntries);
-    setReviewForm(initialReviewFormValues);
-    setReviewFormMessage(null);
+    setState((p) => ({...p,image: product.gallery?.[0] || product.image,color: product.colors?.[0]?.name || "",size: product.sizes?.[0] || "",qty: 1,tab: "description",form: initialReviewFormValues,msg: null,}));
   }, [product?.id]);
 
-  useEffect(() => {
-    setIsImageZoomed(false);
-    setZoomOrigin({ x: 50, y: 50 });
-  }, [selectedImage]);
-
-  return {selectedImage,setSelectedImage,selectedColor,setSelectedColor,selectedSize,setSelectedSize,quantity,setQuantity,isImageZoomed,setIsImageZoomed,zoomOrigin,setZoomOrigin,activeTab,setActiveTab,reviews,setReviews,reviewForm,setReviewForm,reviewFormMessage,setReviewFormMessage,relatedSliderRef,};
+  return {
+    selectedImage: state.image,setSelectedImage: (v: string) =>setState((p) => ({ ...p, image: v })),
+    selectedColor: state.color,setSelectedColor: (v: string) => setState((p) => ({ ...p, color: v })),
+    selectedSize: state.size,setSelectedSize: (v: string) =>setState((p) => ({ ...p, size: v })),
+    quantity: state.qty,setQuantity: (v: number) =>setState((p) => ({ ...p, qty: v })),
+    isImageZoomed: state.zoom,setIsImageZoomed: (v: boolean) =>setState((p) => ({ ...p, zoom: v })),zoomOrigin: state.zoomOrigin,
+    activeTab: state.tab,setActiveTab: (v: ProductTab) =>setState((p) => ({ ...p, tab: v })),
+    reviewForm: state.form,setReviewForm: (v: ReviewFormValues) =>setState((p) => ({ ...p, form: v })),
+    reviewFormMessage: state.msg,setReviewFormMessage: (v: string | null) =>setState((p) => ({ ...p, msg: v })),
+    relatedSliderRef: sliderRef,
+    reviews,
+    isReviewsLoading: canFetch && reviewQuery.isLoading,
+    setState,
+  };
 };
 
+/* ------------------ HANDLERS ------------------ */
 export const useProductDetailHandlers = (product: ProductItem | null,state: ReturnType<typeof useProductDetailState>) => {
-  const {selectedColor,selectedSize,selectedImage,quantity,setQuantity,setReviewForm,setReviewFormMessage,setReviews,setIsImageZoomed,setZoomOrigin,relatedSliderRef,reviewForm,reviewFormMessage,} = state;
-
+  const {setState,selectedColor,selectedSize,selectedImage,quantity,reviewForm,reviewFormMessage,relatedSliderRef,} = state;
   const navigate = useNavigate();
+  const addReview = Mutations.useAddReview();
+  const update = (data: any) =>setState((p: any) => ({ ...p, ...data }));
 
   const handleAddToCart = () => {
     if (!product) return;
@@ -51,100 +75,70 @@ export const useProductDetailHandlers = (product: ProductItem | null,state: Retu
     if (
       (product.colors.length && !selectedColor) ||
       (product.sizes.length && !selectedSize)
-    ) {
-      return message.warning("Please select required options");
-    }
+    )
+      return message.warning("Select required options");
 
-    addToCart({
-      productId: product.id,
-      name: product.name,
-      price: product.price,
-      image: selectedImage || product.image,
-      color: selectedColor,
-      size: selectedSize,
-      quantity,
-    });
+    addToCart({productId: product.id,name: product.name,price: product.price,image: selectedImage || product.image,color: selectedColor,size: selectedSize,quantity,});
 
     message.success("Added to cart");
   };
 
-  const handleWishlist = () => {
-    if (!product) return;
+  const handleWishlist = () =>
+    message[addToWishlist(product!) ? "success" : "info"]("Wishlist updated");
 
-    const added = addToWishlist(product);
+  const handleQuantityChange = (e: ChangeEvent<HTMLInputElement>) =>
+    update({qty: Math.max(  1,  Math.min(99, e.target.valueAsNumber || 1)),
+    });
 
-    message[added ? "success" : "info"](
-      added ? "Added to wishlist" : "Already in wishlist"
-    );
+  const handleReviewFieldChange = (field: any, e: any) => {
+    if (reviewFormMessage) update({ msg: null });
+    update({ form: { ...reviewForm, [field]: e.target.value } });
   };
 
-  const handleQuantityChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const v = Math.trunc(e.target.valueAsNumber);
-    setQuantity(!v || v < 1 ? 1 : Math.min(v, 99));
-  };
+  const handleReviewRatingChange = (rating: number) =>
+    update({ form: { ...reviewForm, rating } });
 
-  const handleReviewFieldChange = (
-    field: Exclude<keyof ReviewFormValues, "rating">,
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    if (reviewFormMessage) setReviewFormMessage(null);
-    setReviewForm((p) => ({ ...p, [field]: e.target.value }));
-  };
-
-
-  const handleReviewRatingChange = (rating: number) => {
-    if (reviewFormMessage) setReviewFormMessage(null);
-    setReviewForm((p) => ({ ...p, rating }));
-  };
-
-  const handleReviewSubmit = (e: FormEvent) => {
+  const handleReviewSubmit = async (e: FormEvent) => {
     e.preventDefault();
+
+    if (!getToken()) {
+      navigate(ROUTES.AUTH.SIGNIN);
+      return update({ msg: "Login required" });
+    }
+
+    const productId = isObjectId(product?.id) ? product?.id : "";
+    if (!productId) return update({ msg: "Invalid product" });
 
     const { fullName, email, description, rating } = reviewForm;
 
-    if (!fullName.trim() || !email.trim() || !description.trim()) {
-      return setReviewFormMessage("Please fill all fields.");
+    if (!fullName || !email || !description)
+      return update({ msg: "Fill all fields" });
+
+    try {
+      await addReview.mutateAsync({productId,personName: fullName,email,description,rating,});
+
+      update({form: initialReviewFormValues,msg: "Review added",});
+    } catch (e: any) {
+      update({ msg: e.message || "Error" });
     }
-
-    const newReview: ProductReview = {id: `review-${Date.now()}`,name: fullName.trim(),date: formatReviewDate(new Date()),rating,comment: description.trim(),avatarLabel: getReviewInitials(fullName) || "R",avatarBackground: "linear-gradient(135deg,#dfe4ea,#b9c3cf)",};
-
-    setReviews((p) => [newReview, ...p]);
-    setReviewForm(initialReviewFormValues);
-    setReviewFormMessage("Review submitted successfully.");
   };
+
   const handleImageMouseMove = (e: MouseEvent<HTMLDivElement>) => {
     const b = e.currentTarget.getBoundingClientRect();
-    const x = ((e.clientX - b.left) / b.width) * 100;
-    const y = ((e.clientY - b.top) / b.height) * 100;
-
-    setZoomOrigin({
-      x: Math.min(100, Math.max(0, x)),
-      y: Math.min(100, Math.max(0, y)),
-    });
+    update({zoomOrigin: {x: ((e.clientX - b.left) / b.width) * 100,y: ((e.clientY - b.top) / b.height) * 100,},});
   };
 
-  const resetImageZoom = () => {
-    setIsImageZoomed(false);
-    setZoomOrigin({ x: 50, y: 50 });
-  };
+  const resetImageZoom = () =>
+    update({ zoom: false, zoomOrigin: { x: 50, y: 50 } });
 
   const scrollRelatedProducts = (dir: 1 | -1) => {
     const el = relatedSliderRef.current;
     if (!el) return;
 
-    const card = el.querySelector<HTMLElement>(
-      "[data-related-product-card='true']"
-    );
-    const width = (card?.offsetWidth || 260) +
-      parseFloat(getComputedStyle(el).gap || "0");
+    const card = el.querySelector("[data-related-product-card]");
+    const w = (card as HTMLElement)?.offsetWidth || 260;
 
-    el.scrollBy({ left: dir * width, behavior: "smooth" });
-  };
-
-  /* 🔹 NAVIGATE */
-  const handleRelatedProductClick = (p: ProductItem) => {
-    navigate(`/products/${p.id}`);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    el.scrollBy({ left: dir * w, behavior: "smooth" });
   };
 
   return {
@@ -157,6 +151,6 @@ export const useProductDetailHandlers = (product: ProductItem | null,state: Retu
     handleImageMouseMove,
     resetImageZoom,
     scrollRelatedProducts,
-    handleRelatedProductClick,
+    isReviewSubmitting: addReview.isPending,
   };
 };

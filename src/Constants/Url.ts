@@ -22,6 +22,11 @@ export const URL_KEYS = {
     BASE: "/product",
     ALL: "/product/all",
   },
+  REVIEW: {
+    BASE: "/review",
+    ALL: "/review/all",
+    ADD: "/review/add",
+  },
   POLICY: {
     BASE: "/policy",
     ALL: "/policy/all",
