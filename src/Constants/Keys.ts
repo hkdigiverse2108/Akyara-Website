@@ -52,4 +52,12 @@ export const KEYS = {
   CONTACT: {
     ADD: "contact.add",
   },
+  WISHLIST: {
+    BASE: "wishlist.base",
+    ALL: "wishlist.all",
+  },
+  CART: {
+    BASE: "cart.base",
+    ALL: "cart.all",
+  },
 } as const;

@@ -3,23 +3,14 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { ROUTES } from "../../../Constants";
 import type { WishlistItem } from "../../../Types/Wishlist";
-import { COMMERCE_STORAGE_EVENT, clearWishlist as clearStoredWishlist, getWishlistItems, removeFromWishlist } from "../../../Utils/commerceStorage";
+import { Queries } from "../../../Api";
+import { getToken } from "../../../Utils";
+import { useWishlist } from "../../../Hooks/useWishlist";
+import { COMMERCE_STORAGE_EVENT, clearWishlist as clearStoredWishlist, getWishlistItems } from "../../../Utils/commerceStorage";
 
+const accentOptions = ["from-[#eef4ff] to-[#dbe7ff]","from-[#effcf6] to-[#d7f7e8]","from-[#fff4ef] to-[#ffe7dc]","from-[#f3f0ff] to-[#e6dcff]","from-[#f8fafc] to-[#e2e8f0]",];
 
-
-const accentOptions = [
-  "from-[#eef4ff] to-[#dbe7ff]",
-  "from-[#effcf6] to-[#d7f7e8]",
-  "from-[#fff4ef] to-[#ffe7dc]",
-  "from-[#f3f0ff] to-[#e6dcff]",
-  "from-[#f8fafc] to-[#e2e8f0]",
-];
-
-const stockClass: Record<WishlistItem["stock"], string> = {
-  "In stock": "bg-[#e9f8ef] text-[#0f9d58]",
-  "Low stock": "bg-[#fff7e8] text-[#b26800]",
-  "Out of stock": "bg-[#ffeaea] text-[#c62828]",
-};
+const stockClass: Record<WishlistItem["stock"], string> = {"In stock": "bg-[#e9f8ef] text-[#0f9d58]","Low stock": "bg-[#fff7e8] text-[#b26800]","Out of stock": "bg-[#ffeaea] text-[#c62828]",};
 
 const formatPrice = (amount: number) => `Rs ${amount.toLocaleString("en-IN")}`;
 
@@ -49,45 +40,52 @@ const loadStoredWishlist = (): WishlistItem[] =>
       if (!id) return null;
 
       const category = (item.categoryLabel || item.category || "Products").trim();
-      const normalized: WishlistItem = {
-        id,
-        name: item.name?.trim() || "Untitled Product",
-        category,
-        price: parsePrice(item.price),
-        ...(item.oldPrice ? { originalPrice: parsePrice(item.oldPrice) } : {}),
-        stock: toStock(item.availability),
-        accent: getAccent(id),
-        badge: item.badge,
-      };
+      const normalized: WishlistItem = {id,name: item.name?.trim() || "Untitled Product",category,price: parsePrice(item.price),...(item.oldPrice ? { originalPrice: parsePrice(item.oldPrice) } : {}),stock: toStock(item.availability),accent: getAccent(id),badge: item.badge,image: item.image,};
 
       return normalized;
     })
     .filter((entry): entry is WishlistItem => entry !== null);
 
 const ProfileWishlistSection = () => {
-  const [wishlist, setWishlist] = useState<WishlistItem[]>(() => loadStoredWishlist());
+  const token = getToken();
+  const [localWishlist, setLocalWishlist] = useState<WishlistItem[]>(() => loadStoredWishlist());
+
+  const { toggleWishlist } = useWishlist();
+  const { data: apiWishlistData } = Queries.useGetWishlist(undefined, !!token);
 
   useEffect(() => {
-    const sync = () => setWishlist(loadStoredWishlist());
+    const sync = () => setLocalWishlist(loadStoredWishlist());
     sync();
     window.addEventListener(COMMERCE_STORAGE_EVENT, sync);
     return () => window.removeEventListener(COMMERCE_STORAGE_EVENT, sync);
   }, []);
 
+  const wishlist = useMemo(() => {
+    if (token && apiWishlistData?.data) {
+      const dataArray = Array.isArray(apiWishlistData.data) ? apiWishlistData.data : ((apiWishlistData.data as any)?.wishlist_data || []);
+      return dataArray.map((item: any): WishlistItem => {
+        const prod = item.productId || {};
+        const id = prod._id || item._id;
+        return {id: id,name: prod.title || "Untitled Product",category: prod.categoryName || "Products",price: parsePrice(prod.sellingPrice?.toString()),...(prod.mrp ? { originalPrice: parsePrice(prod.mrp?.toString()) } : {}),stock: prod.stock ? "In stock" : "Out of stock",accent: getAccent(id),badge: item.badge,image: prod.thumbnail || (prod.images ? prod.images[0] : "") || "",};
+      });
+    }
+    return localWishlist;
+  }, [apiWishlistData, localWishlist, token]);
+
   const summary = useMemo(() => {
     const savedItems = wishlist.length;
-    const inStock = wishlist.filter((item) => item.stock === "In stock").length;
-    const lowStock = wishlist.filter((item) => item.stock === "Low stock").length;
-    const totalValue = wishlist.reduce((acc, item) => acc + item.price, 0);
+    const inStock = wishlist.filter((item: any) => item.stock === "In stock").length;
+    const lowStock = wishlist.filter((item: any) => item.stock === "Low stock").length;
+    const totalValue = wishlist.reduce((acc: any, item: any) => acc + item.price, 0);
 
     return { savedItems, inStock, lowStock, totalValue };
   }, [wishlist]);
 
-  const removeItem = (id: string) => {
-    removeFromWishlist(id);
+  const removeItem = async (id: string) => {
+    await toggleWishlist({ id });
   };
 
-  const clearWishlist = () => {
+  const clearWishlistLocal = () => {
     clearStoredWishlist();
   };
 
@@ -103,23 +101,10 @@ const ProfileWishlistSection = () => {
 
           <div className="flex items-center gap-2">
             {wishlist.length ? (
-              <button
-                type="button"
-                onClick={clearWishlist}
-                className="inline-flex items-center gap-2 rounded-full border border-[#ffe0e0] bg-[#fff6f6] px-4 py-2 text-sm font-semibold text-[#c62828] transition hover:bg-[#ffeaea]"
-              >
-                <DeleteOutlined />
-                Clear All
-              </button>
+              <button type="button" onClick={clearWishlistLocal} className="inline-flex items-center gap-2 rounded-full border border-[#ffe0e0] bg-[#fff6f6] px-4 py-2 text-sm font-semibold text-[#c62828] transition hover:bg-[#ffeaea]"><DeleteOutlined />Clear All</button>
             ) : null}
 
-            <Link
-              to={ROUTES.PRODUCTS}
-              className="inline-flex items-center gap-2 rounded-full border border-[#dde4ee] bg-white px-4 py-2 text-sm font-semibold text-[#0f172a] transition hover:border-[#0f172a]"
-            >
-              <ShoppingCartOutlined />
-              Explore Products
-            </Link>
+            <Link to={ROUTES.PRODUCTS} className="inline-flex items-center gap-2 rounded-full border border-[#dde4ee] bg-white px-4 py-2 text-sm font-semibold text-[#0f172a] transition hover:border-[#0f172a]"><ShoppingCartOutlined />Explore Products</Link>
           </div>
         </div>
       </div>
@@ -127,12 +112,7 @@ const ProfileWishlistSection = () => {
       {wishlist.length ? (
         <>
           <div className="grid gap-4 border-b border-[#e6ebf1] p-4 sm:grid-cols-2 lg:grid-cols-4 lg:p-6 xl:p-8">
-            {[
-              { label: "Saved Items", value: summary.savedItems.toString() },
-              { label: "In Stock", value: summary.inStock.toString() },
-              { label: "Low Stock", value: summary.lowStock.toString() },
-              { label: "Current Value", value: formatPrice(summary.totalValue) },
-            ].map((item) => (
+            {[{ label: "Saved Items", value: summary.savedItems.toString() },{ label: "In Stock", value: summary.inStock.toString() },{ label: "Low Stock", value: summary.lowStock.toString() },{ label: "Current Value", value: formatPrice(summary.totalValue) },].map((item) => (
               <div key={item.label} className="rounded-[12px] border border-[#e8edf4] bg-white p-4">
                 <p className="text-[0.68rem] font-semibold uppercase tracking-[0.18em] text-[#8b96a8]">{item.label}</p>
                 <p className="mt-2 text-xl font-semibold text-[#111827]">{item.value}</p>
@@ -141,13 +121,17 @@ const ProfileWishlistSection = () => {
           </div>
 
           <div className="grid gap-4 p-4 sm:grid-cols-2 lg:p-6 xl:grid-cols-3 xl:p-8">
-            {wishlist.map((item) => (
+            {wishlist.map((item: any) => (
               <article key={item.id} className="overflow-hidden rounded-[12px] border border-[#e5e9f0] bg-white">
-                <div className={`grid aspect-[4/3] place-items-center bg-gradient-to-br ${item.accent}`}>
-                  <div className="flex flex-col items-center gap-2 rounded-[14px] border border-white/70 bg-white/75 px-4 py-3 text-[#111827] backdrop-blur-sm">
-                    <HeartFilled className="text-[#ef6b4a]" />
-                    <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#6b7280]">{item.category}</p>
-                  </div>
+                <div className={`grid aspect-[4/3] place-items-center bg-gradient-to-br overflow-hidden ${item.accent}`}>
+                  {item.image ? (
+                    <img src={item.image} alt={item.name} className="h-full w-full object-cover transition-transform duration-500 hover:scale-105" />
+                  ) : (
+                    <div className="flex flex-col items-center gap-2 rounded-[14px] border border-white/70 bg-white/75 px-4 py-3 text-[#111827] backdrop-blur-sm">
+                      <HeartFilled className="text-[#ef6b4a]" />
+                      <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#6b7280]">{item.category}</p>
+                    </div>
+                  )}
                 </div>
 
                 <div className="space-y-3 p-4">
@@ -171,21 +155,8 @@ const ProfileWishlistSection = () => {
                   </div>
 
                   <div className="grid grid-cols-2 gap-2 pt-1">
-                    <button
-                      type="button"
-                      disabled={item.stock === "Out of stock"}
-                      className="inline-flex items-center justify-center rounded-[10px] border border-[#d9e0eb] bg-white px-3 py-2 text-sm font-semibold text-[#0f172a] transition hover:border-[#0f172a] disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      Add to Cart
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => removeItem(item.id)}
-                      className="inline-flex items-center justify-center gap-1.5 rounded-[10px] border border-[#ffe0e0] bg-[#fff6f6] px-3 py-2 text-sm font-semibold text-[#c62828] transition hover:bg-[#ffeaea]"
-                    >
-                      <DeleteOutlined />
-                      Remove
-                    </button>
+                    <button type="button" disabled={item.stock === "Out of stock"} className="inline-flex items-center justify-center rounded-[10px] border border-[#d9e0eb] bg-white px-3 py-2 text-sm font-semibold text-[#0f172a] transition hover:border-[#0f172a] disabled:cursor-not-allowed disabled:opacity-50">Add to Cart</button>
+                    <button type="button" onClick={() => removeItem(item.id)} className="inline-flex items-center justify-center gap-1.5 rounded-[10px] border border-[#ffe0e0] bg-[#fff6f6] px-3 py-2 text-sm font-semibold text-[#c62828] transition hover:bg-[#ffeaea]"><DeleteOutlined />Remove</button>
                   </div>
                 </div>
               </article>

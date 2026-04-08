@@ -11,3 +11,5 @@ export * from "./Order";
 export * from "./Address";
 export * from "./Product";
 export * from "./Review";
+export * from "./Wishlist";
+export * from "./Cart";

@@ -5,7 +5,8 @@ import { Mutations, Queries } from "../../../Api";
 import { ROUTES } from "../../../Constants";
 import type {ProductItem,ProductReview,ProductTab,ReviewFormValues,ReviewRecord,} from "../../../Types";
 import { getToken } from "../../../Utils";
-import { addToCart, addToWishlist } from "../../../Utils/commerceStorage";
+import { useWishlist } from "../../../Hooks/useWishlist";
+import { useCart } from "../../../Hooks/useCart";
 import {initialReviewEntries,initialReviewFormValues,} from "./constants";
 import { formatReviewDate, getReviewInitials } from "./utils";
 
@@ -67,9 +68,12 @@ export const useProductDetailHandlers = (product: ProductItem | null,state: Retu
   const {setState,selectedColor,selectedSize,selectedImage,quantity,reviewForm,reviewFormMessage,relatedSliderRef,} = state;
   const navigate = useNavigate();
   const addReview = Mutations.useAddReview();
+  const { toggleWishlist, wishlistMap } = useWishlist();
   const update = (data: any) =>setState((p: any) => ({ ...p, ...data }));
 
-  const handleAddToCart = () => {
+  const { toggleCart } = useCart();
+
+  const handleAddToCart = async () => {
     if (!product) return;
 
     if (
@@ -78,13 +82,16 @@ export const useProductDetailHandlers = (product: ProductItem | null,state: Retu
     )
       return message.warning("Select required options");
 
-    addToCart({productId: product.id,name: product.name,price: product.price,image: selectedImage || product.image,color: selectedColor,size: selectedSize,quantity,});
-
-    message.success("Added to cart");
+    await toggleCart(
+      { ...product, id: product.id, image: selectedImage || product.image },
+      quantity
+    );
   };
 
-  const handleWishlist = () =>
-    message[addToWishlist(product!) ? "success" : "info"]("Wishlist updated");
+  const handleWishlist = async () => {
+    if (!product) return;
+    await toggleWishlist(product);
+  };
 
   const handleQuantityChange = (e: ChangeEvent<HTMLInputElement>) =>
     update({qty: Math.max(  1,  Math.min(99, e.target.valueAsNumber || 1)),
@@ -152,5 +159,6 @@ export const useProductDetailHandlers = (product: ProductItem | null,state: Retu
     resetImageZoom,
     scrollRelatedProducts,
     isReviewSubmitting: addReview.isPending,
+    isWished: !!product && wishlistMap.has(product.id),
   };
 };

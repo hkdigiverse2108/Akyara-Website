@@ -137,4 +137,3 @@ export const clearWishlist = () => {
   setWishlistItems([]);
 };
 
-export const getWishlistCount = () => getWishlistItems().length;

@@ -7,7 +7,9 @@ import { ROUTES } from "../Constants";
 import { useAppDispatch, useAppSelector } from "../Store/Hooks";
 import { setSignOut, setUser } from "../Store/Slices/AuthSlice";
 import type { AuthSessionUser } from "../Types";
-import { COMMERCE_STORAGE_EVENT, getCartCount, getWishlistCount } from "../Utils/commerceStorage";
+import { COMMERCE_STORAGE_EVENT } from "../Utils/commerceStorage";
+import { useWishlist } from "../Hooks/useWishlist";
+import { useCart } from "../Hooks/useCart";
 
 const navLinks = [{ label: "Home", to: ROUTES.HOME }, { label: "Products", to: ROUTES.PRODUCTS }, { label: "Shirts", to: ROUTES.SHIRTS }, { label: "Tshirts", to: ROUTES.TSHIRTS }, { label: "Jeans", to: ROUTES.JEANS },];
 
@@ -31,22 +33,15 @@ const Header = () => {
   const { isAuthenticated, user } = useAppSelector((state) => state.auth);
   const [accountOpen, setAccountOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [wishlistCount, setWishlistCount] = useState(0);
-  const [cartCount, setCartCount] = useState(0);
+  const { wishlistMap } = useWishlist();
+  const wishlistCount = wishlistMap.size;
+  const { cartList } = useCart();
+  const cartCount = cartList.reduce((acc, item) => acc + (item.quantity || 1), 0);
   const userId = user?._id;
   const singleUserQuery = Queries.useGetSingleUser(userId);
 
   useEffect(() => {
-    const syncCounts = () => {
-      setWishlistCount(getWishlistCount());
-      setCartCount(getCartCount());
-    };
-
-    syncCounts();
-    window.addEventListener(COMMERCE_STORAGE_EVENT, syncCounts);
-    return () => {
-      window.removeEventListener(COMMERCE_STORAGE_EVENT, syncCounts);
-    };
+    // Only kept for any other local events if needed
   }, []);
 
   useEffect(() => {

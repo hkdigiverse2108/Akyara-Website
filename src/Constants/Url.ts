@@ -55,4 +55,15 @@ export const URL_KEYS = {
   CONTACT: {
     ADD: "/contact/add",
   },
+  WISHLIST: {
+    BASE: "/wishlist",
+    ALL: "/wishlist",
+    ADD: "/wishlist/add",
+  },
+  CART: {
+    BASE: "/cart",
+    ALL: "/cart",
+    ADD: "/cart/add",
+    UPDATE: "/cart/update",
+  },
 } as const;
