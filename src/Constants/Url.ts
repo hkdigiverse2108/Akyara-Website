@@ -75,4 +75,8 @@ export const URL_KEYS = {
     BASE: "/ig-post",
     ALL: "/ig-post/all",
   },
+  BANNER: {
+    BASE: "/banner",
+    ALL: "/banner/all",
+  },
 } as const;

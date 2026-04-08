@@ -1,5 +1,5 @@
 import { CloseOutlined } from "@ant-design/icons";
-import { useEffect, useRef, useState, type FormEvent } from "react";
+import { useEffect, useRef, useState, useMemo, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { Mutations, Queries } from "../../Api";
 import { CategoryHighlights, HeroSlider, InstagramFeed, ProductCard, FaqAccordion } from "../../Components";
@@ -20,89 +20,92 @@ const countdownCards = [
 ];
 
 const Home = () => {
-const [subscribe, setSubscribe] = useState({
-  show: false,
-  email: "",
-  status: null as { error?: string; success?: string } | null,
-});
+  const [subscribe, setSubscribe] = useState({
+    show: false,
+    email: "",
+    status: null as { error?: string; success?: string } | null,
+  });
 
-const [isDealsHovered, setIsDealsHovered] = useState(false);
-const dealsSliderRef = useRef<HTMLDivElement | null>(null);
-const scrollAmountRef = useRef(260);
-const { isAuthenticated, user } = useAppSelector((s) => s.auth);
-const sessionEmail = user?.email ?? "";
-const newsletterMutation = Mutations.useSubscribeNewsletter();
-const hasToken = Boolean(getToken());
-const { data: trendingData } = Queries.useGetAllProducts({ isTrending: true }, hasToken);
-const { data: dealsData } = Queries.useGetAllProducts({ isDealOfDay: true }, hasToken);
-const trendingProducts = normalizeProductList(trendingData);
-const dealProducts = normalizeProductList(dealsData);
+  const [isDealsHovered, setIsDealsHovered] = useState(false);
+  const dealsSliderRef = useRef<HTMLDivElement | null>(null);
+  const scrollAmountRef = useRef(260);
+  const { isAuthenticated, user } = useAppSelector((s) => s.auth);
+  const sessionEmail = user?.email ?? "";
+  const newsletterMutation = Mutations.useSubscribeNewsletter();
+  const hasToken = Boolean(getToken());
+  const { data: trendingData } = Queries.useGetAllProducts({ isTrending: true }, hasToken);
+  const { data: dealsData } = Queries.useGetAllProducts({ isDealOfDay: true }, hasToken);
+  const trendingProducts = normalizeProductList(trendingData);
+  const dealProducts = normalizeProductList(dealsData);
+  const { data: bannerData } = Queries.useGetAllBanners();
+  const banners = useMemo(() => bannerData?.data?.banner_data || [], [bannerData]);
 
-useEffect(() => {
-  const el = dealsSliderRef.current;
-  if (!el) return;
-
-  const card = el.querySelector<HTMLElement>("[data-product-card='true']");
-  const gap = parseFloat(getComputedStyle(el).gap || "0");
-
-  scrollAmountRef.current = (card?.offsetWidth ?? 260) + gap;
-}, [dealProducts]);
-
-useEffect(() => {
-  if (isAuthenticated) return;
-
-  const t = setTimeout(() => {
-    setSubscribe((s) => ({ ...s, show: true }))}, 2000);
-
-  return () => clearTimeout(t);
-}, [isAuthenticated]);
-
-useEffect(() => {
-  if (!sessionEmail) return;
-  setSubscribe((s) => ({ ...s, email: s.email || sessionEmail }));
-}, [sessionEmail]);
-
-useEffect(() => {
-  const id = setInterval(() => {
-    if (isDealsHovered) return;
+  useEffect(() => {
     const el = dealsSliderRef.current;
     if (!el) return;
-  const scroll = scrollAmountRef.current;
-    const max = el.scrollWidth - el.clientWidth;
 
-    el.scrollLeft + scroll >= max? el.scrollTo({ left: 0, behavior: "smooth" }): el.scrollBy({ left: scroll, behavior: "smooth" });
-  }, 3000);
+    const card = el.querySelector<HTMLElement>("[data-product-card='true']");
+    const gap = parseFloat(getComputedStyle(el).gap || "0");
 
-  return () => clearInterval(id);
-}, [isDealsHovered]);
+    scrollAmountRef.current = (card?.offsetWidth ?? 260) + gap;
+  }, [dealProducts]);
 
-const scrollByCard = (dir: 1 | -1) => {
-  const el = dealsSliderRef.current;
-  if (!el) return;
-  el.scrollBy({ left: dir * scrollAmountRef.current, behavior: "smooth" });
-};
+  useEffect(() => {
+    if (isAuthenticated) return;
 
-const closeSubscribePopup = () =>setSubscribe({ show: false, email: "", status: null });
+    const t = setTimeout(() => {
+      setSubscribe((s) => ({ ...s, show: true }))
+    }, 2000);
 
-const handleSubscribe = async (e: FormEvent) => {
-  e.preventDefault();
+    return () => clearTimeout(t);
+  }, [isAuthenticated]);
 
-  const email = subscribe.email.trim();
+  useEffect(() => {
+    if (!sessionEmail) return;
+    setSubscribe((s) => ({ ...s, email: s.email || sessionEmail }));
+  }, [sessionEmail]);
 
-  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return setSubscribe((s) => ({...s,status: { error: !email ? "Email is required" : "Invalid email" },}));
-  }
+  useEffect(() => {
+    const id = setInterval(() => {
+      if (isDealsHovered) return;
+      const el = dealsSliderRef.current;
+      if (!el) return;
+      const scroll = scrollAmountRef.current;
+      const max = el.scrollWidth - el.clientWidth;
 
-  try {
-    const res = await newsletterMutation.mutateAsync({ email });
+      el.scrollLeft + scroll >= max ? el.scrollTo({ left: 0, behavior: "smooth" }) : el.scrollBy({ left: scroll, behavior: "smooth" });
+    }, 3000);
 
-    setSubscribe((s) => ({...s,status: { success: res?.message || "Subscribed successfully" },}));
+    return () => clearInterval(id);
+  }, [isDealsHovered]);
 
-    setTimeout(closeSubscribePopup, 1200);
-  } catch (err) {
-    setSubscribe((s) => ({...s,status: { error: err instanceof Error ? err.message : "Failed" },}));
-  }
-};
+  const scrollByCard = (dir: 1 | -1) => {
+    const el = dealsSliderRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir * scrollAmountRef.current, behavior: "smooth" });
+  };
+
+  const closeSubscribePopup = () => setSubscribe({ show: false, email: "", status: null });
+
+  const handleSubscribe = async (e: FormEvent) => {
+    e.preventDefault();
+
+    const email = subscribe.email.trim();
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return setSubscribe((s) => ({ ...s, status: { error: !email ? "Email is required" : "Invalid email" }, }));
+    }
+
+    try {
+      const res = await newsletterMutation.mutateAsync({ email });
+
+      setSubscribe((s) => ({ ...s, status: { success: res?.message || "Subscribed successfully" }, }));
+
+      setTimeout(closeSubscribePopup, 1200);
+    } catch (err) {
+      setSubscribe((s) => ({ ...s, status: { error: err instanceof Error ? err.message : "Failed" }, }));
+    }
+  };
 
   return (
     <div>
@@ -125,7 +128,7 @@ const handleSubscribe = async (e: FormEvent) => {
           </div>
         </div>
       )}
-      <HeroSlider />
+      <HeroSlider banners={banners} />
       <CategoryHighlights />
       <section className="mt-12 py-10 sm:mt-14 sm:py-16">
         <div className="site-container">
@@ -182,12 +185,12 @@ const handleSubscribe = async (e: FormEvent) => {
             </button>
 
             <div ref={dealsSliderRef} className="hide-scrollbar flex gap-4 overflow-x-auto px-2 pb-6 scroll-smooth snap-x snap-mandatory sm:gap-6 sm:px-6 xl:px-0" onMouseEnter={() => setIsDealsHovered(true)} onMouseLeave={() => setIsDealsHovered(false)} onTouchStart={() => setIsDealsHovered(true)} onTouchEnd={() => setIsDealsHovered(false)} onTouchCancel={() => setIsDealsHovered(false)}>
-              {dealProducts.map((deal) => (<ProductCard key={deal.id} {...deal} href={getProductDetailPath(deal.id)} badgeStyles={badgeStyles} className="min-w-[180px] flex-shrink-0 snap-start min-[420px]:min-w-[210px] sm:min-w-[230px] md:min-w-[250px] lg:min-w-[260px] xl:min-w-0 xl:flex-[0_0_calc((100%-72px)/4)]" imageClassName="h-[220px] min-[420px]:h-[250px] sm:h-[300px] lg:h-[340px]"cardDataAttribute={{ name: "data-product-card", value: "true" }}/>))}
+              {dealProducts.map((deal) => (<ProductCard key={deal.id} {...deal} href={getProductDetailPath(deal.id)} badgeStyles={badgeStyles} className="min-w-[180px] flex-shrink-0 snap-start min-[420px]:min-w-[210px] sm:min-w-[230px] md:min-w-[250px] lg:min-w-[260px] xl:min-w-0 xl:flex-[0_0_calc((100%-72px)/4)]" imageClassName="h-[220px] min-[420px]:h-[250px] sm:h-[300px] lg:h-[340px]" cardDataAttribute={{ name: "data-product-card", value: "true" }} />))}
             </div>
           </div>
         </div>
       </section>
-      
+
       <FaqAccordion />
 
       <InstagramFeed />

@@ -1,6 +1,6 @@
 import { KEYS, URL_KEYS } from "../Constants";
 import type { PolicyType } from "../Constants";
-import type {AboutApiResponse,AddressApiResponse,ApiResponse,BlogApiResponse,FaqApiResponse,Params,PolicyApiResponse,ProductApiResponse,ReviewApiResponse,SettingsApiResponse,UserProfileResponse,WishlistApiResponse,CartApiResponse,} from "../Types";
+import type {AboutApiResponse,AddressApiResponse,ApiResponse,BlogApiResponse,FaqApiResponse,Params,PolicyApiResponse,ProductApiResponse,ReviewApiResponse,SettingsApiResponse,UserProfileResponse,WishlistApiResponse,CartApiResponse,BannerApiResponse,SingleBannerApiResponse} from "../Types";
 import { Get } from "./Methods/Get";
 import { useQueries } from "./ReactQuery/useQueries";
 
@@ -25,4 +25,6 @@ export const Queries = {
   useGetCart: (params?: Params, enabled = true) =>useQueries<CartApiResponse>([KEYS.CART.ALL, params], () => Get(URL_KEYS.CART.ALL, params), { enabled }),
   useGetAllOrders: (params?: Params, enabled = true) =>useQueries<any>([KEYS.ORDER.ALL, params], () => Get(URL_KEYS.ORDER.ALL, params), { enabled }),
   useGetIgPosts: (params?: Params, enabled = true) =>useQueries<any>([KEYS.IG_POST.ALL, params], () => Get(URL_KEYS.IG_POST.ALL, params), { enabled }),
+  useGetAllBanners: (enabled = true) =>useQueries<BannerApiResponse>([KEYS.BANNER.ALL], () => Get(URL_KEYS.BANNER.ALL), { enabled }),
+  useGetBannerById: (id?: string, enabled = true) =>useQueries<SingleBannerApiResponse>([KEYS.BANNER.DETAIL, id], () => Get(`${URL_KEYS.BANNER.BASE}/${id}`), {enabled: enabled && !!id,}),
 };

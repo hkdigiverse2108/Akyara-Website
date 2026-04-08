@@ -68,4 +68,8 @@ export const KEYS = {
   IG_POST: {
     ALL: "ig_post.all",
   },
+  BANNER: {
+    ALL: "banner.all",
+    DETAIL: "banner.detail",
+  },
 } as const;
