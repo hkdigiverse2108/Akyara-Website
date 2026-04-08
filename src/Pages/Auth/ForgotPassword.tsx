@@ -2,8 +2,7 @@ import { Form, Formik } from "formik";
 import { Link, useNavigate } from "react-router-dom";
 import { Mutations } from "../../Api/Mutations";
 import { ErrorMessage } from "../../Attribute/Notification";
-import AuthShell from "../../Components/AuthShell";
-import CommonInput from "../../Components/CommonInput";
+import { AuthShell, CommonInput } from "../../Components";
 import { ForgotPasswordSchema } from "../../Utils/ValidationSchemas";
 import { ROUTES } from "../../Constants";
 

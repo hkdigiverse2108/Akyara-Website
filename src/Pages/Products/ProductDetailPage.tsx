@@ -1,12 +1,11 @@
 import { Link, useParams } from "react-router-dom";
 import { Queries } from "../../Api";
-import PageLoader from "../../Components/PageLoader";
+import { PageLoader, ProductImageGallery, ProductInfo, ProductTabs, RelatedProducts } from "../../Components";
 import { ROUTES } from "../../Constants";
 import { getToken } from "../../Utils";
 import {getProductById as getFallbackProductById,products as fallbackProducts,} from "./productData";
 import {normalizeProductDetail,normalizeProductList,} from "./productApiUtils";
 import {useProductDetailState,useProductDetailHandlers,} from "./ProductDetail/hooks";
-import {ProductImageGallery,ProductInfo,ProductTabs,RelatedProducts,} from "../../Components/Product";
 
 const ProductDetailPage = () => {
   const { id } = useParams();

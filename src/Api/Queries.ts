@@ -23,4 +23,6 @@ export const Queries = {
   useGetSettings: (enabled = true) =>useQueries<SettingsApiResponse>([KEYS.SETTINGS.ALL], () => Get(URL_KEYS.SETTINGS.BASE), { enabled }),
   useGetWishlist: (params?: Params, enabled = true) =>useQueries<WishlistApiResponse>([KEYS.WISHLIST.ALL, params], () => Get(URL_KEYS.WISHLIST.ALL, params), { enabled }),
   useGetCart: (params?: Params, enabled = true) =>useQueries<CartApiResponse>([KEYS.CART.ALL, params], () => Get(URL_KEYS.CART.ALL, params), { enabled }),
+  useGetAllOrders: (params?: Params, enabled = true) =>useQueries<any>([KEYS.ORDER.ALL, params], () => Get(URL_KEYS.ORDER.ALL, params), { enabled }),
+  useGetIgPosts: (params?: Params, enabled = true) =>useQueries<any>([KEYS.IG_POST.ALL, params], () => Get(URL_KEYS.IG_POST.ALL, params), { enabled }),
 };

@@ -60,4 +60,12 @@ export const KEYS = {
     BASE: "cart.base",
     ALL: "cart.all",
   },
+  ORDER: {
+    BASE: "order.base",
+    ALL: "order.all",
+    DETAIL: "order.detail",
+  },
+  IG_POST: {
+    ALL: "ig_post.all",
+  },
 } as const;

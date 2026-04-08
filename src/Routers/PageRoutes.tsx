@@ -3,18 +3,7 @@ import { ROUTES } from "../Constants";
 import { ForgotPassword, Login, ResetPassword, Signup, VerifyOtp } from "../Pages/Auth";
 import Home from "../Pages/Home/Home";
 import InfoPage from "../Pages/InfoPage";
-import {
-  AboutDetailPage,
-  AboutPage,
-  BlogDetailPage,
-  BlogPage,
-  CancellationPolicyPage,
-  ContactPage,
-  FAQPage,
-  PrivacyPolicyPage,
-  ReturnRefundPolicyPage,
-  TermsConditionPage,
-} from "../Pages/InfoPages";
+import { AboutDetailPage, AboutPage, BlogDetailPage, BlogPage, CancellationPolicyPage, ContactPage, FAQPage, PrivacyPolicyPage, ReturnRefundPolicyPage, TermsConditionPage } from "../Pages/InfoPages";
 import NotFound from "../Pages/NotFound";
 import Profile, { ProfileAddAddressPage, ProfileEditAddressPage } from "../Pages/Profile";
 import ProductDetailPage from "../Pages/Products/ProductDetailPage";
@@ -24,6 +13,7 @@ export const PageRoutes: RouteObject[] = [
   { path: ROUTES.HOME, element: <Home /> },
   { path: ROUTES.PRODUCTS, element: <ProductsPage /> },
   { path: "/products/:id", element: <ProductDetailPage /> },
+  // { path: ROUTES.CHECKOUT, element: <CheckoutPage /> },
   { path: ROUTES.SHIRTS, element: <ProductsPage initialCategory="Shirts" /> },
   { path: ROUTES.TSHIRTS, element: <ProductsPage initialCategory="T-Shirts" /> },
   { path: ROUTES.JEANS, element: <ProductsPage initialCategory="Jeans" /> },

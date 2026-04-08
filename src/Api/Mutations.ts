@@ -25,4 +25,5 @@ export const Mutations = {
   useAddCart: () => useMutations<AddCartPayload, CartApiResponse>([KEYS.CART.BASE, KEYS.CART.ALL], (input) => Post(URL_KEYS.CART.ADD, input)),
   useUpdateCart: () => useMutations<UpdateCartPayload, CartApiResponse>([KEYS.CART.BASE, KEYS.CART.ALL], (input) => Post(URL_KEYS.CART.UPDATE, input)),
   useRemoveCart: () => useMutations<string, CartApiResponse>([KEYS.CART.BASE, KEYS.CART.ALL], (id) => Delete(`${URL_KEYS.CART.BASE}/${id}`)),
+  useAddOrder: () => useMutations<any, any>([KEYS.ORDER.BASE, KEYS.ORDER.ALL], (input) => Post(URL_KEYS.ORDER.ADD, input)),
 };

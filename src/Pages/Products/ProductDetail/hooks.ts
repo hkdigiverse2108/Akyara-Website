@@ -83,7 +83,13 @@ export const useProductDetailHandlers = (product: ProductItem | null,state: Retu
       return message.warning("Select required options");
 
     await toggleCart(
-      { ...product, id: product.id, image: selectedImage || product.image },
+      { 
+        ...product, 
+        id: product.id, 
+        image: selectedImage || product.image,
+        size: selectedSize,
+        color: selectedColor
+      },
       quantity
     );
   };

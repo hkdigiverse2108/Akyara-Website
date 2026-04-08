@@ -1,5 +1,5 @@
 import {CloseOutlined,HeartOutlined,LogoutOutlined,MenuOutlined,SearchOutlined,ShoppingCartOutlined,UserOutlined,} from "@ant-design/icons";
-import { Dropdown, message } from "antd";
+import { Dropdown } from "antd";
 import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Queries } from "../Api/Queries";
@@ -7,9 +7,9 @@ import { ROUTES } from "../Constants";
 import { useAppDispatch, useAppSelector } from "../Store/Hooks";
 import { setSignOut, setUser } from "../Store/Slices/AuthSlice";
 import type { AuthSessionUser } from "../Types";
-import { COMMERCE_STORAGE_EVENT } from "../Utils/commerceStorage";
 import { useWishlist } from "../Hooks/useWishlist";
 import { useCart } from "../Hooks/useCart";
+import CartDrawer from "../Components/Cart/CartDrawer";
 
 const navLinks = [{ label: "Home", to: ROUTES.HOME }, { label: "Products", to: ROUTES.PRODUCTS }, { label: "Shirts", to: ROUTES.SHIRTS }, { label: "Tshirts", to: ROUTES.TSHIRTS }, { label: "Jeans", to: ROUTES.JEANS },];
 
@@ -33,10 +33,11 @@ const Header = () => {
   const { isAuthenticated, user } = useAppSelector((state) => state.auth);
   const [accountOpen, setAccountOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
   const { wishlistMap } = useWishlist();
   const wishlistCount = wishlistMap.size;
   const { cartList } = useCart();
-  const cartCount = cartList.reduce((acc, item) => acc + (item.quantity || 1), 0);
+  const cartCount = cartList.reduce((acc: number, item: any) => acc + (item.quantity || 1), 0);
   const userId = user?._id;
   const singleUserQuery = Queries.useGetSingleUser(userId);
 
@@ -142,7 +143,7 @@ const Header = () => {
                 <span className="absolute -right-1 -top-1 rounded-full bg-black px-1.5 py-[1px] text-[10px] font-medium text-white">{wishlistCount}</span>
               ) : null}
             </button>
-            <button type="button" aria-label="Cart" onClick={() => message.info("Cart page is coming soon.")} className="relative hidden h-9 w-9 place-items-center rounded-full text-[#111] transition hover:bg-[#f3f4f6] lg:grid lg:h-10 lg:w-10">
+            <button type="button" aria-label="Cart" onClick={() => setCartOpen(true)} className="relative hidden h-9 w-9 place-items-center rounded-full text-[#111] transition hover:bg-[#f3f4f6] lg:grid lg:h-10 lg:w-10">
               <ShoppingCartOutlined className="text-[1rem]" />
               {cartCount > 0 ? (
                 <span className="absolute -right-1 -top-1 rounded-full bg-black px-1.5 py-[1px] text-[10px] font-medium text-white">{cartCount}</span>
@@ -180,7 +181,7 @@ const Header = () => {
               <div className="mt-1.5 grid grid-cols-2 gap-1.5">
                 <button type="button" className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-[#e5e7eb] bg-[#f9fafb] px-2.5 py-2 text-[0.95rem] font-semibold text-[#111] transition hover:bg-white"><SearchOutlined />Search</button>
                 <button type="button" onClick={() => navigate(ROUTES.ACCOUNT.WISHLIST)} className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-[#e5e7eb] bg-[#f9fafb] px-2.5 py-2 text-[0.95rem] font-semibold text-[#111] transition hover:bg-white"><HeartOutlined />Wishlist ({wishlistCount})</button>
-                <button type="button" onClick={() => message.info("Cart page is coming soon.")} className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-[#e5e7eb] bg-[#f9fafb] px-2.5 py-2 text-[0.95rem] font-semibold text-[#111] transition hover:bg-white"><ShoppingCartOutlined />Cart ({cartCount})</button>
+                <button type="button" onClick={() => setCartOpen(true)} className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-[#e5e7eb] bg-[#f9fafb] px-2.5 py-2 text-[0.95rem] font-semibold text-[#111] transition hover:bg-white"><ShoppingCartOutlined />Cart ({cartCount})</button>
 
                 {isAuthenticated ? (
                   <>
@@ -195,6 +196,7 @@ const Header = () => {
           </div>
         </div>
       </div>
+      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
     </header>
   );
 };

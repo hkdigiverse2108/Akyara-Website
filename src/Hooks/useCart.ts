@@ -1,18 +1,14 @@
-import { message } from "antd";
 import { useEffect, useMemo, useState } from "react";
-import { Mutations, Queries } from "../Api";
+import { Queries } from "../Api";
 import { getToken } from "../Utils";
 import { COMMERCE_STORAGE_EVENT, getCartItems, addToCart as addLocalCart, setCartItems } from "../Utils/commerceStorage";
-import type { ProductItem, CartRecord, AddCartPayload } from "../Types";
+import type { ProductItem } from "../Types";
 
 export const useCart = () => {
   const token = getToken();
   const [localCart, setLocalCart] = useState(() => getCartItems());
 
-  const { data: apiCartData, refetch } = Queries.useGetCart(undefined, !!token);
-  const addCartMut = Mutations.useAddCart();
-  const updateCartMut = Mutations.useUpdateCart();
-  const removeCartMut = Mutations.useRemoveCart();
+  const { data: productsData } = Queries.useGetAllProducts(undefined, !!token);
 
   useEffect(() => {
     const sync = () => setLocalCart(getCartItems());
@@ -20,78 +16,41 @@ export const useCart = () => {
     return () => window.removeEventListener(COMMERCE_STORAGE_EVENT, sync);
   }, []);
 
-  const cartMap = useMemo(() => {
-    const map = new Map<string, number | string>();
-    if (token && apiCartData?.data) {
-      const arr = Array.isArray(apiCartData.data) ? apiCartData.data : ((apiCartData.data as any)?.cart_data || []);
-      arr.forEach((w: any) => {
-        const rawPId = w.productId?._id || w.productId;
-        if (rawPId && !w.isDeleted) {
-          const pId = String(rawPId);
-          map.set(pId, String(w._id || pId)); // Maps Product ID -> Cart Record ID
-        }
-      });
-    } else {
-      localCart.forEach((w) => map.set(w.productId, w.quantity));
-    }
-    return map;
-  }, [apiCartData, localCart, token]);
-
   const cartList = useMemo(() => {
-    if (token && apiCartData?.data) {
-      const arr = Array.isArray(apiCartData.data) ? apiCartData.data : ((apiCartData.data as any)?.cart_data || []);
-      return arr.filter((w: any) => !w.isDeleted);
-    }
-    return localCart;
-  }, [apiCartData, localCart, token]);
+    const list = localCart;
 
-  const toggleCart = async (product: Partial<ProductItem> & { id: string }, quantity = 1) => {
-    const pId = String(product.id || (product as any)._id);
-    const cartVal = cartMap.get(pId);
-    
-    if (token) {
-      try {
-        if (cartVal) {
-          // If you click it, typically toggling from product card removes it, but cart is ADD generally.
-          // Assuming we just Add if not exist, or increment if exists. 
-          await addCartMut.mutateAsync({ productId: pId, quantity });
-        } else {
-          await addCartMut.mutateAsync({ productId: pId, quantity });
-        }
-        refetch();
-        message.success(`Added to cart`);
-      } catch (err: any) {
-        message.error("Failed to update cart");
-      }
-    } else {
-      const productObj = {
-        productId: pId,
-        name: product.name || "",
-        price: product.price?.toString() || "0",
-        image: product.image || "",
-        quantity: quantity,
-      };
+    if (productsData?.data) {
+      const allProducts = Array.isArray(productsData.data) ? productsData.data : ((productsData.data as any).products || []);
+      const productMap = new Map(allProducts.map((p: any) => [String(p._id || p.id), p]));
       
-      addLocalCart(productObj);
-      message.success("Added to cart");
+      return list.map(item => {
+        const pId = String(item.productId);
+        const details = productMap.get(pId);
+        if (details) {
+          return {...item,productId: details,};
+        }
+        return item;
+      });
     }
+
+    return list;
+  }, [localCart, productsData]);
+
+  const toggleCart = async (product: Partial<ProductItem> & { productId?: any; id?: string; _id?: string; title?: string; sellingPrice?: string | number; thumbnail?: string; size?: string; color?: string }, quantity = 1) => {
+    const pId = String(product.productId || product.id || product._id);
+    const productObj = {productId: pId,name: product.name || (product.productId?.title || product.title) || "",price: (product.price || product.productId?.sellingPrice || product.sellingPrice)?.toString() || "0",image: product.image || (product.productId?.thumbnail || product.thumbnail) || "",quantity: quantity,size: product.size,color: product.color,};
+    addLocalCart(productObj);
   };
 
-  const removeCartItem = async (cartItemId: string, productId: string) => {
-    if (token) {
-      try {
-        await removeCartMut.mutateAsync(cartItemId);
-        refetch();
-        message.success("Removed from cart");
-      } catch (err) {
-        message.error("Failed to remove item");
-      }
-    } else {
-      const next = getCartItems().filter((item) => item.productId !== productId);
-      setCartItems(next);
-      message.success("Removed from cart");
-    }
+  const removeCartItem = async (productId: string, size?: string, color?: string) => {
+    const next = getCartItems().filter((item) => {
+        const matchesId = item.productId === productId;
+        const matchesSize = item.size === size;
+        const matchesColor = item.color === color;
+        return !(matchesId && matchesSize && matchesColor);
+    });
+    setCartItems(next);
   };
 
-  return { cartMap, cartList, toggleCart, removeCartItem };
+  return { cartList, toggleCart, removeCartItem };
 };

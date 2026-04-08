@@ -1,159 +1,155 @@
 import { useEffect, useMemo, useState } from "react";
 import { Queries } from "../../../Api/Queries";
-import type { FaqItem, FaqValue } from "../../../Types";
+import type { FaqItem } from "../../../Types";
+import { PageLoader } from "../../../Components";
+import { PlusOutlined, MinusOutlined } from "@ant-design/icons";
 
 type FaqRecord = Record<string, unknown>;
+type FaqCategoryGroup = { key: string; label: string; items: FaqItem[] };
 
-type FaqCategoryGroup = { key: string; label: string; items: FaqItem[]; };
+const KEYS = ["data", "docs", "items", "rows", "results", "records"] as const;
 
-const COLLECTION_KEYS = ["data", "docs", "items", "rows", "results", "records"] as const;
+const isObj = (v: unknown): v is FaqRecord => typeof v === "object" && v !== null;
 
-const isRecord = (value: unknown): value is FaqRecord => typeof value === "object" && value !== null;
+const getCategory = (v: unknown): FaqItem["faqCategoryId"] | undefined => {
+    if (typeof v === "string") return v;
+    if (!isObj(v)) return;
 
-const getFaqCategoryValue = (value: unknown): FaqItem["faqCategoryId"] | undefined => {
-  if (typeof value === "string") return value;
-  if (!isRecord(value)) return undefined;
-  const categoryName = typeof value.name === "string" ? value.name.trim() : undefined;
-  const categoryTitle = typeof value.title === "string" ? value.title.trim() : undefined;
-
-  return { _id: typeof value._id === "string" ? value._id : undefined, name: categoryName || categoryTitle, };
+    return {
+        _id: typeof v._id === "string" ? v._id : undefined,
+        name: (v.name || v.title)?.toString().trim(),
+    };
 };
 
-const toFaqItem = (value: unknown): FaqItem | undefined => {
-  if (!isRecord(value)) return undefined;
-  const question = typeof value.question === "string" ? value.question.trim() : undefined;
-  const answer = typeof value.answer === "string" ? value.answer.trim() : undefined;
+const toItem = (v: unknown): FaqItem | undefined => {
+    if (!isObj(v)) return;
 
-  if (!question && !answer) return undefined;
+    const q = v.question?.toString().trim();
+    const a = v.answer?.toString().trim();
+    if (!q && !a) return;
 
-  return { _id: typeof value._id === "string" ? value._id : undefined, question, answer, priority: typeof value.priority === "number" ? value.priority : 0, faqCategoryId: getFaqCategoryValue(value.faqCategoryId), isActive: typeof value.isActive === "boolean" ? value.isActive : undefined, isDeleted: typeof value.isDeleted === "boolean" ? value.isDeleted : undefined, };
+    return { _id: typeof v._id === "string" ? v._id : undefined, question: q, answer: a, priority: Number(v.priority) || 0, faqCategoryId: getCategory(v.faqCategoryId), isActive: v.isActive as boolean, isDeleted: v.isDeleted as boolean, };
 };
 
-const normalizeFaqItems = (value: unknown, visited = new WeakSet<object>()): FaqItem[] => {
-  if (!value) return [];
-  if (Array.isArray(value)) return value.flatMap((item) => normalizeFaqItems(item, visited))
-  if (!isRecord(value)) return [];
-  if (visited.has(value)) return [];
-  visited.add(value);
-  const directItem = toFaqItem(value);
-  if (directItem) return [directItem];
+const normalizeFaqItems = (v: unknown): FaqItem[] => {
+    if (!v) return [];
+    if (Array.isArray(v)) return v.flatMap(normalizeFaqItems);
+    if (!isObj(v)) return [];
 
+    const item = toItem(v);
+    if (item) return [item];
 
-  const fromCollectionKeys = COLLECTION_KEYS.flatMap((key) => normalizeFaqItems(value[key], visited),);
-  if (fromCollectionKeys.length) return fromCollectionKeys;
-  return Object.values(value).flatMap((nestedValue) => normalizeFaqItems(nestedValue, visited));
+    return KEYS.flatMap(k => normalizeFaqItems(v[k] ?? Object.values(v)));
 };
 
-const toTitleCase = (value: string) => value.split(/[\s_-]+/).filter(Boolean).map((part) => part[0].toUpperCase() + part.slice(1).toLowerCase()).join(" ");
+const title = (s: string) =>
+    s.replace(/[_-]/g, " ")
+        .replace(/\b\w/g, c => c.toUpperCase());
 
-const resolveFaqCategory = (item: FaqItem, index: number) => {
-  if (typeof item.faqCategoryId === "string" && item.faqCategoryId.trim()) {
-    const normalized = item.faqCategoryId.trim();
-    return { key: `cat:${normalized}`, label: `${toTitleCase(normalized)}:` };
-  }
+const resolveCat = (item: FaqItem, i: number) => {
+    const c = item.faqCategoryId;
 
-  if (item.faqCategoryId && typeof item.faqCategoryId === "object") {
-    const categoryName = item.faqCategoryId.name?.trim();
-    const categoryId = item.faqCategoryId._id?.trim();
+    if (typeof c === "string")
+        return { key: `cat:${c}`, label: title(c) };
 
-    if (categoryName) return { key: `cat:${categoryId || categoryName}`, label: `${categoryName}:` };
-    if (categoryId) return { key: `cat:${categoryId}`, label: "General:" };
-  }
-  return { key: `general:${index}`, label: "General:" };
+    if (typeof c === "object" && (c?.name || c?._id))
+        return { key: `cat:${c._id || c.name}`, label: c.name || "General Information" };
+
+    return { key: `general:${i}`, label: "General Support" };
 };
 
-const getFaqItemKey = (item: FaqItem, categoryKey: string, index: number) =>
-  item._id ? `faq:${item._id}` : `faq:${categoryKey}:${index}`;
+const getKey = (item: FaqItem, cat: string, i: number) =>
+    item._id ? `faq:${item._id}` : `faq:${cat}:${i}`;
 
 const FAQPage = () => {
-  const faqQuery = Queries.useGetFaqAll(true);
+    const { data, isLoading } = Queries.useGetFaqAll(true);
+    const [open, setOpen] = useState<Record<string, boolean>>({});
 
-  const faqItems = useMemo(() => normalizeFaqItems(faqQuery.data?.data as FaqValue).filter((item) => item.isDeleted !== true && item.isActive !== false).sort((a, b) => (a.priority ?? 0) - (b.priority ?? 0)), [faqQuery.data?.data],);
+    const items = useMemo(() =>
+        normalizeFaqItems(data?.data).filter(i => i.isDeleted !== true && i.isActive !== false).sort((a, b) => (a.priority || 0) - (b.priority || 0)),
+        [data]
+    );
 
-  const faqGroups = useMemo(() => {
-    const groupedMap = new Map<string, FaqCategoryGroup>();
+    const groups = useMemo(() => {
+        const map = new Map<string, FaqCategoryGroup>();
 
-    faqItems.forEach((item, index) => {
-      const category = resolveFaqCategory(item, index);
-      const existing = groupedMap.get(category.key);
+        items.forEach((item, i) => {
+            const cat = resolveCat(item, i);
+            map.set(cat.key, map.get(cat.key) ? { ...map.get(cat.key)!, items: [...map.get(cat.key)!.items, item] } : { ...cat, items: [item] });
+        });
 
-      if (existing) {
-        existing.items.push(item);
-        return;
-      }
+        return [...map.values()];
+    }, [items]);
 
-      groupedMap.set(category.key, { key: category.key, label: category.label, items: [item], });
-    });
+    useEffect(() => {
+        if (!groups.length || Object.keys(open).length) return;
+        const first = groups[0]?.items[0];
+        if (first) setOpen({ [getKey(first, groups[0].key, 0)]: true });
+    }, [groups, open]);
 
-    return Array.from(groupedMap.values());
-  }, [faqItems]);
+    const toggle = (k: string) =>
+        setOpen(p => ({ ...p, [k]: !p[k] }));
 
-  const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
+    if (isLoading) return <PageLoader />;
 
-  useEffect(() => {
-    if (!faqGroups.length || Object.keys(openItems).length) {
-      return;
-    }
-
-    const firstGroup = faqGroups[0];
-    const firstItem = firstGroup.items[0];
-
-    if (!firstItem) return;
-    const firstItemKey = getFaqItemKey(firstItem, firstGroup.key, 0);
-    setOpenItems({ [firstItemKey]: true });
-  }, [faqGroups, openItems]);
-
-  const toggleItem = (itemKey: string) => {
-    setOpenItems((previous) => ({ ...previous, [itemKey]: !previous[itemKey], }));
-  };
-
-  return (
-    <section className="site-container py-10 sm:py-14 lg:py-20">
-      <div className="relative text-center">
-        <p className="pointer-events-none absolute left-1/2 top-0 -z-10 -translate-x-1/2 whitespace-nowrap text-[2rem] font-semibold italic tracking-wide text-[#d7d9dd] opacity-60 sm:text-[3rem] lg:text-[4.4rem]">FAQs Section</p>
-        <h1 className="text-[1.8rem] font-semibold leading-tight text-[#0b0b0b] sm:text-[2.2rem] lg:text-[2.75rem]">Frequently Asked Questions</h1>
-      </div>
-
-      <div className="mt-6 space-y-6 sm:mt-8 sm:space-y-8">
-        {faqQuery.isLoading ? (
-          <div className="rounded-[8px] border border-[#cfd4da] bg-[#f3f4f6] px-4 py-6 sm:px-8 sm:py-8">
-            <p className="text-[0.98rem] leading-7 text-[#0b0b0b] sm:text-[1.02rem] sm:leading-8">Loading FAQs...</p>
-          </div>) : faqGroups.length ? (
-            faqGroups.map((group) => (
-              <article key={group.key} className="rounded-[8px] border border-[#cfd4da] bg-[#f3f4f6] p-4 sm:p-6">
-                <h2 className="text-[1.4rem] font-semibold leading-tight text-[#0b0b0b] sm:text-[1.7rem] lg:text-[2rem]">{group.label}</h2>
-
-                <div className="mt-4 space-y-3">
-                  {group.items.map((item, index) => {
-                    const itemKey = getFaqItemKey(item, group.key, index);
-                    const isOpen = !!openItems[itemKey];
-                    return (
-                      <div key={itemKey} className="overflow-hidden rounded-[8px] border border-[#cfd4da] bg-[#f3f4f6]">
-                        <button type="button" onClick={() => toggleItem(itemKey)} className="flex w-full items-center justify-between gap-4 px-4 py-3 text-left sm:px-5 sm:py-4" aria-expanded={isOpen}>
-                          <span className="text-[0.98rem] font-semibold text-[#0b0b0b] sm:text-[1.05rem]">{item.question ?? "Question"}</span>
-                          <span className="text-3xl leading-none text-[#3b3f46] sm:text-4xl">{isOpen ? "\u2212" : "+"}</span>
-                        </button>
-
-                        {isOpen && item.answer ? (
-                          <div className="border-t border-[#d5dae0] px-4 pb-4 sm:px-5 sm:pb-5">
-                            <p className="mt-3 whitespace-pre-line text-[0.98rem] leading-7 text-[#5f6774] sm:text-[1.02rem] sm:leading-8"> {item.answer}</p>
-                          </div>
-                        ) : null}
-                      </div>
-                    );
-                  })}
+    return (
+        <div className="min-h-screen bg-[#fafafa]">
+            <div className="bg-white border-b border-gray-100 py-12 sm:py-20 overflow-hidden">
+                <div className="site-container">
+                    <div className="relative text-center max-w-4xl mx-auto">
+                        <p className="pointer-events-none absolute left-1/2 top-1/2 -z-0 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap text-[clamp(2.5rem,10vw,6rem)] font-bold italic tracking-wider text-black/[0.03] sm:tracking-widest">FAQ&apos;s Section</p>
+                        <h1 className="relative z-10 text-2xl font-bold text-[#111827] sm:text-4xl lg:text-[2.75rem] leading-tight">Frequently Asked Questions</h1>
+                    </div>
                 </div>
-              </article>
-            ))
-          ) : (
-          <div className="rounded-[8px] border border-[#cfd4da] bg-[#f3f4f6] px-4 py-6 sm:px-8 sm:py-8">
-            <p className="text-[0.98rem] leading-7 text-[#5f6774] sm:text-[1.02rem] sm:leading-8">FAQ content will appear here once it is published.</p>
-          </div>
-        )}
-      </div>
-    </section>
-  );
+            </div>
+            <div className="site-container py-12 sm:py-16">
+                <div className="max-w-4xl mx-auto">
+                    <div className="space-y-12">
+                        {groups.length > 0 ? (
+                            groups.map((group) => (
+                                <div key={group.key} className="animate-fadeIn">
+                                    <div className="flex items-center gap-4 mb-6">
+                                        <h2 className="text-xs font-black uppercase tracking-[0.25em] text-[#e53935] whitespace-nowrap">{group.label}</h2>
+                                        <div className="h-[1px] w-full bg-gray-100" />
+                                    </div>
+                                    <div className="space-y-3">
+                                        {group.items.map((item, idx) => {
+                                            const key = getKey(item, group.key, idx);
+                                            const isOpen = !!open[key];
+                                            return (
+                                                <div key={key} className={`group transition-all duration-300 rounded-xl border ${isOpen ? 'border-gray-200 bg-white shadow-lg shadow-black/[0.02]' : 'border-transparent bg-white shadow-sm hover:border-gray-200'}`}>
+                                                    <button onClick={() => toggle(key)} className="w-full flex items-center justify-between px-6 py-4.5 text-left">
+                                                        <span className={`pr-6 font-bold text-[0.95rem] transition-colors duration-300 ${isOpen ? 'text-[#e53935]' : 'text-[#111827]'}`}>
+                                                            {item.question}
+                                                        </span>
+                                                        <span className={`shrink-0 flex items-center justify-center w-7 h-7 rounded-full transition-all duration-300 ${isOpen ? 'bg-[#e53935] text-white rotate-180' : 'bg-gray-50 text-gray-400 group-hover:bg-gray-100'}`}>
+                                                            {isOpen ? <MinusOutlined className="text-[9px]" /> : <PlusOutlined className="text-[9px]" />}
+                                                        </span>
+                                                    </button>
+                                                    <div className={`transition-all duration-500 ease-in-out ${isOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                                                        <div className="px-6 pb-5 pt-1">
+                                                            <div className="border-t border-gray-50 pt-4">
+                                                                <p className="text-gray-500 leading-relaxed text-[0.92rem]">{item.answer}</p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="bg-white rounded-3xl p-12 text-center border border-gray-100 shadow-sm">
+                                <h3 className="text-lg font-bold text-gray-900 mb-2">No FAQs Yet</h3>
+                                <p className="text-gray-500">We&apos;re working on building our knowledge base. Check back soon!</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
 };
 
 export default FAQPage;
-

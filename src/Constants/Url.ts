@@ -66,4 +66,13 @@ export const URL_KEYS = {
     ADD: "/cart/add",
     UPDATE: "/cart/update",
   },
+  ORDER: {
+    BASE: "/order",
+    ADD: "/order/add",
+    ALL: "/order/all",
+  },
+  IG_POST: {
+    BASE: "/ig-post",
+    ALL: "/ig-post/all",
+  },
 } as const;

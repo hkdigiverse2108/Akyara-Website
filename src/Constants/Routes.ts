@@ -11,6 +11,8 @@ export const ROUTES = {
     PAYMENT: "/profile/payment-method",
     CHANGE_PASSWORD: "/profile/change-password",
   },
+  CART: "/cart",
+  CHECKOUT: "/checkout",
   PRODUCTS: "/products",
   SHIRTS: "/shirts",
   TSHIRTS: "/tshirts",

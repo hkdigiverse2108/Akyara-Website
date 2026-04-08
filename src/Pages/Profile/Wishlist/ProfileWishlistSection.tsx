@@ -137,7 +137,7 @@ const ProfileWishlistSection = () => {
                 <div className="space-y-3 p-4">
                   <div className="flex items-start justify-between gap-2">
                     <h3 className="text-base font-semibold text-[#111827]">{item.name}</h3>
-                    <span className={`shrink-0 rounded-full px-2.5 py-1 text-[0.68rem] font-semibold ${stockClass[item.stock]}`}>
+                    <span className={`shrink-0 rounded-full px-2.5 py-1 text-[0.68rem] font-semibold ${stockClass[item.stock as keyof typeof stockClass]}`}>
                       {item.stock}
                     </span>
                   </div>
