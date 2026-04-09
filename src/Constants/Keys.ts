@@ -69,6 +69,10 @@ export const KEYS = {
     PAY: "razorpay.pay",
     VERIFY: "razorpay.verify",
   },
+  PHONEPE: {
+    PAY: "phonepe.pay",
+    CALLBACK: "phonepe.callback",
+  },
   IG_POST: {
     ALL: "ig_post.all",
   },
@@ -77,4 +81,3 @@ export const KEYS = {
     DETAIL: "banner.detail",
   },
 } as const;
-

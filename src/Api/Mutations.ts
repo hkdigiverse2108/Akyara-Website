@@ -28,5 +28,6 @@ export const Mutations = {
   useAddOrder: () => useMutations<any, any>([KEYS.ORDER.BASE, KEYS.ORDER.ALL], (input) => Post(URL_KEYS.ORDER.ADD, input)),
   useCreateRazorpayPayment: () =>useMutations<any, ApiResponse>([KEYS.RAZORPAY.PAY], (input) => Post(URL_KEYS.RAZORPAY.PAY, input)),
   useVerifyRazorpayPayment: () =>useMutations<any, ApiResponse>([KEYS.RAZORPAY.VERIFY], (input) => Post(URL_KEYS.RAZORPAY.VERIFY, input)),
+  useCreatePhonePePayment: () => useMutations<any, ApiResponse>([KEYS.PHONEPE.PAY], (input) => Post(URL_KEYS.PHONEPE.PAY, input)),
+  usePhonePeCallback: () => useMutations<any, ApiResponse>([KEYS.PHONEPE.CALLBACK], (input) => Post(URL_KEYS.PHONEPE.CALLBACK, input, false)),
 };
-

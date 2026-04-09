@@ -33,7 +33,9 @@ const toSettingsItem = (value: unknown): SettingsItem | undefined => {
     youtube: getString(value.youtube),
     twitter: getString(value.twitter),
     isRazorpay: getBoolean(value.isRazorpay),
+    isPhonePe: getBoolean(value.isPhonePe),
     razorpayApiKey: getString(value.razorpayApiKey),
+    phonePeApiKey: getString(value.phonePeApiKey),
   };
 
   const hasUsefulValue =
@@ -45,7 +47,9 @@ const toSettingsItem = (value: unknown): SettingsItem | undefined => {
     !!item.youtube ||
     !!item.twitter ||
     item.isRazorpay === true ||
-    !!item.razorpayApiKey;
+    item.isPhonePe === true ||
+    !!item.razorpayApiKey ||
+    !!item.phonePeApiKey;
 
   return hasUsefulValue ? item : undefined;
 };
@@ -127,4 +131,3 @@ export const resolveSettingsImageUrl = (value?: string) => {
   if (trimmed.startsWith("/")) return `${baseUrl}${trimmed}`;
   return `${baseUrl}/${trimmed.replace(/^\/+/, "")}`;
 };
-

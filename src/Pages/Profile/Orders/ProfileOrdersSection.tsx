@@ -61,6 +61,17 @@ const formatLabel = (value: unknown, fallback: string) => {
   return text.charAt(0).toUpperCase() + text.slice(1).toLowerCase();
 };
 
+const resolvePhonePeRedirectUrl = (value: any) =>
+  String(
+    value?.redirectUrl ||
+      value?.paymentUrl ||
+      value?.url ||
+      value?.data?.instrumentResponse?.redirectInfo?.url ||
+      value?.instrumentResponse?.redirectInfo?.url ||
+      value?.redirectInfo?.url ||
+      "",
+  ).trim();
+
 const RAZORPAY_SCRIPT_URL = "https://checkout.razorpay.com/v1/checkout.js";
 let razorpayLoader: Promise<boolean> | null = null;
 
@@ -92,9 +103,11 @@ const ProfileOrdersSection = () => {
   const settingsQuery = Queries.useGetSettings(true);
   const createRazorpayPaymentMutation = Mutations.useCreateRazorpayPayment();
   const verifyRazorpayPaymentMutation = Mutations.useVerifyRazorpayPayment();
+  const createPhonePePaymentMutation = Mutations.useCreatePhonePePayment();
   const orders = data?.data?.order_data || [];
   const settings = getPrimarySettings(settingsQuery.data?.data);
   const isRazorpayEnabled = Boolean(settings?.isRazorpay);
+  const isPhonePeEnabled = Boolean(settings?.isPhonePe);
   const razorpayKey = String(settings?.razorpayApiKey ?? import.meta.env.VITE_RAZORPAY_KEY_ID ?? "").trim();
 
   const { imageById, imageByTitle } = useMemo(() => {
@@ -129,13 +142,35 @@ const ProfileOrdersSection = () => {
     try {
       setActivePaymentOrderId(localOrderKey);
 
+      const orderTotal = toNumber(order?.total);
+      const orderTotalInRupees = Math.max(1, Number(orderTotal.toFixed(2)));
+      const amountInPaise = Math.max(1, Math.round(orderTotal * 100));
+
+      if (isPhonePeEnabled) {
+        const merchantRedirectUrl =
+          typeof window !== "undefined"
+            ? `${window.location.origin}${ROUTES.ACCOUNT.ORDERS}`
+            : ROUTES.ACCOUNT.ORDERS;
+        const phonePeResponse: any = await createPhonePePaymentMutation.mutateAsync({
+          amount: orderTotalInRupees,
+          redirectUrl: merchantRedirectUrl,
+          orderId: orderId || undefined,
+        });
+        const phonePeData = phonePeResponse?.data ?? phonePeResponse;
+        const redirectUrl = resolvePhonePeRedirectUrl(phonePeData);
+
+        if (!redirectUrl) {
+          throw new Error("Unable to initiate PhonePe payment.");
+        }
+
+        window.location.assign(redirectUrl);
+        return;
+      }
+
       const sdkLoaded = await loadRazorpayScript();
       if (!sdkLoaded) {
         throw new Error("Unable to load Razorpay checkout. Please try again.");
       }
-
-      const orderTotal = toNumber(order?.total);
-      const amountInPaise = Math.max(1, Math.round(orderTotal * 100));
 
       const payResponse: any = await createRazorpayPaymentMutation.mutateAsync({
         amount: amountInPaise,
@@ -253,9 +288,9 @@ const ProfileOrdersSection = () => {
             const isCancelledOrder = orderStatus === "cancelled";
             const isProcessingPayment =
               activePaymentOrderId === orderKey &&
-              (createRazorpayPaymentMutation.isPending || verifyRazorpayPaymentMutation.isPending);
+              (createPhonePePaymentMutation.isPending || createRazorpayPaymentMutation.isPending || verifyRazorpayPaymentMutation.isPending);
             const canPayNow =
-              isAuthenticated && !isCancelledOrder && isPendingPayment && (isRazorpayEnabled || !!razorpayKey);
+              isAuthenticated && !isCancelledOrder && isPendingPayment && (isPhonePeEnabled || isRazorpayEnabled || !!razorpayKey);
             return (
             <article key={orderKey} className="rounded-[12px] border border-[#dfe7f3] bg-white p-4 shadow-[0_10px_24px_rgba(15,23,42,0.04)] sm:p-5">
               <div className="flex flex-wrap items-start justify-between gap-3 border-b border-[#eef2f8] pb-4">

@@ -76,6 +76,11 @@ export const URL_KEYS = {
     PAY: "/razorpay/pay",
     VERIFY: "/razorpay/verify",
   },
+  PHONEPE: {
+    BASE: "/phonepe",
+    PAY: "/phonepe/pay",
+    CALLBACK: "/phonepe/callback",
+  },
   IG_POST: {
     BASE: "/ig-post",
     ALL: "/ig-post/all",
@@ -85,4 +90,3 @@ export const URL_KEYS = {
     ALL: "/banner/all",
   },
 } as const;
-

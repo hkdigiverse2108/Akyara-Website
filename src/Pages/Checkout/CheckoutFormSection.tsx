@@ -24,6 +24,17 @@ const toNumber = (value: unknown) => {
   return Number.isNaN(parsed) ? 0 : parsed;
 };
 
+const resolvePhonePeRedirectUrl = (value: any) =>
+  String(
+    value?.redirectUrl ||
+      value?.paymentUrl ||
+      value?.url ||
+      value?.data?.instrumentResponse?.redirectInfo?.url ||
+      value?.instrumentResponse?.redirectInfo?.url ||
+      value?.redirectInfo?.url ||
+      "",
+  ).trim();
+
 const loadRazorpayScript = async () => {
   const win = window as any;
   if (win.Razorpay) return true;
@@ -53,16 +64,19 @@ const CheckoutFormSection = ({
   const addOrderMutation = Mutations.useAddOrder();
   const createRazorpayPaymentMutation = Mutations.useCreateRazorpayPayment();
   const verifyRazorpayPaymentMutation = Mutations.useVerifyRazorpayPayment();
+  const createPhonePePaymentMutation = Mutations.useCreatePhonePePayment();
   const settingsQuery = Queries.useGetSettings(true);
 
   const settings = getPrimarySettings(settingsQuery.data?.data);
   const isRazorpayEnabled = Boolean(settings?.isRazorpay);
+  const isPhonePeEnabled = Boolean(settings?.isPhonePe);
   const razorpayKey = String(settings?.razorpayApiKey ?? import.meta.env.VITE_RAZORPAY_KEY_ID ?? "").trim();
 
   const isPaymentPending =
     addOrderMutation.isPending ||
     createRazorpayPaymentMutation.isPending ||
-    verifyRazorpayPaymentMutation.isPending;
+    verifyRazorpayPaymentMutation.isPending ||
+    createPhonePePaymentMutation.isPending;
 
   return (
     <Formik
@@ -114,7 +128,9 @@ const CheckoutFormSection = ({
           ...(cleanDiscountCode ? { discountCode: cleanDiscountCode } : {}),
         };
 
-        const shouldUseRazorpay = isAuthenticated && (isRazorpayEnabled || !!razorpayKey);
+        const shouldUsePhonePe = isAuthenticated && isPhonePeEnabled;
+        const shouldUseRazorpay =
+          isAuthenticated && !shouldUsePhonePe && (isRazorpayEnabled || !!razorpayKey);
 
         try {
           const orderResponse: any = await addOrderMutation.mutateAsync(payload);
@@ -122,15 +138,37 @@ const CheckoutFormSection = ({
           const createdOrder: any =
             responseData?.updatedOrder || responseData?.order || responseData || orderResponse?.updatedOrder;
           const createdOrderId = String(createdOrder?._id || createdOrder?.id || "").trim();
+          const payableTotal = toNumber(createdOrder?.total || createdOrder?.subtotal || subtotal);
+          const payableTotalInRupees = Math.max(1, Number(payableTotal.toFixed(2)));
+          const amountInPaise = Math.max(1, Math.round(payableTotal * 100));
+
+          if (shouldUsePhonePe) {
+            const merchantRedirectUrl =
+              typeof window !== "undefined"
+                ? `${window.location.origin}${ROUTES.ACCOUNT.ORDERS}`
+                : ROUTES.ACCOUNT.ORDERS;
+            const phonePeInitResponse: any = await createPhonePePaymentMutation.mutateAsync({
+              amount: payableTotalInRupees,
+              redirectUrl: merchantRedirectUrl,
+              orderId: createdOrderId || undefined,
+            });
+            const phonePeData: any = phonePeInitResponse?.data ?? phonePeInitResponse;
+            const redirectUrl = resolvePhonePeRedirectUrl(phonePeData);
+
+            if (!redirectUrl) {
+              throw new Error("Unable to initiate PhonePe payment.");
+            }
+
+            setCartItems([]);
+            window.location.assign(redirectUrl);
+            return;
+          }
 
           if (shouldUseRazorpay) {
             const sdkLoaded = await loadRazorpayScript();
             if (!sdkLoaded) {
               throw new Error("Unable to load Razorpay checkout. Please try again.");
             }
-
-            const payableTotal = toNumber(createdOrder?.total || createdOrder?.subtotal || subtotal);
-            const amountInPaise = Math.max(1, Math.round(payableTotal * 100));
 
             let paymentData: any = responseData?.razorpayOrder || orderResponse?.razorpayOrder;
             const embeddedAmount = Number(paymentData?.amount);
@@ -354,5 +392,3 @@ const CheckoutFormSection = ({
 };
 
 export default CheckoutFormSection;
-
-
