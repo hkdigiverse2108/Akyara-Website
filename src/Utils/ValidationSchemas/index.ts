@@ -79,3 +79,20 @@ export const AddressSchema = Yup.object({
   country: Yup.string().trim().required("Country is required"),
   isDefault: Yup.boolean().default(false),
 });
+
+export const CheckoutSchema = Yup.object({
+  firstName: Yup.string().trim().required("First name is required"),
+  lastName: Yup.string().trim().required("Last name is required"),
+  email: Yup.string().email("Enter a valid email").required("Email is required"),
+  countryCode: Yup.string().required("Country code is required"),
+  phoneNumber: Yup.string().required("Phone number is required").test("valid-phone-number", "Enter a valid phone number", (value) => (value?.replace(/\D/g, "").length ?? 0) >= 6),
+  discountCode: Yup.string().trim().max(50, "Discount code is too long"),
+  addressId: Yup.string().trim().test("valid-object-id", "Select a valid saved address", (value) => !value || /^[a-f0-9]{24}$/i.test(value)),
+  address1: Yup.string().trim().when("addressId", { is: (value: string) => !value, then: (schema) => schema.required("Address is required"), otherwise: (schema) => schema.notRequired() }),
+  address2: Yup.string().trim(),
+  city: Yup.string().trim().when("addressId", { is: (value: string) => !value, then: (schema) => schema.required("City is required"), otherwise: (schema) => schema.notRequired() }),
+  state: Yup.string().trim().when("addressId", { is: (value: string) => !value, then: (schema) => schema.required("State is required"), otherwise: (schema) => schema.notRequired() }),
+  zipCode: Yup.string().trim().when("addressId", { is: (value: string) => !value, then: (schema) => schema.required("PIN code is required"), otherwise: (schema) => schema.notRequired() }),
+  country: Yup.string().trim().when("addressId", { is: (value: string) => !value, then: (schema) => schema.required("Country is required"), otherwise: (schema) => schema.notRequired() }),
+  isDefault: Yup.boolean().default(false),
+});

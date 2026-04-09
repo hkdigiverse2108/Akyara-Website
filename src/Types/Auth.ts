@@ -31,6 +31,7 @@ export type User = {
 
 export type AuthSessionUser = User & {
   _id?: string;
+  id?: string;
   token?: string;
   userType?: string | number;
   phoneNumber?: string;

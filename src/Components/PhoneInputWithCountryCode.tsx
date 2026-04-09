@@ -16,7 +16,7 @@ const countryCodeOptions = getCountries()
   .sort((left, right) => left.label.localeCompare(right.label));
 
 const fieldClassName =
-  "w-full rounded-[12px] border border-[#e1e1e1] bg-white px-4 py-3 text-sm text-[#2b2b2b] placeholder:text-[#b7b7b7] outline-none transition focus:border-black disabled:cursor-not-allowed disabled:bg-[#f6f6f6]";
+  "w-full rounded-[12px] border border-[#e1e1e1] bg-white px-4 py-2 text-sm text-[#2b2b2b] placeholder:text-[#b7b7b7] outline-none transition focus:border-black disabled:cursor-not-allowed disabled:bg-[#f6f6f6]";
 
 const PhoneInputWithCountryCode = ({ label, countryCodeName, phoneNumberName, placeholder, className }: { label: string; countryCodeName: string; phoneNumberName: string; placeholder?: string; className?: string; }) => {
   const [countryCodeField, countryCodeMeta, countryCodeHelpers] = useField<string>(countryCodeName);

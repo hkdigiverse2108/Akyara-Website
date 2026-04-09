@@ -148,7 +148,7 @@
   .profile-form-input,
   .address-location-input,
   .profile-form-textarea {
-    --profile-field-height: 56px;
+    --profile-field-height: 50px;
   }
 
   .profile-form-input {

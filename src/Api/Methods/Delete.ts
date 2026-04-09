@@ -1,17 +1,17 @@
 import axios, { AxiosError, type AxiosRequestConfig } from "axios";
 import { ShowNotification } from "../../Attribute/Notification";
 import { HTTP_STATUS } from "../../Constants";
-import { getToken } from "../../Utils";
+import { getApiBaseUrl, getToken } from "../../Utils";
 
 export async function Delete<T, TInput>(url: string, data?: TInput): Promise<T> {
   const authToken = getToken();
-    const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const BASE_URL = getApiBaseUrl();
 
   const config: AxiosRequestConfig = {
     method: "DELETE",
     url: BASE_URL + url,
     headers: {
-      Authorization: `Bearer ${authToken}`,
+      ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
     },
     data,
   };

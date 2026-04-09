@@ -17,3 +17,36 @@ export type OrderCard = {
   eta?: string;
   items: OrderItem[];
 };
+
+export type CheckoutFormValues = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  countryCode: string;
+  phoneNumber: string;
+  discountCode: string;
+  addressId: string;
+  address1: string;
+  address2: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+  isDefault: boolean;
+};
+
+export type CheckoutLineItem = {
+  productId: string;
+  quantity: number;
+  unitPrice: number;
+  lineTotal: number;
+  name: string;
+};
+
+export type CheckoutFormSectionProps = {
+  initialValues: CheckoutFormValues;
+  items: CheckoutLineItem[];
+  subtotal: number;
+  isAuthenticated: boolean;
+  userId: string;
+};

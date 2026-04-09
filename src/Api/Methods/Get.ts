@@ -2,20 +2,17 @@ import axios, { AxiosError, type AxiosRequestConfig } from "axios";
 import { ErrorMessage, ShowNotification } from "../../Attribute/Notification";
 import { HTTP_STATUS, ROUTES } from "../../Constants";
 import type { Params } from "../../Types";
-import { getToken, Storage } from "../../Utils";
+import { getApiBaseUrl, getToken, Storage } from "../../Utils";
 
 let isRedirecting = false;
 
 export async function Get<T>(url: string, params?: Params, headers?: Record<string, string>): Promise<T> {
   const authToken = getToken();
-  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const BASE_URL = getApiBaseUrl();
   const config: AxiosRequestConfig = {
     method: "GET",
     headers: {
-      Authorization: `Bearer ${authToken}`,
-      "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
-      Pragma: "no-cache",
-      Expires: "0",
+      ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
       ...headers,
     },
     params,
@@ -28,7 +25,7 @@ export async function Get<T>(url: string, params?: Params, headers?: Record<stri
   } catch (error) {
     const axiosError = error as AxiosError<{ status?: string }>;
 
-    if (axiosError?.response?.status === HTTP_STATUS.UNAUTHORIZED && !isRedirecting) {
+    if (axiosError?.response?.status === HTTP_STATUS.UNAUTHORIZED && !!authToken && !isRedirecting) {
       Storage.clear();
       isRedirecting = true;
       window.location.href = ROUTES.HOME;

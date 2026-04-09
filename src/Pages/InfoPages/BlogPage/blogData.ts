@@ -1,5 +1,6 @@
 import { ROUTES, URL_KEYS } from "../../../Constants";
 import type { BlogCategoryRef, BlogItem } from "../../../Types";
+import { getApiBaseUrl } from "../../../Utils";
 
 type Rec = Record<string, unknown>;
 
@@ -14,7 +15,7 @@ const arr = (v: unknown): string[] => {
 };
 const uniq = (a: string[]) => [...new Set(a.filter(Boolean))];
 
-const baseUrl = () => (import.meta.env.VITE_API_BASE_URL || "").replace(/\/+$/, "");
+const baseUrl = () => getApiBaseUrl();
 const cleanPath = (p: string) => p.replace(/^\/+/, "");
 const isUrl = (v: string) => /^(https?:\/\/|data:image\/|blob:)/i.test(v);
 

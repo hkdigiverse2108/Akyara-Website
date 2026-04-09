@@ -117,18 +117,18 @@ export const ProductTabs = ({product,activeTab,setActiveTab,reviews,isReviewsLoa
             <div className="grid gap-5 md:grid-cols-2">
               <label className="grid gap-2 text-sm font-semibold text-[#111827]">
                 <span>Full Name</span>
-                <input type="text" value={reviewForm.fullName} onChange={(event) => handleReviewFieldChange("fullName", event)} className="h-14 w-full rounded-[6px] border border-[#d8dde6] bg-white px-4 text-[0.95rem] text-[#111827] outline-none transition focus:border-black"/>
+                <input type="text" value={reviewForm.fullName} onChange={(event) => handleReviewFieldChange("fullName", event)} className="h-11 w-full rounded-[6px] border border-[#d8dde6] bg-white px-4 text-[0.95rem] text-[#111827] outline-none transition focus:border-black"/>
               </label>
 
               <label className="grid gap-2 text-sm font-semibold text-[#111827]">
                 <span>Email Address</span>
-                <input type="email" value={reviewForm.email} onChange={(event) => handleReviewFieldChange("email", event)} className="h-14 w-full rounded-[6px] border border-[#d8dde6] bg-white px-4 text-[0.95rem] text-[#111827] outline-none transition focus:border-black"/>
+                <input type="email" value={reviewForm.email} onChange={(event) => handleReviewFieldChange("email", event)} className="h-11 w-full rounded-[6px] border border-[#d8dde6] bg-white px-4 text-[0.95rem] text-[#111827] outline-none transition focus:border-black"/>
               </label>
             </div>
 
             <label className="grid gap-2 text-sm font-semibold text-[#111827]">
               <span>Description</span>
-              <textarea rows={7} value={reviewForm.description} onChange={(event) => handleReviewFieldChange("description", event)} className="w-full resize-y rounded-[6px] border border-[#d8dde6] bg-white px-4 py-3 text-[0.95rem] leading-7 text-[#111827] outline-none transition focus:border-black"/>
+              <textarea rows={7} value={reviewForm.description} onChange={(event) => handleReviewFieldChange("description", event)} className="w-full resize-y rounded-[6px] border border-[#d8dde6] bg-white px-4 py-2 text-[0.95rem] leading-7 text-[#111827] outline-none transition focus:border-black"/>
             </label>
 
             {reviewFormMessage ? (

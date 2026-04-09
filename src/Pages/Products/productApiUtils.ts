@@ -1,4 +1,5 @@
 import type {ProductApiResponse,ProductCategory,ProductColor,ProductItem,ProductRecord,ProductRef,} from "../../Types";
+import { getApiBaseUrl } from "../../Utils";
 
 const assetUrl = (p: string) => `${import.meta.env.BASE_URL}${p}`;
 const fallbackImage = assetUrl("assets/1.jpg");
@@ -24,7 +25,7 @@ const media = (v: unknown) => {
   if (!p) return "";
   if (/^https?:\/\//i.test(p)) return p;
 
-  const base = str(import.meta.env.VITE_API_BASE_URL).replace(/\/$/, "");
+  const base = getApiBaseUrl();
   return p.startsWith("/") ? (base ? `${base}${p}` : p) : p;
 };
 

@@ -1,7 +1,6 @@
 import { Queries } from "../../Api";
 import { ProductCard, PageLoader, EmptyState } from "../../Components";
 import type { ProductCategory } from "../../Types";
-import { getToken } from "../../Utils";
 import { badgeStyles, getProductDetailPath, getProductsByCategory as getFallbackProductsByCategory } from "./productData";
 import { filterProductsByCategory, normalizeProductList } from "./productApiUtils";
 
@@ -10,8 +9,7 @@ type ProductsPageProps = {
 };
 
 const ProductsPage = ({ initialCategory = "All" }: ProductsPageProps) => {
-  const hasToken = Boolean(getToken());
-  const { data, isLoading } = Queries.useGetAllProducts(undefined, hasToken);
+  const { data, isLoading } = Queries.useGetAllProducts();
   const apiProducts = normalizeProductList(data);
   const visibleProducts = apiProducts.length > 0
     ? filterProductsByCategory(apiProducts, initialCategory)

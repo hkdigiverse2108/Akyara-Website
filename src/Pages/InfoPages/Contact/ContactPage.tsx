@@ -98,14 +98,14 @@ const ContactPage = () => {
                   {[{ label: "Your Name *", name: "name", type: "text" },{ label: "Your Email *", name: "email", type: "email" },{ label: "Mobile Number *", name: "mobileNumber", type: "text" },{ label: "Subject", name: "subject", type: "text" },].map((field) => (
                     <label key={field.name} className="grid gap-2 text-sm font-semibold text-[#111111]">
                       <span>{field.label}</span>
-                      <Field name={field.name} type={field.type} placeholder={field.label} className="w-full rounded-[6px] border border-[#d8dde6] bg-white px-4 py-3 text-[0.95rem] text-[#111827] outline-none transition focus:border-black focus:shadow-[0_0_0_1px_rgba(0,0,0,0.05)]"/>
+                      <Field name={field.name} type={field.type} placeholder={field.label} className="w-full rounded-[6px] border border-[#d8dde6] bg-white px-4 py-2 text-[0.95rem] text-[#111827] outline-none transition focus:border-black focus:shadow-[0_0_0_1px_rgba(0,0,0,0.05)]"/>
                       <FormikErrorMessage name={field.name} component="span" className="text-xs text-[#e53935]" />
                     </label>
                   ))}
 
                   <label className="grid gap-2 text-sm font-semibold text-[#111111]">
                     <span>Message *</span>
-                    <Field as="textarea" name="message" rows={6} placeholder="Write your message..." className="w-full resize-y rounded-[6px] border border-[#d8dde6] bg-white px-4 py-3 text-[0.95rem] leading-7 text-[#111827] outline-none transition focus:border-black focus:shadow-[0_0_0_1px_rgba(0,0,0,0.05)]"/>
+                    <Field as="textarea" name="message" rows={6} placeholder="Write your message..." className="w-full resize-y rounded-[6px] border border-[#d8dde6] bg-white px-4 py-2 text-[0.95rem] leading-7 text-[#111827] outline-none transition focus:border-black focus:shadow-[0_0_0_1px_rgba(0,0,0,0.05)]"/>
                     <FormikErrorMessage name="message" component="span" className="text-xs text-[#e53935]" />
                   </label>
 

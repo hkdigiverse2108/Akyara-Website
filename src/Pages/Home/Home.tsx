@@ -2,12 +2,11 @@ import { CloseOutlined } from "@ant-design/icons";
 import { useEffect, useRef, useState, useMemo, type FormEvent } from "react";
 import { Link } from "react-router-dom";
 import { Mutations, Queries } from "../../Api";
-import { CategoryHighlights, HeroSlider, InstagramFeed, ProductCard, FaqAccordion } from "../../Components";
+import { CategoryHighlights, HeroSlider, InstagramFeed, ProductCard } from "../../Components";
 import { ROUTES } from "../../Constants";
-import { badgeStyles, getProductDetailPath } from "../Products/productData";
+import { badgeStyles, getProductDetailPath, products as fallbackProducts } from "../Products/productData";
 import { normalizeProductList } from "../Products/productApiUtils";
 import { useAppSelector } from "../../Store/Hooks";
-import { getToken } from "../../Utils";
 
 const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 
@@ -32,11 +31,12 @@ const Home = () => {
   const { isAuthenticated, user } = useAppSelector((s) => s.auth);
   const sessionEmail = user?.email ?? "";
   const newsletterMutation = Mutations.useSubscribeNewsletter();
-  const hasToken = Boolean(getToken());
-  const { data: trendingData } = Queries.useGetAllProducts({ isTrending: true }, hasToken);
-  const { data: dealsData } = Queries.useGetAllProducts({ isDealOfDay: true }, hasToken);
+  const { data: trendingData } = Queries.useGetAllProducts({ isTrending: true });
+  const { data: dealsData } = Queries.useGetAllProducts({ isDealOfDay: true });
   const trendingProducts = normalizeProductList(trendingData);
   const dealProducts = normalizeProductList(dealsData);
+  const trendingCatalog = trendingProducts.length ? trendingProducts : fallbackProducts;
+  const dealsCatalog = dealProducts.length ? dealProducts : fallbackProducts;
   const { data: bannerData } = Queries.useGetAllBanners();
   const banners = useMemo(() => bannerData?.data?.banner_data || [], [bannerData]);
 
@@ -48,7 +48,7 @@ const Home = () => {
     const gap = parseFloat(getComputedStyle(el).gap || "0");
 
     scrollAmountRef.current = (card?.offsetWidth ?? 260) + gap;
-  }, [dealProducts]);
+  }, [dealsCatalog]);
 
   useEffect(() => {
     if (isAuthenticated) return;
@@ -120,7 +120,7 @@ const Home = () => {
             <h3 className="mb-[10px] text-center font-display text-[1.35rem] text-[#1f1f1f] sm:text-[1.6rem]">Don't Miss Out</h3>
             <p className="mb-6 text-center text-[#6b6b6b] leading-relaxed">Subscribe for exclusive offers, new fragrance launches, and curated scentstories delivered to your inbox.</p>
             <form className="grid gap-4" onSubmit={handleSubscribe}>
-              <input className="w-full rounded-[14px] border border-[#e1e1e1] px-4 py-3 text-[#2b2b2b] placeholder:text-[#b7b7b7] outline-none transition focus:border-black" type="email" placeholder="Enter your email address" value={subscribe.email} onChange={(e) => setSubscribe((s) => ({ ...s, email: e.target.value, status: null }))} disabled={newsletterMutation.isPending} />
+              <input className="w-full rounded-[14px] border border-[#e1e1e1] px-4 py-2 text-[#2b2b2b] placeholder:text-[#b7b7b7] outline-none transition focus:border-black" type="email" placeholder="Enter your email address" value={subscribe.email} onChange={(e) => setSubscribe((s) => ({ ...s, email: e.target.value, status: null }))} disabled={newsletterMutation.isPending} />
               {subscribe.status?.error && (<p className="rounded-[10px] bg-[#ffecec] px-3 py-2 text-sm text-[#e53935]">{subscribe.status.error}</p>)}
               {subscribe.status?.success && (<p className="rounded-[10px] bg-[#ecfff0] px-3 py-2 text-sm text-[#1b7f3a]">{subscribe.status.success}</p>)}
               <button type="submit" disabled={newsletterMutation.isPending} className="w-full rounded-full bg-black py-3 font-semibold text-white shadow-[0_10px_24px_rgba(0,0,0,0.25)] transition hover:bg-[#111111] disabled:cursor-not-allowed disabled:opacity-70">{newsletterMutation.isPending ? "Subscribing..." : "Subscribe"}</button>
@@ -137,8 +137,8 @@ const Home = () => {
             <h2 className="relative z-10 m-0 pt-2 font-display text-2xl sm:text-3xl">Our Trending Products</h2>
           </div>
           <div className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2 md:grid-cols-3 lg:gap-6 xl:grid-cols-4">
-            {trendingProducts.slice(0, 8).map((product) => (<ProductCard key={product.id} {...product} href={getProductDetailPath(product.id)} badgeStyles={badgeStyles} />))}
-          </div>
+              {trendingCatalog.slice(0, 8).map((product) => (<ProductCard key={product.id} {...product} href={getProductDetailPath(product.id)} badgeStyles={badgeStyles} />))}
+            </div>
           <div className="mt-10 text-center">
             <Link to={ROUTES.PRODUCTS} className="inline-flex w-full items-center justify-center gap-2 border border-black px-7 py-3 text-sm font-medium text-black transition-colors duration-200 hover:bg-black hover:text-white sm:w-auto">Explore More<span aria-hidden="true">&rarr;</span></Link>
           </div>
@@ -185,13 +185,11 @@ const Home = () => {
             </button>
 
             <div ref={dealsSliderRef} className="hide-scrollbar flex gap-4 overflow-x-auto px-2 pb-6 scroll-smooth snap-x snap-mandatory sm:gap-6 sm:px-6 xl:px-0" onMouseEnter={() => setIsDealsHovered(true)} onMouseLeave={() => setIsDealsHovered(false)} onTouchStart={() => setIsDealsHovered(true)} onTouchEnd={() => setIsDealsHovered(false)} onTouchCancel={() => setIsDealsHovered(false)}>
-              {dealProducts.map((deal) => (<ProductCard key={deal.id} {...deal} href={getProductDetailPath(deal.id)} badgeStyles={badgeStyles} className="min-w-[180px] flex-shrink-0 snap-start min-[420px]:min-w-[210px] sm:min-w-[230px] md:min-w-[250px] lg:min-w-[260px] xl:min-w-0 xl:flex-[0_0_calc((100%-72px)/4)]" imageClassName="h-[220px] min-[420px]:h-[250px] sm:h-[300px] lg:h-[340px]" cardDataAttribute={{ name: "data-product-card", value: "true" }} />))}
+              {dealsCatalog.map((deal) => (<ProductCard key={deal.id} {...deal} href={getProductDetailPath(deal.id)} badgeStyles={badgeStyles} className="min-w-[180px] flex-shrink-0 snap-start min-[420px]:min-w-[210px] sm:min-w-[230px] md:min-w-[250px] lg:min-w-[260px] xl:min-w-0 xl:flex-[0_0_calc((100%-72px)/4)]" imageClassName="h-[220px] min-[420px]:h-[250px] sm:h-[300px] lg:h-[340px]" cardDataAttribute={{ name: "data-product-card", value: "true" }} />))}
             </div>
           </div>
         </div>
       </section>
-
-      <FaqAccordion />
 
       <InstagramFeed />
     </div>

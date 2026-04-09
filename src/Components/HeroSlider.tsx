@@ -78,7 +78,6 @@ const HeroSlider = ({ banners }: HeroSliderProps) => {
                   </>
                 )}
               </h1>
-
               <p className="mt-2.5 text-[0.95rem] italic text-[#4f5a7a] sm:mt-4 sm:text-lg md:text-xl">
                 There&apos;s nothing like trend
               </p>

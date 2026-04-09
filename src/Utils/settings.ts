@@ -62,7 +62,43 @@ export const normalizeExternalLink = (value?: string) => {
 
 const isAbsoluteUrl = (value: string) => /^(https?:\/\/|data:image\/|blob:)/i.test(value);
 
-const getApiBaseUrl = () => (import.meta.env.VITE_API_BASE_URL || "").replace(/\/+$/, "");
+const isLocalHostname = (hostname: string) =>
+  ["localhost", "127.0.0.1", "::1"].includes(hostname.trim().toLowerCase());
+
+const stripTrailingSlashes = (value: string) => value.replace(/\/+$/, "");
+
+const isLocalApiBaseUrl = (value: string) => {
+  if (!value || value.startsWith("/")) return false;
+  const lowered = value.toLowerCase();
+  if (lowered.includes("localhost") || lowered.includes("127.0.0.1") || lowered.includes("::1")) return true;
+  try {
+    const parsed = new URL(value);
+    return isLocalHostname(parsed.hostname);
+  } catch {
+    return false;
+  }
+};
+
+let didWarnLocalhostProdBaseUrl = false;
+
+export const getApiBaseUrl = () => {
+  const raw = String(import.meta.env.VITE_API_BASE_URL ?? "").trim();
+  const cleaned = stripTrailingSlashes(raw);
+
+  if (!cleaned) return import.meta.env.DEV ? "/api" : "";
+
+  if (import.meta.env.PROD && typeof window !== "undefined" && !isLocalHostname(window.location.hostname) && isLocalApiBaseUrl(cleaned)) {
+    if (!didWarnLocalhostProdBaseUrl) {
+      didWarnLocalhostProdBaseUrl = true;
+      console.warn(
+        "VITE_API_BASE_URL is set to a localhost URL in production; falling back to same-origin requests. Set VITE_API_BASE_URL to your production API host."
+      );
+    }
+    return "";
+  }
+
+  return cleaned;
+};
 
 export const resolveSettingsImageUrl = (value?: string) => {
   const trimmed = value?.trim();

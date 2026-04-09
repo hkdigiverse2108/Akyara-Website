@@ -1,18 +1,18 @@
 import axios, { AxiosError, type AxiosRequestConfig } from "axios";
-import { getToken } from "../../Utils";
+import { getApiBaseUrl, getToken } from "../../Utils";
 import { HTTP_STATUS } from "../../Constants";
 import { ShowNotification } from "../../Attribute/Notification";
 
 export async function Post<TInput, TResponse>(url: string, data?: TInput, isToken: boolean = true): Promise<TResponse> {
   const authToken = getToken();
   const isFormData = data instanceof FormData;
-  const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+  const BASE_URL = getApiBaseUrl();
 
   const config: AxiosRequestConfig = {
     method: "POST",
     url: BASE_URL + url,
     headers: {
-      ...(isToken ? { Authorization: `Bearer ${authToken}` } : {}),
+      ...(isToken && authToken ? { Authorization: `Bearer ${authToken}` } : {}),
       ...(isFormData ? {} : { "Content-Type": "application/json" }),
     },
     data,

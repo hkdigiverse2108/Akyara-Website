@@ -1,7 +1,6 @@
 import { URL_KEYS } from "../../../Constants";
 import { type ReactNode, useEffect, useMemo, useState } from "react";
-
-const getApiBaseUrl = () => (import.meta.env.VITE_API_BASE_URL || "").replace(/\/+$/, "");
+import { getApiBaseUrl } from "../../../Utils";
 
 export const isAbsoluteImageUrl = (value: string) => /^(https?:\/\/|data:image\/|blob:)/i.test(value);
 
