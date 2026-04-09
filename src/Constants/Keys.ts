@@ -65,6 +65,10 @@ export const KEYS = {
     ALL: "order.all",
     DETAIL: "order.detail",
   },
+  RAZORPAY: {
+    PAY: "razorpay.pay",
+    VERIFY: "razorpay.verify",
+  },
   IG_POST: {
     ALL: "ig_post.all",
   },
@@ -73,3 +77,4 @@ export const KEYS = {
     DETAIL: "banner.detail",
   },
 } as const;
+

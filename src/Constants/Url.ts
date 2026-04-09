@@ -71,6 +71,11 @@ export const URL_KEYS = {
     ADD: "/order/add",
     ALL: "/order/all",
   },
+  RAZORPAY: {
+    BASE: "/razorpay",
+    PAY: "/razorpay/pay",
+    VERIFY: "/razorpay/verify",
+  },
   IG_POST: {
     BASE: "/ig-post",
     ALL: "/ig-post/all",
@@ -80,3 +85,4 @@ export const URL_KEYS = {
     ALL: "/banner/all",
   },
 } as const;
+

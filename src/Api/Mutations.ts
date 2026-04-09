@@ -26,4 +26,7 @@ export const Mutations = {
   useUpdateCart: () => useMutations<UpdateCartPayload, CartApiResponse>([KEYS.CART.BASE, KEYS.CART.ALL], (input) => Post(URL_KEYS.CART.UPDATE, input)),
   useRemoveCart: () => useMutations<string, CartApiResponse>([KEYS.CART.BASE, KEYS.CART.ALL], (id) => Delete(`${URL_KEYS.CART.BASE}/${id}`)),
   useAddOrder: () => useMutations<any, any>([KEYS.ORDER.BASE, KEYS.ORDER.ALL], (input) => Post(URL_KEYS.ORDER.ADD, input)),
+  useCreateRazorpayPayment: () =>useMutations<any, ApiResponse>([KEYS.RAZORPAY.PAY], (input) => Post(URL_KEYS.RAZORPAY.PAY, input)),
+  useVerifyRazorpayPayment: () =>useMutations<any, ApiResponse>([KEYS.RAZORPAY.VERIFY], (input) => Post(URL_KEYS.RAZORPAY.VERIFY, input)),
 };
+

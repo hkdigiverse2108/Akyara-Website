@@ -7,6 +7,18 @@ const COLLECTION_KEYS = ["data", "docs", "items", "rows", "results", "records", 
 const isRecord = (value: unknown): value is SettingsRecord => typeof value === "object" && value !== null;
 
 const getString = (value: unknown) => (typeof value === "string" ? value.trim() : undefined);
+const getBoolean = (value: unknown) => {
+  if (typeof value === "boolean") return value;
+  if (typeof value === "number") return value === 1;
+
+  if (typeof value === "string") {
+    const normalized = value.trim().toLowerCase();
+    if (["true", "1", "yes", "on"].includes(normalized)) return true;
+    if (["false", "0", "no", "off"].includes(normalized)) return false;
+  }
+
+  return undefined;
+};
 
 const toSettingsItem = (value: unknown): SettingsItem | undefined => {
   if (!isRecord(value)) return undefined;
@@ -20,6 +32,8 @@ const toSettingsItem = (value: unknown): SettingsItem | undefined => {
     facebook: getString(value.facebook),
     youtube: getString(value.youtube),
     twitter: getString(value.twitter),
+    isRazorpay: getBoolean(value.isRazorpay),
+    razorpayApiKey: getString(value.razorpayApiKey),
   };
 
   const hasUsefulValue =
@@ -29,7 +43,9 @@ const toSettingsItem = (value: unknown): SettingsItem | undefined => {
     !!item.instagram ||
     !!item.facebook ||
     !!item.youtube ||
-    !!item.twitter;
+    !!item.twitter ||
+    item.isRazorpay === true ||
+    !!item.razorpayApiKey;
 
   return hasUsefulValue ? item : undefined;
 };
@@ -111,3 +127,4 @@ export const resolveSettingsImageUrl = (value?: string) => {
   if (trimmed.startsWith("/")) return `${baseUrl}${trimmed}`;
   return `${baseUrl}/${trimmed.replace(/^\/+/, "")}`;
 };
+
