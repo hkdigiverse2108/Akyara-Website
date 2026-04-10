@@ -194,9 +194,13 @@ const Home = () => {
                   </div>
                 ))}
               </div>
-              <div className="mt-10">
-                <Link to={`${ROUTES.PRODUCTS}?sale=true`} className="inline-flex items-center justify-center rounded-full bg-black px-10 py-4 text-sm font-bold uppercase tracking-wider text-white transition-all hover:bg-[#111111] hover:shadow-xl active:scale-95">
+              <div className="mt-12 text-center">
+                <Link
+                  to={`${ROUTES.PRODUCTS}?sale=true`}
+                  className="inline-flex items-center justify-center gap-2 border border-black px-10 py-3 text-sm font-medium text-black transition-colors duration-200 hover:bg-black hover:text-white group"
+                >
                   Shop Now
+                  <span className="transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true">&rarr;</span>
                 </Link>
               </div>
             </div>
