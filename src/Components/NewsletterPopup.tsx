@@ -44,13 +44,14 @@ export const NewsletterPopup = () => {
       const res = await newsletterMutation.mutateAsync({ email });
       setSubscribe((s) => ({
         ...s,
-        status: { success: res?.message || "Subscribed successfully" },
+        status: { success: typeof res?.message === 'string' ? res.message : "Subscribed successfully" },
       }));
-      setTimeout(closeSubscribePopup, 1200);
-    } catch (err) {
+      setTimeout(closeSubscribePopup, 2000);
+    } catch (err: any) {
+      const errorMsg = err?.response?.data?.message || err?.message || "Subscription failed";
       setSubscribe((s) => ({
         ...s,
-        status: { error: err instanceof Error ? err.message : "Failed" },
+        status: { error: typeof errorMsg === 'string' ? errorMsg : "An error occurred" },
       }));
     }
   };
