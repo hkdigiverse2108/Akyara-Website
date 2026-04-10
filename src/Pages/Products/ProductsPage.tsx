@@ -33,7 +33,7 @@ const ProductsPage = ({ initialCategory = "All" }: ProductsPageProps) => {
   }
 
   return (
-    <div className="bg-[#f7f4ef] pb-16 pt-8 sm:pt-10 lg:pb-24">
+    <div className="bg-white pb-16 pt-8 sm:pt-10 lg:pb-24">
       <section className="site-container">
         {visibleProducts.length === 0 ? (
           <div className="bg-white rounded-[18px] border border-gray-100 shadow-sm overflow-hidden">
