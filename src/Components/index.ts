@@ -15,3 +15,8 @@ export { default as FaqAccordion } from './FaqAccordion';
 // Folders
 export { default as CartDrawer } from './Cart/CartDrawer';
 export * from './Product';
+
+// New Components
+export * from './SaleBanner';
+export * from './NewsletterPopup';
+export * from './DealOfTheDaySlider';
