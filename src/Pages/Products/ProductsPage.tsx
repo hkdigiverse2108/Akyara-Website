@@ -22,13 +22,7 @@ const ProductsPage = ({ initialCategory = "All" }: ProductsPageProps) => {
     : getFallbackProductsByCategory(initialCategory);
   const visibleProducts = filterProductsByAudience(productsByCategory, audienceFilter);
   const audienceLabel =
-    audienceFilter === "women"
-      ? "Women's Wear"
-      : audienceFilter === "men"
-      ? "Men's Wear"
-      : audienceFilter === "kids"
-      ? "Kid's Wear"
-      : "";
+    audienceFilter === "women"? "Women's Wear": audienceFilter === "men"? "Men's Wear": audienceFilter === "kids"? "Kid's Wear": "";
 
   if (isLoading && apiProducts.length === 0) {
     return <PageLoader />;
@@ -42,9 +36,7 @@ const ProductsPage = ({ initialCategory = "All" }: ProductsPageProps) => {
              <EmptyState 
               title="No products found"
               description={
-                audienceLabel
-                  ? `Products for ${audienceLabel} will appear here as soon as they are available in your catalog.`
-                  : "Products will appear here as soon as they are available in your catalog."
+                audienceLabel? `Products for ${audienceLabel} will appear here as soon as they are available in your catalog.`: "Products will appear here as soon as they are available in your catalog."
               }
             />
           </div>

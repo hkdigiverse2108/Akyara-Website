@@ -1,6 +1,6 @@
 import {CloseOutlined,HeartOutlined,LogoutOutlined,MenuOutlined,SearchOutlined,ShoppingCartOutlined,UserOutlined,} from "@ant-design/icons";
 import { Dropdown } from "antd";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Queries } from "../Api/Queries";
 import { ROUTES } from "../Constants";
@@ -40,10 +40,6 @@ const Header = () => {
   const cartCount = cartList.reduce((acc: number, item: any) => acc + (item.quantity || 1), 0);
   const userId = user?._id;
   const singleUserQuery = Queries.useGetSingleUser(userId);
-
-  useEffect(() => {
-    // Only kept for any other local events if needed
-  }, []);
 
   useEffect(() => {
     if (!singleUserQuery.data?.data) return;
@@ -120,7 +116,7 @@ const Header = () => {
             </Link>
           </div>
 
-          <nav className="ml-7 hidden items-center md- gap-4 lg:flex xl:gap-6">
+          <nav className="ml-7 hidden items-center gap-4 lg:flex xl:gap-6">
             {navLinks.map(({ label, to }) => {
               return (
                 <Link key={label} to={to} className="whitespace-nowrap text-[0.92rem] font-medium text-[#444] transition duration-200 hover:text-black xl:text-[0.96rem]">{label}</Link>

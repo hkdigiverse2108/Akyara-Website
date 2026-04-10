@@ -1,28 +1,28 @@
-import {FacebookFilled,InstagramFilled,TwitterOutlined,YoutubeFilled,} from "@ant-design/icons";
+import { FacebookFilled, InstagramFilled, TwitterOutlined, YoutubeFilled, } from "@ant-design/icons";
 import { Link } from "react-router-dom";
 import { Queries } from "../Api/Queries";
 import { ROUTES } from "../Constants";
 import { getPrimarySettings, normalizeExternalLink, resolveSettingsImageUrl } from "../Utils/settings";
 
-const companyLinks = [{ label: "Contact Us", to: ROUTES.INFO.CONTACT },{ label: "About Us", to: ROUTES.INFO.ABOUT },{ label: "Tracking Order", to: ROUTES.INFO.TRACKING },{ label: "Blog", to: ROUTES.INFO.BLOG },{ label: "FAQ Page", to: ROUTES.INFO.FAQ }];
+const companyLinks = [{ label: "Contact Us", to: ROUTES.INFO.CONTACT }, { label: "About Us", to: ROUTES.INFO.ABOUT }, { label: "Tracking Order", to: ROUTES.INFO.TRACKING }, { label: "Blog", to: ROUTES.INFO.BLOG }, { label: "FAQ Page", to: ROUTES.INFO.FAQ }];
 
-const supportLinks = [{ label: "Return & Refund Policy", to: ROUTES.INFO.REFUND },{ label: "Privacy Policy", to: ROUTES.INFO.PRIVACY },{ label: "Terms & Condition", to: ROUTES.INFO.TERMS },{ label: "Cancellation Policy", to: ROUTES.INFO.CANCELLATION },];
+const supportLinks = [{ label: "Return & Refund Policy", to: ROUTES.INFO.REFUND }, { label: "Privacy Policy", to: ROUTES.INFO.PRIVACY }, { label: "Terms & Condition", to: ROUTES.INFO.TERMS }, { label: "Cancellation Policy", to: ROUTES.INFO.CANCELLATION },];
 
 const toAddressLine = (value?: string) =>
-  value? value    .split(/\r?\n|,/)    .map((item) => item.trim())    .filter(Boolean)    .join(", "): "";
+  value ? value.split(/\r?\n|,/).map((item) => item.trim()).filter(Boolean).join(", ") : "";
 
 const Footer = () => {
   const settingsQuery = Queries.useGetSettings(true);
   const settings = getPrimarySettings(settingsQuery.data?.data);
 
   const addressLine = toAddressLine(settings?.address);
-  const contact = settings?.contact?.trim() ;
+  const contact = settings?.contact?.trim();
   const email = settings?.email?.trim();
-  const socialLinks = [{label: "Facebook",href: normalizeExternalLink(settings?.facebook || "https://facebook.com"),icon: <FacebookFilled />,},{label: "Twitter",href: normalizeExternalLink(settings?.twitter || "https://twitter.com"),icon: <TwitterOutlined />,},{label: "Youtube",href: normalizeExternalLink(settings?.youtube || "https://youtube.com"),icon: <YoutubeFilled />,},{label: "Instagram",href: normalizeExternalLink(settings?.instagram || "https://instagram.com"),icon: <InstagramFilled />,},].filter((item) => !!item.href);
+  const socialLinks = [{ label: "Facebook", href: normalizeExternalLink(settings?.facebook || "https://facebook.com"), icon: <FacebookFilled />, }, { label: "Twitter", href: normalizeExternalLink(settings?.twitter || "https://twitter.com"), icon: <TwitterOutlined />, }, { label: "Youtube", href: normalizeExternalLink(settings?.youtube || "https://youtube.com"), icon: <YoutubeFilled />, }, { label: "Instagram", href: normalizeExternalLink(settings?.instagram || "https://instagram.com"), icon: <InstagramFilled />, },].filter((item) => !!item.href);
   const securePaymentImages = (settings?.securePaymentImages ?? []).map((item) => resolveSettingsImageUrl(item)).filter(Boolean);
 
-    return (
-      <footer className="bg-[#1f2937] py-10 text-[#d1d5db] sm:py-12">
+  return (
+    <footer className="bg-[#1f2937] py-10 text-[#d1d5db] sm:py-12">
       <div className="site-container grid gap-8 text-center sm:grid-cols-2 sm:text-left lg:grid-cols-[minmax(290px,1.45fr)_minmax(170px,0.85fr)_minmax(220px,1fr)_max-content] lg:items-start xl:gap-10">
         <div className="flex flex-col items-center sm:items-start lg:pr-6">
           <Link to={ROUTES.HOME}>
@@ -70,7 +70,7 @@ const Footer = () => {
           {securePaymentImages.length ? (
             <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start lg:flex-nowrap lg:justify-end">
               {securePaymentImages.map((image, index) => (
-                <img key={`${image}-${index}`} src={image} alt="Secure payment" className="h-10 w-auto rounded bg-white object-contain p-1" loading="lazy"/>
+                <img key={`${image}-${index}`} src={image} alt="Secure payment" className="h-10 w-auto rounded bg-white object-contain p-1" loading="lazy" />
               ))}
             </div>
           ) : (<img src="/assets/images/payment-methods.svg" alt="Payments" className="w-[180px] max-w-full" />)}

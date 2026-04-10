@@ -24,7 +24,7 @@ const InstagramFeed = () => {
                 <div className="flex gap-2.5 site-container">
                     {posts.map((post: any) => (
                         <a key={post._id} href={post.link || "#"} target="_blank" rel="noopener noreferrer" className="w-[180px] sm:w-[220px] aspect-square rounded-[10px] overflow-hidden group relative bg-gray-50 shrink-0 snap-start">
-                            <img src={post.image} alt={post.title || "Instagram Post"} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"/>
+                            <img src={post.image} alt={post.title || "Instagram Post"} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
                             <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                                 <InstagramOutlined style={{ color: '#fff', fontSize: '32px' }} className="transform scale-50 group-hover:scale-100 transition-transform duration-300" />
                             </div>

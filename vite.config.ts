@@ -23,10 +23,10 @@ export default defineConfig(({ mode }) => {
         },
 
         manifest: {
-          name: "Delvoura ",
-          short_name: "Delvoura",
-          description: "Delvoura App",
-          theme_color: "#5d3bff",
+          name: "Akyara",
+          short_name: "Akyara",
+          description: "Akyara - Premium Fashion & Trends",
+          theme_color: "#111111",
         },
 
         workbox: {
