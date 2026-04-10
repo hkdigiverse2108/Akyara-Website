@@ -106,6 +106,7 @@ export type CategoryCardProps = {
   title: string;
   count: string;
   image: string;
+  to?: string;
   contentClass: string;
   imageWrapClass: string;
   imageClass?: string;

@@ -1,19 +1,32 @@
+import { useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import { Queries } from "../../Api";
 import { ProductCard, PageLoader, EmptyState } from "../../Components";
 import type { ProductCategory } from "../../Types";
 import { badgeStyles, getProductDetailPath, getProductsByCategory as getFallbackProductsByCategory } from "./productData";
-import { filterProductsByCategory, normalizeProductList } from "./productApiUtils";
+import { filterProductsByAudience, filterProductsByCategory, normalizeProductList, parseProductAudience } from "./productApiUtils";
 
 type ProductsPageProps = {
   initialCategory?: ProductCategory;
 };
 
 const ProductsPage = ({ initialCategory = "All" }: ProductsPageProps) => {
+  const [searchParams] = useSearchParams();
+  const audienceFilter = parseProductAudience(searchParams.get("audience"));
   const { data, isLoading } = Queries.useGetAllProducts();
-  const apiProducts = normalizeProductList(data);
-  const visibleProducts = apiProducts.length > 0
+  const apiProducts = useMemo(() => normalizeProductList(data), [data]);
+  const productsByCategory = apiProducts.length > 0
     ? filterProductsByCategory(apiProducts, initialCategory)
     : getFallbackProductsByCategory(initialCategory);
+  const visibleProducts = filterProductsByAudience(productsByCategory, audienceFilter);
+  const audienceLabel =
+    audienceFilter === "women"
+      ? "Women's Wear"
+      : audienceFilter === "men"
+      ? "Men's Wear"
+      : audienceFilter === "kids"
+      ? "Kid's Wear"
+      : "";
 
   if (isLoading && apiProducts.length === 0) {
     return <PageLoader />;
@@ -26,7 +39,11 @@ const ProductsPage = ({ initialCategory = "All" }: ProductsPageProps) => {
           <div className="bg-white rounded-[18px] border border-gray-100 shadow-sm overflow-hidden">
              <EmptyState 
               title="No products found"
-              description="Products will appear here as soon as they are available in your catalog."
+              description={
+                audienceLabel
+                  ? `Products for ${audienceLabel} will appear here as soon as they are available in your catalog.`
+                  : "Products will appear here as soon as they are available in your catalog."
+              }
             />
           </div>
         ) : (

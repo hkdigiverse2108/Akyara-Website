@@ -1,4 +1,4 @@
-import type {ProductApiResponse,ProductCategory,ProductColor,ProductItem,ProductRecord,ProductRef,} from "../../Types";
+import type {ProductApiResponse,ProductAudience,ProductCategory,ProductColor,ProductItem,ProductRecord,ProductRef,} from "../../Types";
 import { getApiBaseUrl } from "../../Utils";
 
 const assetUrl = (p: string) => `${import.meta.env.BASE_URL}${p}`;
@@ -41,6 +41,19 @@ const normalizeCategory = (v: string) => {
   if (val.includes("shirt")) return "Shirts";
   return v.trim();
 };
+
+const normalizeAudienceText = (value: string) =>
+  value
+    .toLowerCase()
+    .replace(/['`]/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+
+const audienceMatchers: Array<{ audience: ProductAudience; regex: RegExp }> = [
+  { audience: "kids", regex: /\b(kid|kids|child|children|toddler|toddlers|infant|infants|baby|babies|junior|juniors|boys|girls|youth)\b/ },
+  { audience: "women", regex: /\b(women|womens|woman|ladies|lady|female|females)\b/ },
+  { audience: "men", regex: /\b(men|mens|man|gents|gent|gentlemen|male|males)\b/ },
+];
 
 const currency = (v: unknown) => `Rs ${num(v).toLocaleString("en-IN")}`;
 
@@ -108,4 +121,40 @@ export const normalizeProductDetail = (res?: ProductApiResponse,fallback?: Produ
   return normalizeProduct(data) ?? fallback ?? null;
 };
 
-export const filterProductsByCategory = (products: ProductItem[],category: ProductCategory) => category === "All"? products: products.filter((p) => normalizeCategory(p.category) === category);
+export const parseProductAudience = (value: unknown): ProductAudience | null => {
+  const normalized = normalizeAudienceText(str(value));
+  if (!normalized) return null;
+  if (/\b(kid|kids|child|children|toddler|toddlers|infant|infants|baby|babies|junior|juniors|youth)\b/.test(normalized)) return "kids";
+  if (/\b(women|womens|woman|ladies|lady|female|females)\b/.test(normalized)) return "women";
+  if (/\b(men|mens|man|gents|gent|gentlemen|male|males)\b/.test(normalized)) return "men";
+  return null;
+};
+
+export const detectProductAudience = (
+  product: Pick<ProductItem, "name" | "category" | "categoryLabel">
+): ProductAudience | null => {
+  const value = normalizeAudienceText(
+    [product.categoryLabel, product.category, product.name]
+      .filter(Boolean)
+      .join(" ")
+  );
+  if (!value) return null;
+  return audienceMatchers.find((item) => item.regex.test(value))?.audience ?? null;
+};
+
+export const getAudienceProductCounts = (products: ProductItem[]) => {
+  const counts: Record<ProductAudience, number> = { women: 0, men: 0, kids: 0 };
+  products.forEach((product) => {
+    const audience = detectProductAudience(product);
+    if (audience) counts[audience] += 1;
+  });
+  return counts;
+};
+
+export const filterProductsByCategory = (products: ProductItem[],category: ProductCategory) =>
+  category === "All" ? products : products.filter((p) => normalizeCategory(p.category) === category);
+
+export const filterProductsByAudience = (
+  products: ProductItem[],
+  audience?: ProductAudience | null
+) => (audience ? products.filter((product) => detectProductAudience(product) === audience) : products);

@@ -24,6 +24,7 @@ export type ProductCardProps = ProductCardItem & {
 };
 
 export type ProductCategory = "All" | "Shirts" | "T-Shirts" | "Jeans";
+export type ProductAudience = "women" | "men" | "kids";
 
 export type ProductColor = {
   name: string;
