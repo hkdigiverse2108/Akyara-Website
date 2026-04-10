@@ -1,6 +1,6 @@
 import { KEYS, URL_KEYS } from "../Constants";
 import type { PolicyType } from "../Constants";
-import type { AboutApiResponse, AddressApiResponse, BlogApiResponse, FaqApiResponse, Params, PolicyApiResponse, ProductApiResponse, ReviewApiResponse, SettingsApiResponse, UserProfileResponse, WishlistApiResponse, CartApiResponse, BannerApiResponse, SaleBannerApiResponse, CategoryApiResponse } from "../Types";
+import type { AboutApiResponse, AddressApiResponse, BlogApiResponse, FaqApiResponse, Params, PolicyApiResponse, ProductApiResponse, ReviewApiResponse, SettingsApiResponse, UserProfileResponse, WishlistApiResponse, CartApiResponse, BannerApiResponse, SaleBannerApiResponse } from "../Types";
 import { Get } from "./Methods/Get";
 import { useQueries } from "./ReactQuery/useQueries";
 
@@ -24,5 +24,5 @@ export const Queries = {
   useGetIgPosts: (params?: Params, enabled = true) => useQueries<any>([KEYS.IG_POST.ALL, params], () => Get(URL_KEYS.IG_POST.ALL, params), { enabled }),
   useGetAllBanners: (enabled = true) => useQueries<BannerApiResponse>([KEYS.BANNER.ALL], () => Get(URL_KEYS.BANNER.ALL), { enabled }),
   useGetSaleBanner: (enabled = true) => useQueries<SaleBannerApiResponse>([KEYS.SALE_BANNER.ALL], () => Get(URL_KEYS.SALE_BANNER.BASE), { enabled }),
-  useGetAllCategories: (params?: Params, enabled = true) => useQueries<CategoryApiResponse>([KEYS.CATEGORY.ALL, params], () => Get(URL_KEYS.CATEGORY.ALL, params), { enabled }),
+  useGetAllCategories: (params?: Params, enabled = true) => useQueries<any>([KEYS.CATEGORY.ALL, params], () => Get(URL_KEYS.CATEGORY.ALL, params), { enabled }),
 };

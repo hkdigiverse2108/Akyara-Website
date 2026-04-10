@@ -1,6 +1,6 @@
 import {CloseOutlined,HeartOutlined,LogoutOutlined,MenuOutlined,SearchOutlined,ShoppingCartOutlined,UserOutlined,} from "@ant-design/icons";
 import { Dropdown } from "antd";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Queries } from "../Api/Queries";
 import { ROUTES } from "../Constants";
@@ -34,6 +34,18 @@ const Header = () => {
   const [accountOpen, setAccountOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      setSearchOpen(false);
+      setMobileMenuOpen(false);
+      navigate(`${ROUTES.PRODUCTS}?search=${encodeURIComponent(searchQuery.trim())}`);
+      setSearchQuery("");
+    }
+  };
   const { wishlistMap } = useWishlist();
   const wishlistCount = wishlistMap.size;
   const { cartList } = useCart();
@@ -50,6 +62,7 @@ const Header = () => {
     const closeMenusTimer = window.setTimeout(() => {
       setMobileMenuOpen(false);
       setAccountOpen(false);
+      setSearchOpen(false);
     }, 0);
 
     return () => {
@@ -125,7 +138,7 @@ const Header = () => {
           </nav>
 
           <div className="ml-auto flex items-center gap-0.5 sm:gap-1 lg:gap-2">
-            <button type="button" aria-label="Search" className="hidden h-9 w-9 place-items-center rounded-full text-[#111] transition hover:bg-[#f3f4f6] lg:grid lg:h-10 lg:w-10">
+            <button type="button" aria-label="Search" onClick={() => setSearchOpen((prev) => !prev)} className="hidden h-9 w-9 place-items-center rounded-full text-[#111] transition hover:bg-[#f3f4f6] lg:grid lg:h-10 lg:w-10">
               <SearchOutlined className="text-[1rem]" />
             </button>
             {isAuthenticated ? (
@@ -175,7 +188,7 @@ const Header = () => {
               </div>
 
               <div className="mt-1.5 grid grid-cols-2 gap-1.5">
-                <button type="button" className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-[#e5e7eb] bg-[#f9fafb] px-2.5 py-2 text-[0.95rem] font-semibold text-[#111] transition hover:bg-white"><SearchOutlined />Search</button>
+                <button type="button" onClick={() => { setMobileMenuOpen(false); setSearchOpen(true); }} className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-[#e5e7eb] bg-[#f9fafb] px-2.5 py-2 text-[0.95rem] font-semibold text-[#111] transition hover:bg-white"><SearchOutlined />Search</button>
                 <button type="button" onClick={() => navigate(ROUTES.ACCOUNT.WISHLIST)} className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-[#e5e7eb] bg-[#f9fafb] px-2.5 py-2 text-[0.95rem] font-semibold text-[#111] transition hover:bg-white"><HeartOutlined />Wishlist ({wishlistCount})</button>
                 <button type="button" onClick={() => setCartOpen(true)} className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-[#e5e7eb] bg-[#f9fafb] px-2.5 py-2 text-[0.95rem] font-semibold text-[#111] transition hover:bg-white"><ShoppingCartOutlined />Cart ({cartCount})</button>
 
@@ -192,6 +205,17 @@ const Header = () => {
           </div>
         </div>
       </div>
+      {searchOpen && (
+        <div className="absolute inset-0 z-50 flex items-center bg-white px-4">
+          <div className="site-container relative flex w-full items-center gap-3">
+             <SearchOutlined className="text-[1.1rem] text-[#888]" />
+             <form onSubmit={handleSearchSubmit} className="flex-1">
+                <input autoFocus value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder="Search for products, categories or brands..." className="w-full bg-transparent py-2.5 text-[0.95rem] font-medium text-[#111] outline-none placeholder:text-[#888] sm:text-[1.05rem]" />
+             </form>
+             <button type="button" onClick={() => setSearchOpen(false)} className="grid h-9 w-9 place-items-center rounded-full bg-[#f3f4f6] text-[#111] transition hover:bg-[#e5e7eb]"><CloseOutlined className="text-[0.9rem]" /></button>
+          </div>
+        </div>
+      )}
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
     </header>
   );

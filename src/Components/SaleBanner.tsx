@@ -4,7 +4,6 @@ import { ROUTES } from "../Constants";
 import { getApiBaseUrl } from "../Utils";
 import type { SaleBanner as SaleBannerType } from "../Types";
 
-const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path}`;
 
 interface SaleBannerProps {
   banner: SaleBannerType | null | undefined;
