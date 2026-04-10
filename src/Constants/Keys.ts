@@ -80,4 +80,7 @@ export const KEYS = {
     ALL: "banner.all",
     DETAIL: "banner.detail",
   },
+  SALE_BANNER: {
+    ALL: "sale_banner.all",
+  },
 } as const;

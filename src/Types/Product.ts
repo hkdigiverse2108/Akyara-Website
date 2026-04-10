@@ -83,6 +83,7 @@ export type ProductRecord = {
   isTrending?: boolean;
   isDealOfDay?: boolean;
   isOurTrendingProduct?: boolean;
+  isSale?: boolean;
   sizeIds?: Array<string | ProductRef>;
   colorIds?: Array<string | ProductRef>;
   isActive?: boolean;

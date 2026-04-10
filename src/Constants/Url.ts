@@ -89,4 +89,7 @@ export const URL_KEYS = {
     BASE: "/banner",
     ALL: "/banner/all",
   },
+  SALE_BANNER: {
+    BASE: "/sale-banner",
+  },
 } as const;

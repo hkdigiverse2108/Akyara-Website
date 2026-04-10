@@ -13,7 +13,9 @@ type ProductsPageProps = {
 const ProductsPage = ({ initialCategory = "All" }: ProductsPageProps) => {
   const [searchParams] = useSearchParams();
   const audienceFilter = parseProductAudience(searchParams.get("audience"));
-  const { data, isLoading } = Queries.useGetAllProducts();
+  const isSaleFilter = searchParams.get("sale") === "true";
+  
+  const { data, isLoading } = Queries.useGetAllProducts(isSaleFilter ? { isSale: true } : undefined);
   const apiProducts = useMemo(() => normalizeProductList(data), [data]);
   const productsByCategory = apiProducts.length > 0
     ? filterProductsByCategory(apiProducts, initialCategory)

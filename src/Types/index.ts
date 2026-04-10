@@ -14,3 +14,5 @@ export * from "./Review";
 export * from "./Wishlist";
 export * from "./Cart";
 export * from "./Banner";
+export * from "./SaleBanner";
+

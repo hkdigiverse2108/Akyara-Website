@@ -7,16 +7,9 @@ import { ROUTES } from "../../Constants";
 import { badgeStyles, getProductDetailPath, products as fallbackProducts } from "../Products/productData";
 import { normalizeProductList } from "../Products/productApiUtils";
 import { useAppSelector } from "../../Store/Hooks";
+import { getApiBaseUrl } from "../../Utils";
 
 const assetUrl = (path: string) => `${import.meta.env.BASE_URL}${path}`;
-
-
-const countdownCards = [
-  { label: "days", value: "-1614" },
-  { label: "Hours", value: "-12" },
-  { label: "Minutes", value: "-50" },
-  { label: "Seconds", value: "-44" },
-];
 
 const Home = () => {
   const [subscribe, setSubscribe] = useState({
@@ -25,20 +18,57 @@ const Home = () => {
     status: null as { error?: string; success?: string } | null,
   });
 
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
   const [isDealsHovered, setIsDealsHovered] = useState(false);
   const dealsSliderRef = useRef<HTMLDivElement | null>(null);
   const scrollAmountRef = useRef(260);
   const { isAuthenticated, user } = useAppSelector((s) => s.auth);
   const sessionEmail = user?.email ?? "";
   const newsletterMutation = Mutations.useSubscribeNewsletter();
+  
   const { data: trendingData } = Queries.useGetAllProducts({ isTrending: true });
   const { data: dealsData } = Queries.useGetAllProducts({ isDealOfDay: true });
+  const { data: saleProductsData } = Queries.useGetAllProducts({ isSale: true });
+  const { data: bannerData } = Queries.useGetAllBanners();
+  const { data: saleBannerData } = Queries.useGetSaleBanner();
+
   const trendingProducts = normalizeProductList(trendingData);
   const dealProducts = normalizeProductList(dealsData);
+  const saleProductsList = normalizeProductList(saleProductsData);
+  
   const trendingCatalog = trendingProducts.length ? trendingProducts : fallbackProducts;
   const dealsCatalog = dealProducts.length ? dealProducts : fallbackProducts;
-  const { data: bannerData } = Queries.useGetAllBanners();
   const banners = useMemo(() => bannerData?.data?.banner_data || [], [bannerData]);
+  const saleBanner = saleBannerData?.data;
+
+  const resolvedSaleBannerImage = useMemo(() => {
+    if (!saleBanner?.image) return "";
+    if (saleBanner.image.startsWith("http")) return saleBanner.image;
+    const base = getApiBaseUrl();
+    return saleBanner.image.startsWith("/") ? `${base}${saleBanner.image}` : `${base}/${saleBanner.image}`;
+  }, [saleBanner?.image]);
+
+  useEffect(() => {
+    if (!saleBanner?.saleEndTime) return;
+
+    const calculateTimeLeft = () => {
+      const difference = +new Date(saleBanner.saleEndTime) - +new Date();
+      if (difference > 0) {
+        setTimeLeft({
+          days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+          hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
+          minutes: Math.floor((difference / 1000 / 60) % 60),
+          seconds: Math.floor((difference / 1000) % 60),
+        });
+      } else {
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+      }
+    };
+
+    calculateTimeLeft();
+    const id = setInterval(calculateTimeLeft, 1000);
+    return () => clearInterval(id);
+  }, [saleBanner?.saleEndTime]);
 
   useEffect(() => {
     const el = dealsSliderRef.current;
@@ -133,7 +163,7 @@ const Home = () => {
       <section className="mt-12 py-10 sm:mt-14 sm:py-16">
         <div className="site-container">
           <div className="relative mb-10 text-center sm:mb-12">
-            <span className="pointer-events-none absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-[70%] whitespace-nowrap text-[clamp(2.2rem,6vw,3.5rem)] font-semibold italic text-black/10 md:block" aria-hidden="true">Trendy Products</span>
+            <span className="pointer-events-none absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-[70%] whitespace-nowrap text-[clamp(2.2rem,6vw,3.5rem)] font-semibold italic text-black/10 md:block" aria-hidden="true">Trending Products</span>
             <h2 className="relative z-10 m-0 pt-2 font-display text-2xl sm:text-3xl">Our Trending Products</h2>
           </div>
           <div className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2 md:grid-cols-3 lg:gap-6 xl:grid-cols-4">
@@ -144,22 +174,49 @@ const Home = () => {
           </div>
         </div>
       </section>
-      <section className="relative mt-16 bg-cover bg-center bg-no-repeat py-14 sm:py-[80px]" style={{ backgroundImage: `url(${assetUrl("assets/bg.jpg")})` }}>
-        <div className="site-container">
-          <div className="mx-auto max-w-[750px] text-center">
-            <p className="text-base font-semibold text-[#111111]">Get up to -40% Off</p>
-            <h2 className="mt-2 text-2xl font-semibold text-[#111111] sm:text-3xl">Only Summer Collections</h2>
-            <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-6 sm:grid-cols-4">
-              {countdownCards.map((item) => (
-                <div className="bg-[#f1e9e2] px-3 py-5 text-center shadow-[0_10px_22px_-18px_rgba(0,0,0,0.25)]" key={item.label}>
-                  <div className="text-2xl font-semibold text-[#d29a70]">{item.value}</div>
-                  <div className="mt-1 text-sm font-medium text-[#555555]">{item.label}</div>
-                </div>
-              ))}
+      
+      {saleBanner && saleBanner.isActive && (
+        <section className="relative mt-16 bg-cover bg-center bg-no-repeat py-14 sm:py-[80px]" style={{ backgroundImage: `url(${resolvedSaleBannerImage})` }}>
+          <div className="site-container">
+            <div className="mx-auto max-w-[750px] text-center">
+              <p className="text-base font-semibold text-[#111111]">{saleBanner.subtitle}</p>
+              <h2 className="mt-2 text-2xl font-semibold text-[#111111] sm:text-3xl">{saleBanner.title}</h2>
+              <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-6 sm:grid-cols-4">
+                {[
+                  { label: "Days", value: timeLeft.days },
+                  { label: "Hours", value: timeLeft.hours },
+                  { label: "Minutes", value: timeLeft.minutes },
+                  { label: "Seconds", value: timeLeft.seconds },
+                ].map((item) => (
+                  <div className="bg-[#f1e9e2] px-3 py-5 text-center shadow-[0_10px_22px_-18px_rgba(0,0,0,0.25)]" key={item.label}>
+                    <div className="text-2xl font-semibold text-[#d29a70]">{item.value.toString().padStart(2, '0')}</div>
+                    <div className="mt-1 text-sm font-medium text-[#555555]">{item.label}</div>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-10">
+                <Link to={`${ROUTES.PRODUCTS}?sale=true`} className="inline-flex items-center justify-center rounded-full bg-black px-10 py-4 text-sm font-bold uppercase tracking-wider text-white transition-all hover:bg-[#111111] hover:shadow-xl active:scale-95">
+                  Shop Now
+                </Link>
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      )}
+
+      {saleProductsList.length > 0 && (
+        <section className="mt-12 py-10 sm:mt-16 sm:py-16 bg-gray-50/50">
+          <div className="site-container">
+            <div className="relative mb-10 text-center sm:mb-12">
+              <span className="pointer-events-none absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-[70%] whitespace-nowrap text-[clamp(2.2rem,6vw,3.5rem)] font-semibold italic text-black/10 md:block" aria-hidden="true">Summer Collection</span>
+              <h2 className="relative z-10 m-0 pt-2 font-display text-2xl sm:text-3xl">Summer Sale Products</h2>
+            </div>
+            <div className="grid grid-cols-1 gap-4 min-[420px]:grid-cols-2 md:grid-cols-3 lg:gap-6 xl:grid-cols-4">
+              {saleProductsList.map((product) => (<ProductCard key={product.id} {...product} href={getProductDetailPath(product.id)} badgeStyles={badgeStyles} />))}
+            </div>
+          </div>
+        </section>
+      )}
 
       <section className="mt-12 py-10 sm:mt-16 sm:py-16">
         <div className="site-container">
@@ -197,5 +254,3 @@ const Home = () => {
 };
 
 export default Home;
-
-
