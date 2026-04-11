@@ -14,8 +14,7 @@ const Signup = () => {
 
   return (
     <AuthShell title="Create Account" subtitle="Sign up to unlock deals and track your orders." footer={<span>  Already have an account?{" "}  <Link className="font-semibold text-black" to={ROUTES.AUTH.LOGIN}>    Sign in  </Link></span>}>
-      <Formik initialValues={{firstName: "",lastName: "",email: "",countryCode: "+91",phoneNumber: "",password: "",confirmPassword: "",}} validationSchema={SignupSchema} onSubmit={async (values, { setSubmitting, setStatus }) => {
-          setStatus(undefined);
+      <Formik initialValues={{firstName: "",lastName: "",email: "",countryCode: "+91",phoneNumber: "",password: "",confirmPassword: "",}} validationSchema={SignupSchema} onSubmit={async (values, { setSubmitting, setStatus }) => {setStatus(undefined);
           try {
             const payload = {firstName: values.firstName.trim(),lastName: values.lastName.trim(),email: values.email,contact: {countryCode: values.countryCode,phoneNo: values.phoneNumber.replace(/\D/g, ""),},password: values.password,role: "user",};
             const data = await signupMutation.mutateAsync(payload);
