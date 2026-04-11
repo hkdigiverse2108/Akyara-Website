@@ -31,20 +31,7 @@ const PhoneInputWithCountryCode = ({ label, countryCodeName, phoneNumberName, pl
       <span>{label}</span>
       <div className="grid gap-3 sm:grid-cols-[180px_minmax(0,1fr)]">
         <div className="grid gap-2">
-          <Select 
-            showSearch 
-            value={countryCodeField.value} 
-            options={countryCodeOptions} 
-            optionFilterProp="label" 
-            popupMatchSelectWidth={320} 
-            popupClassName="country-code-dropdown" 
-            className={`country-code-select ${countryCodeMeta.touched && countryCodeMeta.error ? "country-code-select--error" : ""}`} 
-            placeholder="Select code" 
-            onChange={(value) => countryCodeHelpers.setValue(value)} 
-            onBlur={() => countryCodeHelpers.setTouched(true)} 
-            filterOption={(inputValue, option) => String(option?.label ?? "").toLowerCase().includes(inputValue.toLowerCase())} 
-            getPopupContainer={(triggerNode) => triggerNode.parentElement ?? document.body} 
-          />
+          <Select showSearch value={countryCodeField.value} options={countryCodeOptions} optionFilterProp="label" popupMatchSelectWidth={320} popupClassName="country-code-dropdown" className={`country-code-select ${countryCodeMeta.touched && countryCodeMeta.error ? "country-code-select--error" : ""}`} placeholder="Select code" onChange={(value) => countryCodeHelpers.setValue(value)} onBlur={() => countryCodeHelpers.setTouched(true)} filterOption={(inputValue, option) => String(option?.label ?? "").toLowerCase().includes(inputValue.toLowerCase())} getPopupContainer={(triggerNode) => triggerNode.parentElement ?? document.body} />
           <ErrorMessage name={countryCodeName} component="span" className="text-xs text-[#e53935]" />
         </div>
 
