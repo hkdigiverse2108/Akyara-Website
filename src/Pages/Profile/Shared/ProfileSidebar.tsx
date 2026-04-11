@@ -1,10 +1,4 @@
-import {
-  CreditCardOutlined,
-  EnvironmentOutlined,
-  HeartOutlined,
-  LogoutOutlined,
-  ShoppingOutlined,
-  UserOutlined,
+import {EnvironmentOutlined,HeartOutlined,LogoutOutlined,ShoppingOutlined,UserOutlined,
 } from "@ant-design/icons";
 import { NavLink, useNavigate } from "react-router-dom";
 import { ROUTES } from "../../../Constants";
@@ -20,7 +14,6 @@ const ProfileSidebar = () => {
     [ROUTES.ACCOUNT.WISHLIST]: <HeartOutlined />,
     [ROUTES.ACCOUNT.INFO]: <UserOutlined />,
     [ROUTES.ACCOUNT.ADDRESSES]: <EnvironmentOutlined />,
-    [ROUTES.ACCOUNT.PAYMENT]: <CreditCardOutlined />,
     [ROUTES.ACCOUNT.CHANGE_PASSWORD]: <UserOutlined />,
   } as const;
 

@@ -33,6 +33,17 @@
     font: inherit;
   }
 
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
+  }
+
   img,
   svg,
   video,
@@ -230,6 +241,16 @@
   .profile-form-textarea:disabled {
     cursor: not-allowed;
     background: #f6f6f6;
+  }
+  .profile-form-input[type="number"]::-webkit-inner-spin-button,
+  .profile-form-input[type="number"]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+
+  .profile-form-input[type="number"] {
+    -moz-appearance: textfield;
+    appearance: textfield;
   }
 
   .country-code-select,

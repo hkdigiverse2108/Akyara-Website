@@ -20,7 +20,7 @@ const ProfileAddressForm = ({ mode, addressId }: ProfileAddressFormProps) => {
   const { user } = useAppSelector((state) => state.auth);
   const addressOwnerId = typeof user?._id === "string" ? user._id : "";
   const isEditing = mode === "edit";
-  const { selectedAddress, saveAddress, isLoading, isSaving } = useAddressApi({addressId,enabled: isEditing && !!addressOwnerId,userId: addressOwnerId });
+  const { selectedAddress, saveAddress, isLoading, isSaving } = useAddressApi({ addressId, enabled: isEditing && !!addressOwnerId, userId: addressOwnerId });
 
   const goBack = () => navigate(ROUTES.ACCOUNT.ADDRESSES);
 
@@ -61,9 +61,9 @@ const ProfileAddressForm = ({ mode, addressId }: ProfileAddressFormProps) => {
     );
   }
 
-  const initialValues = isEditing? getAddressFormValues(selectedAddress): createAddressFormValues();
+  const initialValues = isEditing ? getAddressFormValues(selectedAddress) : createAddressFormValues();
   const formTitle = isEditing ? "Edit Address" : "Add New Address";
-  const formDescription = isEditing? "Update the selected address details from this page.": "Save a new shipping address to your account.";
+  const formDescription = isEditing ? "Update the selected address details from this page." : "Save a new shipping address to your account.";
 
   return (
     <div className="overflow-hidden rounded-[14px] border border-[#e6ebf1] bg-white shadow-[0_24px_56px_rgba(15,23,42,0.08)] sm:rounded-[16px]">
@@ -78,21 +78,22 @@ const ProfileAddressForm = ({ mode, addressId }: ProfileAddressFormProps) => {
         </div>
       </div>
 
-      <Formik<AddressFormValues> key={addressId ?? "add-address"} enableReinitialize initialValues={initialValues} validationSchema={AddressSchema} onSubmit={async (values, { setStatus, setSubmitting }) => {   setStatus(undefined);
-          if (isEditing && !values.id) {
-            setStatus({ error: "Address ID is missing. Please try again." });
-            setSubmitting(false);
-            return;
-          }
-          try {
-            await saveAddress(values);
-            navigate(ROUTES.ACCOUNT.ADDRESSES);
-          } catch (error) {
-            setStatus({error: error instanceof Error   ? error.message   : isEditing     ? "Unable to update address."     : "Unable to add address.",});
-          } finally {
-            setSubmitting(false);
-          }
-        }}
+      <Formik<AddressFormValues> key={addressId ?? "add-address"} enableReinitialize initialValues={initialValues} validationSchema={AddressSchema} onSubmit={async (values, { setStatus, setSubmitting }) => {
+        setStatus(undefined);
+        if (isEditing && !values.id) {
+          setStatus({ error: "Address ID is missing. Please try again." });
+          setSubmitting(false);
+          return;
+        }
+        try {
+          await saveAddress(values);
+          navigate(ROUTES.ACCOUNT.ADDRESSES);
+        } catch (error) {
+          setStatus({ error: error instanceof Error ? error.message : isEditing ? "Unable to update address." : "Unable to add address.", });
+        } finally {
+          setSubmitting(false);
+        }
+      }}
       >
         {({ isSubmitting, status }) => (
           <Form className="grid gap-5 bg-[#fcfcfd] px-4 py-5 sm:gap-6 sm:px-5 sm:py-6 lg:px-7 lg:py-7">
@@ -114,10 +115,10 @@ const ProfileAddressForm = ({ mode, addressId }: ProfileAddressFormProps) => {
               </div>
 
               <div className="mt-5 grid gap-4">
-                <CommonInput label="Address" name="address1" placeholder="House no, street, apartment"/>
+                <CommonInput label="Address" name="address1" placeholder="House no, street, apartment" />
 
                 <label className="grid gap-2 text-sm font-medium text-[#111111]">Address Line 2
-                  <Field as="textarea" name="address2" rows={4} placeholder="Area, locality, landmark, or additional address details" className="profile-form-textarea w-full"/>
+                  <Field as="textarea" name="address2" rows={4} placeholder="Area, locality, landmark, or additional address details" className="profile-form-textarea w-full" />
                   <FormikErrorMessage name="address2" component="span" className="text-xs text-[#e53935]" />
                 </label>
               </div>
@@ -142,7 +143,7 @@ const ProfileAddressForm = ({ mode, addressId }: ProfileAddressFormProps) => {
 
             <div className="flex flex-col-reverse gap-3 border-t border-[#e6ebf1] pt-5 sm:flex-row sm:justify-end">
               <button type="submit" disabled={isSubmitting || isSaving} className="w-full rounded-full bg-black px-6 py-3 text-sm font-semibold text-white transition hover:bg-[#111111] disabled:cursor-not-allowed disabled:opacity-70 sm:min-w-[170px] sm:w-auto">
-                {isSubmitting || isSaving? isEditing  ? "Updating..."  : "Saving...": isEditing  ? "Update Address"  : "Save Address"}
+                {isSubmitting || isSaving ? isEditing ? "Updating..." : "Saving..." : isEditing ? "Update Address" : "Save Address"}
               </button>
               <button type="button" onClick={goBack} className="w-full rounded-full border border-[#d9d9d9] bg-white px-6 py-3 text-sm font-semibold text-[#111111] transition hover:border-black sm:min-w-[128px] sm:w-auto"> Cancel</button>
             </div>

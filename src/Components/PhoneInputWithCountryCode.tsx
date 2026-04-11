@@ -49,7 +49,18 @@ const PhoneInputWithCountryCode = ({ label, countryCodeName, phoneNumberName, pl
         </div>
 
         <div className="grid gap-2">
-          <Field name={phoneNumberName} type="tel" inputMode="numeric" placeholder={placeholder} className={fieldClassName}
+          <Field
+            name={phoneNumberName}
+            type="tel"
+            inputMode="numeric"
+            placeholder={placeholder}
+            className={fieldClassName}
+            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+              const allowed = ["Backspace", "Delete", "Tab", "ArrowLeft", "ArrowRight", "Home", "End", "+"];
+              if (!allowed.includes(e.key) && !/^\d$/.test(e.key)) {
+                e.preventDefault();
+              }
+            }}
           />
           <ErrorMessage name={phoneNumberName} component="span" className="text-xs text-[#e53935]" />
         </div>

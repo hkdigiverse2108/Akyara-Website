@@ -5,6 +5,5 @@ export const profileSections = [
   { label: "Wishlist", to: ROUTES.ACCOUNT.WISHLIST },
   { label: "Profile Info", to: ROUTES.ACCOUNT.INFO },
   { label: "Addresses", to: ROUTES.ACCOUNT.ADDRESSES },
-  { label: "Payment Methode", to: ROUTES.ACCOUNT.PAYMENT },
   { label: "Change Password", to: ROUTES.ACCOUNT.CHANGE_PASSWORD },
 ] as const;
