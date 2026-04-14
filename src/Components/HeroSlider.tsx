@@ -60,7 +60,7 @@ const HeroSlider = ({ banners }: HeroSliderProps) => {
           );
         })}
 
-        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.3)_0%,rgba(255,255,255,0)_40%,rgba(255,255,255,0.7)_100%)] sm:bg-[linear-gradient(90deg,rgba(255,255,255,0.92)_0%,rgba(255,255,255,0.7)_40%,rgba(255,255,255,0)_100%)]" />
+        <div className="pointer-events-none absolute inset-0 " />
 
         <div className="absolute inset-0 z-10">
           <div className="site-container flex h-full items-center pb-12 pt-20 sm:pb-0 sm:pt-0">
