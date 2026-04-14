@@ -60,7 +60,7 @@ const HeroSlider = ({ banners }: HeroSliderProps) => {
           );
         })}
 
-        <div className="pointer-events-none absolute inset-0 " />
+        <div className="pointer-events-none absolute inset-0" />
 
         <div className="absolute inset-0 z-10">
           <div className="site-container flex h-full items-center pb-12 pt-20 sm:pb-0 sm:pt-0">

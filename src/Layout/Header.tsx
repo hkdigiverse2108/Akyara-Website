@@ -119,10 +119,19 @@ const Header = () => {
     </div>
   );
 
+  const [isScrolled, setIsScrolled] = useState(false);
+  const isHome = location.pathname === "/" || location.pathname === "";
+
+  useEffect(() => {
+    const handleScroll = () => setIsScrolled(window.scrollY > 40);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
-    <header className="fixed left-0 right-0 top-0 z-40 border-b border-[#e7ebf2] bg-white/95 backdrop-blur">
+    <header className={`fixed left-0 right-0 top-0 z-40 transition-all duration-300 ${isHome && !isScrolled ? "border-transparent bg-transparent" : "border-b border-[#e7ebf2] bg-white/95 backdrop-blur shadow-sm"}`}>
       <div className="site-container">
-        <div className="flex min-h-[64px] m items-center gap-2 sm:min-h-[70px] lg:min-h-[78px]">
+        <div className="flex min-h-[64px] items-center gap-2 sm:min-h-[70px] lg:min-h-[78px]">
           <div className="shrink-0">
             <Link to={ROUTES.HOME} aria-label="Home">
               <img className="block h-7 w-auto object-contain sm:h-8 md:h-9 lg:h-11" src="/assets/images/logo/logo.png" alt="Kumo logo"/>

@@ -84,7 +84,7 @@ export const NewsletterPopup = () => {
               {subscribe.status.success}
             </p>
           )}
-          <button type="submit" disabled={newsletterMutation.isPending} className="mt-2 w-full rounded-full bg-black py-3.5 font-bold uppercase tracking-wider text-white shadow-[0_10px_24px_rgba(0,0,0,0.25)] transition-all hover:bg-[#111111] hover:shadow-black/20 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"> {newsletterMutation.isPending ? "Joining..." : "Join the Club"}</button>
+          <button type="submit" disabled={newsletterMutation.isPending} className="mt-2 w-full rounded-full bg-black py-3.5 font-bold uppercase tracking-wider text-white shadow-[0_10px_24px_rgba(0,0,0,0.25)] transition-all hover:bg-[#111111] hover:shadow-black/20 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"> {newsletterMutation.isPending ? "Joining..." : "Submit"}</button>
         </form>
       </div>
     </div>

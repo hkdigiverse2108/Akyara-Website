@@ -30,7 +30,9 @@ const MainLayout = ({ children }: MainLayoutProps) => {
     <div className="flex min-h-screen flex-col overflow-x-hidden bg-white">
       {isBootLoading ? <PageLoader /> : null}
       <Header />
-      <main className="flex-1 pt-[64px] sm:pt-[70px] lg:pt-[78px]">{children ?? <Outlet />}</main>
+      <main className={`flex-1 ${location.pathname === '/' ? '' : 'pt-[64px] sm:pt-[70px] lg:pt-[78px]'}`}>
+        {children ?? <Outlet />}
+      </main>
       <SupportHighlights />
       <Footer />
     </div>
