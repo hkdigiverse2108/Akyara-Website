@@ -7,14 +7,20 @@ const featureCards = [
 
 const SupportHighlights = () => {
   return (
-    <section className=" bg-white py-7">
-      <div className="site-container grid gap-6 text-sm sm:grid-cols-2 xl:grid-cols-4">
+    <section className="bg-white py-10 sm:py-14">
+      <div className="site-container grid gap-10 text-sm sm:grid-cols-2 lg:grid-cols-4">
         {featureCards.map((item) => (
-          <div key={item.title} className="flex items-center gap-4">
-            <div className="text-[#e53935]">{item.icon}</div>
+          <div key={item.title} className="flex flex-col items-center text-center">
+            <div className="mb-4 text-[#e53935] transition-transform duration-300 hover:scale-110">
+              {item.icon}
+            </div>
             <div>
-              <p className="text-xs font-bold uppercase tracking-[0.15em] text-[#111111]">{item.title}</p>
-              <p className="mt-1 text-sm text-[#667085]">{item.description}</p>
+              <p className="text-[0.8rem] font-bold uppercase tracking-[0.2em] text-[#111111]">
+                {item.title}
+              </p>
+              <p className="mt-2 text-xs text-[#667085] leading-relaxed max-w-[200px] mx-auto">
+                {item.description}
+              </p>
             </div>
           </div>
         ))}

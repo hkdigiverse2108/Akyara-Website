@@ -148,7 +148,7 @@ export const ProductTabs = ({product,activeTab,setActiveTab,reviews,isReviewsLoa
   return (
     <section className="mt-16 border-t border-[#eef1f5] pt-14">
       <div className="site-container">
-        <div className="flex flex-wrap items-center justify-center gap-6 text-xs font-semibold uppercase tracking-[0.18em] text-[#8b96a8] sm:gap-8">
+        <div className="hide-scrollbar flex items-center justify-start gap-7 overflow-x-auto whitespace-nowrap px-4 text-[0.75rem] font-bold uppercase tracking-[0.2em] text-[#8b96a8] sm:justify-center sm:gap-10 sm:px-0">
           {([{ key: "description", label: "Description" },{ key: "additional", label: "Additional Information" },{ key: "reviews", label: "Reviews" },] as Array<{ key: ProductTab; label: string }>).map((tab) => {
             const isActive = activeTab === tab.key;
 

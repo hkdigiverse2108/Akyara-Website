@@ -46,48 +46,44 @@ const HeroSlider = ({ banners }: HeroSliderProps) => {
 
   return (
     <section className="bg-[#efefef]">
-      <div className="relative isolate h-screen min-h-[420px] w-full overflow-hidden bg-[#e7e7e7]">
+      <div className="relative isolate h-[60dvh] min-h-[460px] w-full overflow-hidden bg-white sm:h-[calc(100dvh-78px)]">
         {displayBanners.map((banner, index) => {
           const isActive = index === activeBanner;
           return (
-            <div key={banner._id || index} className={`absolute inset-0 transition-opacity duration-700 ${isActive ? "opacity-100" : "opacity-0"}`}>
+            <div key={banner._id || index} className={`absolute inset-0 transition-opacity duration-1000 ${isActive ? "opacity-100" : "opacity-0 invisible"}`}>
               <img
                 src={banner.image?.startsWith('http') ? banner.image : assetUrl(banner.image || "")}
                 alt={banner.title}
-                className="h-full w-full object-cover object-top"
+                className="h-full w-full object-cover object-[center_15%] sm:object-top"
               />
             </div>
           );
         })}
 
-        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.88)_0%,rgba(255,255,255,0.65)_30%,rgba(255,255,255,0.12)_62%,rgba(255,255,255,0)_100%)] sm:bg-[linear-gradient(90deg,rgba(255,255,255,0.86)_0%,rgba(255,255,255,0.48)_38%,rgba(255,255,255,0)_72%)]" />
+        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,255,255,0.3)_0%,rgba(255,255,255,0)_40%,rgba(255,255,255,0.7)_100%)] sm:bg-[linear-gradient(90deg,rgba(255,255,255,0.92)_0%,rgba(255,255,255,0.7)_40%,rgba(255,255,255,0)_100%)]" />
 
         <div className="absolute inset-0 z-10">
-          <div className="site-container flex h-full items-end pb-10 pt-16 sm:items-center sm:pb-0 sm:pt-0">
+          <div className="site-container flex h-full items-center pb-12 pt-20 sm:pb-0 sm:pt-0">
             <div className="max-w-[620px]">
               <span className="text-[0.65rem] font-medium uppercase tracking-[0.24em] text-[#e53935] sm:text-sm sm:tracking-[0.32em]">
                 {activeSlide.type || "Special Collection"}
               </span>
 
-              <h1 className="mt-2.5 text-[clamp(1.6rem,7vw,2.8rem)] font-medium leading-[1.08] text-black sm:mt-3">
+              <h1 className="mt-3 text-[clamp(1.65rem,8vw,2.4rem)] font-semibold leading-[1.15] tracking-tight text-black sm:mt-4 sm:text-[clamp(2.8rem,6vw,4rem)]">
                 {activeSlide.title}
                 {activeSlide.subtitle && (
-                  <>
-                    <br />
+                  <span className="mt-2 block text-[0.65em] font-medium leading-relaxed text-black/80 sm:mt-3">
                     {activeSlide.subtitle}
-                  </>
+                  </span>
                 )}
               </h1>
-              <p className="mt-2.5 text-[0.95rem] italic text-[#4f5a7a] sm:mt-4 sm:text-lg md:text-xl">
-                There&apos;s nothing like trend
-              </p>
 
               <Link
                 to={activeSlide.ctaButtonRedirection || activeSlide.pageRedirection || "/products"}
-                className="mt-5 inline-flex w-full items-center justify-center gap-2 border border-black px-6 py-2.5 text-sm font-medium text-black transition-colors duration-200 hover:bg-black hover:text-white sm:mt-7 sm:w-auto sm:px-7 sm:py-3"
+                className="mt-6 inline-flex w-full items-center justify-center gap-2 border-2 border-black bg-transparent px-6 py-3 text-sm font-bold uppercase tracking-wider text-black transition-all duration-300 hover:bg-black hover:text-white sm:mt-8 sm:w-auto sm:px-10 sm:py-4"
               >
                 {activeSlide.ctaButton || "Shop Now"}
-                <span aria-hidden="true">&rarr;</span>
+                <span className="text-lg" aria-hidden="true">&rarr;</span>
               </Link>
             </div>
           </div>

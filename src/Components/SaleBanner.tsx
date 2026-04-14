@@ -44,31 +44,37 @@ export const SaleBanner = ({ banner }: SaleBannerProps) => {
   if (!banner || !banner.isActive) return null;
 
   return (
-    <section 
-      className="relative mt-16 bg-cover bg-center bg-no-repeat py-14 sm:py-[80px]" 
-      style={{ backgroundImage: `url(${resolvedSaleBannerImage})` }}
-    >
-      <div className="site-container">
-        <div className="mx-auto max-w-[750px] text-center">
-          <p className="text-base font-semibold text-[#111111]">{banner.subtitle}</p>
-          <h2 className="mt-2 text-[clamp(1.5rem,5vw,2rem)] font-semibold text-[#111111]">
-            {banner.title}
-          </h2>
-          
-          <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-6 sm:grid-cols-4">
-            {[{ label: "Days", value: timeLeft.days },{ label: "Hours", value: timeLeft.hours },{ label: "Minutes", value: timeLeft.minutes },{ label: "Seconds", value: timeLeft.seconds },].map((item) => (
-              <div className="bg-[#f1e9e2] px-3 py-5 text-center shadow-[0_10px_22px_-18px_rgba(0,0,0,0.25)]" key={item.label}>
-                <div className="text-2xl font-semibold text-[#d29a70]">{item.value.toString().padStart(2, '0')}</div>
-                <div className="mt-1 text-xs font-medium uppercase tracking-wider text-[#555555]">{item.label}</div>
-              </div>
-            ))}
-          </div>
+    <section className="relative mt-16 overflow-hidden bg-white lg:mt-24">
+      <div className="absolute inset-0 z-0 select-none">
+        <img
+          src={resolvedSaleBannerImage}
+          alt={banner.title}
+          className="h-full w-full object-contain sm:object-cover"
+        />
+      </div>
+      <div className="relative z-10 py-14 sm:py-[80px]">
+        <div className="site-container">
+          <div className="mx-auto max-w-[750px] text-center">
+            <p className="text-base font-semibold text-[#111111]">{banner.subtitle}</p>
+            <h2 className="mt-2 text-[clamp(1.5rem,5vw,2rem)] font-semibold text-[#111111]">
+              {banner.title}
+            </h2>
 
-          <div className="mt-12 text-center">
-            <Link to={`${ROUTES.PRODUCTS}?sale=true`} className="inline-flex items-center justify-center gap-2 border border-black px-10 py-3 text-sm font-medium text-black transition-colors duration-200 hover:bg-black hover:text-white group">
-              Shop Now
-              <span className="transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true">&rarr;</span>
-            </Link>
+            <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-6 sm:grid-cols-4">
+              {[{ label: "Days", value: timeLeft.days }, { label: "Hours", value: timeLeft.hours }, { label: "Minutes", value: timeLeft.minutes }, { label: "Seconds", value: timeLeft.seconds },].map((item) => (
+                <div className="bg-[#f1e9e2] px-3 py-5 text-center shadow-[0_10px_22px_-18px_rgba(0,0,0,0.25)]" key={item.label}>
+                  <div className="text-2xl font-semibold text-[#d29a70]">{item.value.toString().padStart(2, '0')}</div>
+                  <div className="mt-1 text-xs font-medium uppercase tracking-wider text-[#555555]">{item.label}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="mt-12 text-center">
+              <Link to={`${ROUTES.PRODUCTS}?sale=true`} className="inline-flex items-center justify-center gap-2 border border-black px-10 py-3 text-sm font-medium text-black transition-colors duration-200 hover:bg-black hover:text-white group">
+                Shop Now
+                <span className="transition-transform duration-200 group-hover:translate-x-1" aria-hidden="true">&rarr;</span>
+              </Link>
+            </div>
           </div>
         </div>
       </div>

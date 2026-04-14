@@ -18,27 +18,27 @@ const ProductCard = (props: ProductCardProps) => {
   return (
     <article className={[   "product-card group relative overflow-hidden rounded-[6px] bg-white shadow-[0_12px_30px_-24px_rgba(0,0,0,0.35)]",   className, ]   .filter(Boolean)   .join(" ")} {...articleProps}>
       {badge ? (<span className={`absolute left-4 top-4 z-10 rounded-[6px] px-3 py-1 text-[0.65rem] font-semibold uppercase tracking-[0.2em] text-white ${   badgeStyles?.[badge] ?? "bg-black" }`}>{badge}</span>) : null}
-      <button type="button" onClick={handleWishlistClick} className="absolute right-4 top-4 z-10 inline-flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#111111] shadow-[0_10px_26px_rgba(0,0,0,0.12)] transition hover:scale-105" aria-label={favoriteAriaLabel ?? `Save ${name}`}>
-        {isWished ? <HeartFilled className="text-[#ef6b4a]" /> : <HeartOutlined />}
+      <button type="button" onClick={handleWishlistClick} className="absolute right-3 top-3 z-10 inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#111111] shadow-[0_8px_20px_rgba(0,0,0,0.1)] transition active:scale-90 sm:h-10 sm:w-10 sm:right-4 sm:top-4" aria-label={favoriteAriaLabel ?? `Save ${name}`}>
+        {isWished ? <HeartFilled className="text-[#e53935]" /> : <HeartOutlined className="text-lg" />}
       </button>
-      <div className="relative overflow-hidden bg-[#f1f0ec]">
+      <div className="relative overflow-hidden bg-[#f9f9f9]">
         <Link to={href} aria-label={`Open ${name}`} className="block">
-          <img src={image} alt={name} loading="lazy" className={[   "card-img-top w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]",   imageClassName ?? "h-[220px] min-[420px]:h-[260px] sm:h-[300px] lg:h-[360px]", ]   .filter(Boolean)   .join(" ")}/>
+          <img src={image} alt={name} loading="lazy" className={[   "card-img-top w-full object-cover object-top transition-transform duration-700 group-hover:scale-110",   imageClassName ?? "aspect-[4/5] sm:h-[300px] lg:h-[380px]", ]   .filter(Boolean)   .join(" ")}/>
         </Link>
-        <Link to={href} className="absolute inset-x-0 bottom-0 translate-y-full bg-black/90 px-4 py-3 text-center text-sm text-white transition-transform duration-300 group-hover:translate-y-0">
-          <span className="inline-flex items-center gap-2 font-semibold uppercase tracking-wide">
-            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.5"> <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6z" /><circle cx="12" cy="12" r="3" /></svg> Quick View
+        <Link to={href} className="absolute inset-x-0 bottom-0 hidden translate-y-full bg-black/90 px-4 py-3 text-center text-xs text-white transition-transform duration-300 group-hover:translate-y-0 sm:block sm:text-sm">
+          <span className="inline-flex items-center gap-2 font-semibold uppercase tracking-wider">
+            Quick View
           </span>
         </Link>
       </div>
 
-      <div className="p-4 text-center">
-        <Link to={href} className="mb-1 block text-sm font-medium text-[#1f1f1f] transition hover:text-[#ef6b4a]">
+      <div className="p-3 text-center sm:p-5">
+        <Link to={href} className="line-clamp-1 mb-1 block text-[0.82rem] font-medium text-[#1f1f1f] transition hover:text-[#e53935] sm:text-sm">
           {name}
         </Link>
-        <div className="text-sm font-medium">
-          {oldPrice ? <span className="mr-2 text-[#9b9b9b] line-through">{oldPrice}</span> : null}
-          <span className={`text-base font-semibold ${oldPrice ? "text-[#e53935]" : "text-[#1f1f1f]"}`}>{price}</span>
+        <div className="flex flex-col items-center gap-0.5 sm:flex-row sm:justify-center sm:gap-2">
+          {oldPrice ? <span className="text-[0.75rem] text-[#9b9b9b] line-through sm:text-sm">{oldPrice}</span> : null}
+          <span className={`text-sm font-bold sm:text-base ${oldPrice ? "text-[#e53935]" : "text-[#111111]"}`}>{price}</span>
         </div>
       </div>
     </article>
