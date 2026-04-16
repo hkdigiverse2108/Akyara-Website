@@ -5,20 +5,42 @@ import { CategoryHighlights, HeroSlider, InstagramFeed, ProductCard, SaleBanner,
 import { ROUTES } from "../../Constants";
 import { badgeStyles, getProductDetailPath, products as fallbackProducts } from "../Products/productData";
 import { normalizeProductList } from "../Products/productApiUtils";
+import type { SaleBanner as SaleBannerType } from "../../Types";
 
 const Home = () => {
   const { data: trendingData } = Queries.useGetAllProducts({ isTrending: true });
   const { data: dealsData } = Queries.useGetAllProducts({ isDealOfDay: true });
+  const { data: allProductsData } = Queries.useGetAllProducts();
   const { data: bannerData } = Queries.useGetAllBanners();
   const { data: saleBannerData } = Queries.useGetSaleBanner();
 
   const trendingProducts = normalizeProductList(trendingData);
   const dealProducts = normalizeProductList(dealsData);
+  const allProducts = normalizeProductList(allProductsData);
 
-  const trendingCatalog = trendingProducts.length ? trendingProducts : fallbackProducts;
-  const dealsCatalog = dealProducts.length ? dealProducts : fallbackProducts;
+  const trendingCatalog = trendingProducts.length ? trendingProducts : allProducts.length ? allProducts : fallbackProducts;
+  const dealsCatalog = dealProducts.length ? dealProducts : allProducts.length ? allProducts : fallbackProducts;
   const banners = useMemo(() => bannerData?.data?.banner_data || [], [bannerData]);
-  const saleBanner = saleBannerData?.data;
+  const saleBanner = useMemo(() => {
+    const raw = saleBannerData?.data as unknown;
+    const candidates = Array.isArray(raw) ? raw : raw ? [raw] : [];
+
+    const toBoolean = (value: unknown) => {
+      if (typeof value === "boolean") return value;
+      if (typeof value === "number") return value === 1;
+      if (typeof value === "string") {
+        const normalized = value.trim().toLowerCase();
+        return normalized === "true" || normalized === "1" || normalized === "yes";
+      }
+      return false;
+    };
+
+    const activeBanner = candidates.find((item) =>
+      toBoolean((item as { isActive?: unknown })?.isActive),
+    );
+
+    return (activeBanner as SaleBannerType | undefined) ?? null;
+  }, [saleBannerData?.data]);
 
   return (
     <div>

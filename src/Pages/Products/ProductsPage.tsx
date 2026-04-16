@@ -19,7 +19,7 @@ const ProductsPage = ({ initialCategory = "All" }: ProductsPageProps) => {
   const searchQuery = searchParams.get("search");
   
   const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 20;
+  const pageSize = 16;
 
   const filterParams: Record<string, any> = { page: currentPage, limit: pageSize };
   if (isSaleFilter) filterParams.isSale = true;

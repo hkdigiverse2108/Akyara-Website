@@ -19,7 +19,7 @@ export const Mutations = {
   useVerifyOtp: () => useMutations<VerifyOtpPayload, VerifyOtpResponse>([KEYS.AUTH.VERIFY_OTP], (input) => Post(URL_KEYS.AUTH.VERIFY_OTP, input, false),),
   useChangePassword: () => useMutations<ChangePasswordPayload, ApiResponse>([KEYS.AUTH.CHANGE_PASSWORD], (input) => Post(URL_KEYS.AUTH.CHANGE_PASSWORD, input),),
   useAddContact: () => useMutations<ContactPayload, ApiResponse>([KEYS.CONTACT.ADD], (input) => Post(URL_KEYS.CONTACT.ADD, input, false)),
-  useAddReview: () => useMutations<AddReviewPayload, ApiResponse>([KEYS.REVIEW.BASE, KEYS.REVIEW.ALL, KEYS.REVIEW.DETAIL,KEYS.PRODUCT.ALL], (input) => Post(URL_KEYS.REVIEW.ADD, input)),
+  useAddReview: () => useMutations<AddReviewPayload, ApiResponse>([KEYS.REVIEW.BASE, KEYS.REVIEW.ALL, KEYS.REVIEW.DETAIL], (input) => Post(URL_KEYS.REVIEW.ADD, input)),
   useAddWishlist: () => useMutations<AddWishlistPayload, WishlistApiResponse>([KEYS.WISHLIST.BASE, KEYS.WISHLIST.ALL], (input) => Post(URL_KEYS.WISHLIST.ADD, input)),
   useRemoveWishlist: () => useMutations<string, ApiResponse>([KEYS.WISHLIST.BASE, KEYS.WISHLIST.ALL], (id) => Delete(`${URL_KEYS.WISHLIST.BASE}/${id}`)),
   useAddCart: () => useMutations<AddCartPayload, CartApiResponse>([KEYS.CART.BASE, KEYS.CART.ALL], (input) => Post(URL_KEYS.CART.ADD, input)),

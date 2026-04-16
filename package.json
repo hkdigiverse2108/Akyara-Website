@@ -15,7 +15,7 @@
     "@tailwindcss/vite": "^4.2.1",
     "@tanstack/react-query": "^5.90.21",
     "antd": "^6.3.3",
-    "axios": "^1.13.6",
+    "axios": "^1.15.0",
     "country-state-city": "^3.2.1",
     "formik": "^2.4.9",
     "framer-motion": "^12.23.12",

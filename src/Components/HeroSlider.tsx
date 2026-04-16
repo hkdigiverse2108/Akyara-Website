@@ -8,30 +8,9 @@ interface HeroSliderProps {
   banners?: Banner[];
 }
 
-const fallbackBanners = [
-  {
-    _id: "fb-1",
-    image: assetUrl("assets/bennr-1.png"),
-    title: "New Winter",
-    subtitle: "Collections 2021",
-    type: "Winter Collection",
-    ctaButton: "Shop Now",
-    ctaButtonRedirection: "/products"
-  },
-  {
-    _id: "fb-2",
-    image: assetUrl("assets/bennr-2.png"),
-    title: "Women's Fashion",
-    subtitle: "UpTo 30% Off",
-    type: "Summer Collection",
-    ctaButton: "Shop Now",
-    ctaButtonRedirection: "/products"
-  }
-];
-
 const HeroSlider = ({ banners }: HeroSliderProps) => {
   const [activeBanner, setActiveBanner] = useState(0);
-  const displayBanners = banners && banners.length > 0 ? banners : (fallbackBanners as unknown as Banner[]);
+  const displayBanners = banners ?? [];
 
   useEffect(() => {
     if (displayBanners.length <= 1) return;
@@ -41,6 +20,14 @@ const HeroSlider = ({ banners }: HeroSliderProps) => {
 
     return () => window.clearInterval(interval);
   }, [displayBanners.length]);
+
+  useEffect(() => {
+    if (displayBanners.length > 0 && activeBanner >= displayBanners.length) {
+      setActiveBanner(0);
+    }
+  }, [activeBanner, displayBanners.length]);
+
+  if (displayBanners.length === 0) return null;
 
   const activeSlide = displayBanners[activeBanner];
 

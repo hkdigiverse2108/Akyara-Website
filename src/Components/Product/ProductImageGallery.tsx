@@ -6,8 +6,8 @@ export const ProductImageGallery = ({product,selectedImage,setSelectedImage,isIm
 }: ProductImageGalleryProps) => {
   return (
     <div className="min-w-0 w-full max-w-[640px]">
-      <div className="mx-auto flex aspect-[4/5] w-full items-center justify-center overflow-hidden rounded-[2px] p-4 sm:aspect-[5/6] sm:p-5" onMouseEnter={() => setIsImageZoomed(true)} onMouseMove={handleImageMouseMove} onMouseLeave={resetImageZoom}>
-        <img src={selectedImage || product.image} alt={product.name} className="block h-full w-full object-contain transition duration-200 ease-out" style={{   transform: isImageZoomed ? "scale(1.45)" : "scale(1)",   transformOrigin: `${zoomOrigin.x}% ${zoomOrigin.y}%`,}}/>
+      <div className="mx-auto flex aspect-[4/5] w-full cursor-zoom-in items-center justify-center overflow-hidden rounded-[2px] p-4 sm:aspect-[5/6] sm:p-5" onClick={() => setIsImageZoomed(!isImageZoomed)} onMouseMove={isImageZoomed ? handleImageMouseMove : undefined} onMouseLeave={resetImageZoom}>
+        <img src={selectedImage || product.image} alt={product.name} className="block h-full w-full object-contain transition duration-200 ease-out" style={{   transform: isImageZoomed ? "scale(1.35)" : "scale(1)",   transformOrigin: `${zoomOrigin.x}% ${zoomOrigin.y}%`,}}/>
       </div>
 
       <div className="mt-3 grid grid-cols-6 gap-2">

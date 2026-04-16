@@ -11,6 +11,18 @@ interface SaleBannerProps {
 
 export const SaleBanner = ({ banner }: SaleBannerProps) => {
   const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+  const [isImageVisible, setIsImageVisible] = useState(true);
+
+  const isBannerActive = useMemo(() => {
+    const value = (banner as { isActive?: unknown } | null | undefined)?.isActive;
+    if (typeof value === "boolean") return value;
+    if (typeof value === "number") return value === 1;
+    if (typeof value === "string") {
+      const normalized = value.trim().toLowerCase();
+      return normalized === "true" || normalized === "1" || normalized === "yes";
+    }
+    return false;
+  }, [banner]);
 
   const resolvedSaleBannerImage = useMemo(() => {
     if (!banner?.image) return "";
@@ -41,16 +53,23 @@ export const SaleBanner = ({ banner }: SaleBannerProps) => {
     return () => clearInterval(id);
   }, [banner?.saleEndTime]);
 
-  if (!banner || !banner.isActive) return null;
+  useEffect(() => {
+    setIsImageVisible(true);
+  }, [resolvedSaleBannerImage]);
+
+  if (!banner || !isBannerActive) return null;
 
   return (
     <section className="relative mt-16 overflow-hidden bg-white lg:mt-24">
       <div className="absolute inset-0 z-0 select-none">
-        <img
-          src={resolvedSaleBannerImage}
-          alt={banner.title}
-          className="h-full w-full object-contain sm:object-cover"
-        />
+        {isImageVisible && resolvedSaleBannerImage ? (
+          <img
+            src={resolvedSaleBannerImage}
+            alt={banner.title}
+            className="h-full w-full object-contain sm:object-cover"
+            onError={() => setIsImageVisible(false)}
+          />
+        ) : null}
       </div>
       <div className="relative z-10 py-14 sm:py-[80px]">
         <div className="site-container">

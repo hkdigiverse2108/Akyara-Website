@@ -7,7 +7,7 @@ import type {ProductItem,ProductReview,ProductTab,ReviewFormValues,ReviewRecord,
 import { getToken } from "../../../Utils";
 import { useWishlist } from "../../../Hooks/useWishlist";
 import { useCart } from "../../../Hooks/useCart";
-import {initialReviewEntries,initialReviewFormValues,} from "./constants";
+import {initialReviewFormValues,} from "./constants";
 import { formatReviewDate, getReviewInitials } from "./utils";
 
 const isObjectId = (v?: string) => /^[a-f0-9]{24}$/i.test(v ?? "");
@@ -39,7 +39,7 @@ export const useProductDetailState = (product: ProductItem | null) => {
 
   const reviewQuery = Queries.useGetAllReviews(canFetch);
 
-  const reviews = useMemo(() => canFetch? normalizeReviews(reviewQuery.data, productId): initialReviewEntries,[reviewQuery.data, productId]);
+  const reviews = useMemo(() => canFetch? normalizeReviews(reviewQuery.data, productId): [],[reviewQuery.data, productId]);
 
   useEffect(() => {
     if (!product) return;
