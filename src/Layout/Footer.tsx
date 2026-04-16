@@ -26,7 +26,7 @@ const Footer = () => {
       <div className="site-container grid gap-8 text-center sm:grid-cols-2 sm:text-left lg:grid-cols-[minmax(290px,1.45fr)_minmax(170px,0.85fr)_minmax(220px,1fr)_max-content] lg:items-start xl:gap-10">
         <div className="flex flex-col items-center sm:items-start lg:pr-6">
           <Link to={ROUTES.HOME}>
-            <img className="h-10 object-contain" src="/assets/images/logo/image.png" alt="Logo" />
+            <img className="h-10 object-contain" src="/assets/images/logo/image.png" alt="Akyara logo" />
           </Link>
 
           <div className="mt-3 space-y-1 text-sm leading-6">
@@ -78,7 +78,7 @@ const Footer = () => {
       </div>
 
       <div className="site-container mt-8 border-t border-gray-700 pt-3 text-center text-xs text-gray-400 sm:text-sm">
-        (c) {new Date().getFullYear()} Kumo. All rights reserved.
+        (c) {new Date().getFullYear()} Akyara. All rights reserved.
       </div>
     </footer>
   );

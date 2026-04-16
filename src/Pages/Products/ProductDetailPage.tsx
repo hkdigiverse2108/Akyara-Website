@@ -1,7 +1,6 @@
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Queries } from "../../Api";
 import { PageLoader, ProductImageGallery, ProductInfo, ProductTabs, RelatedProducts } from "../../Components";
-import { ROUTES } from "../../Constants";
 import {getProductById as getFallbackProductById,products as fallbackProducts,} from "./productData";
 import {normalizeProductDetail,normalizeProductList,} from "./productApiUtils";
 import {useProductDetailState,useProductDetailHandlers,} from "./ProductDetail/hooks";
@@ -31,11 +30,6 @@ const ProductDetailPage = () => {
   return (
     <div className="bg-white pb-16 pt-8 overflow-x-hidden">
       <section className="site-container">
-        <div className="mb-6 text-sm">
-          <Link to={ROUTES.HOME}>Home</Link> /{" "}
-          <Link to={ROUTES.PRODUCTS}>Products</Link> / {product.name}
-        </div>
-
         <div className="grid gap-8 lg:grid-cols-[600px_1fr] xl:grid-cols-[640px_1fr] xl:gap-12">
           <ProductImageGallery product={product} selectedImage={state.selectedImage} setSelectedImage={state.setSelectedImage} isImageZoomed={state.isImageZoomed} setIsImageZoomed={state.setIsImageZoomed} zoomOrigin={state.zoomOrigin} handleImageMouseMove={handlers.handleImageMouseMove} resetImageZoom={handlers.resetImageZoom}/>
 

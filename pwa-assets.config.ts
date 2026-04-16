@@ -5,5 +5,5 @@ export default defineConfig({
     preset: "2023",
   },
   preset,
-  images: ["public/assets/images/logo/logo.png"],
+  images: ["public/akayra-logo.png"],
 });
