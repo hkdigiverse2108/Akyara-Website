@@ -22,63 +22,76 @@ const Footer = () => {
   const securePaymentImages = (settings?.securePaymentImages ?? []).map((item) => resolveSettingsImageUrl(item)).filter(Boolean);
 
   return (
-    <footer className="bg-[#1f2937] py-10 text-[#d1d5db] sm:py-12">
-      <div className="site-container grid gap-8 text-center sm:grid-cols-2 sm:text-left lg:grid-cols-[minmax(290px,1.45fr)_minmax(170px,0.85fr)_minmax(220px,1fr)_max-content] lg:items-start xl:gap-10">
-        <div className="flex flex-col items-center sm:items-start lg:pr-6">
-          <Link to={ROUTES.HOME}>
-            <img className="h-10 object-contain" src="/assets/images/logo/image.png" alt="Akyara logo" />
+    <footer className="bg-gradient-to-b from-[#111827] to-[#1f2937] py-7 text-[#d1d5db] sm:py-8 border-t border-gray-800">
+      <div className="site-container grid gap-5 text-center sm:grid-cols-2 sm:text-left lg:grid-cols-[minmax(240px,1fr)_minmax(160px,0.8fr)_minmax(200px,1fr)_max-content] lg:items-start xl:gap-8">
+        <div className="flex flex-col items-center sm:items-start lg:pr-4">
+          <Link to={ROUTES.HOME} className="group transition-transform hover:scale-105 block">
+            <img className="h-24 w-auto object-contain opacity-95 transition-opacity hover:opacity-100" src="/akayra-pwa-footer-logo.png" alt="Akyara logo" />
           </Link>
 
-          <div className="mt-3 space-y-1 text-sm leading-6">
-            {addressLine ? <p>{addressLine}</p> : null}
-            <a href={`tel:${contact}`} className="block transition hover:text-white"> {contact}</a>
-            <a href={`mailto:${email}`} className="block transition hover:text-white">{email}</a>
+          <div className="mt-2 space-y-1 text-[0.88rem] leading-6 text-gray-400">
+            {addressLine ? <p className="max-w-[260px]">{addressLine}</p> : null}
+            <div className="flex flex-col gap-0.5">
+              <a href={`tel:${contact}`} className="block transition-colors hover:text-white"> {contact}</a>
+              <a href={`mailto:${email}`} className="block transition-colors hover:text-white decoration-gray-600 underline-offset-4 hover:underline">{email}</a>
+            </div>
           </div>
 
-          <div className="mt-3 flex gap-3 text-base">
-            {socialLinks.map(({ label, href, icon }) => (<a key={label} href={href} target="_blank" rel="noreferrer" aria-label={label} className="transition hover:text-white">{icon}</a>))}
+          <div className="mt-3 flex gap-2.5 text-base">
+            {socialLinks.map(({ label, href, icon }) => (
+              <a 
+                key={label} 
+                href={href} 
+                target="_blank" 
+                rel="noreferrer" 
+                aria-label={label} 
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-gray-800 text-gray-400 transition-all hover:bg-white hover:text-black hover:shadow-lg"
+              >
+                {icon}
+              </a>
+            ))}
           </div>
         </div>
 
-        <div>
-          <h3 className="mb-2 text-sm font-semibold uppercase tracking-[0.14em] text-white">Company</h3>
-          <ul className="space-y-1 text-sm">
+        <div className="flex flex-col items-center sm:items-start">
+          <h3 className="mb-2 text-sm font-bold uppercase tracking-[0.2em] text-white">Company</h3>
+          <ul className="space-y-1.5 text-sm text-left">
             {companyLinks.map(({ label, to }) => (
               <li key={label}>
-                <Link to={to} className="transition hover:text-white">{label}</Link>
+                <Link to={to} className="transition-colors hover:text-white">{label}</Link>
               </li>
             ))}
           </ul>
         </div>
 
-        <div>
-          <h3 className="mb-2 text-sm font-semibold uppercase tracking-[0.14em] text-white">Support</h3>
-          <ul className="space-y-1 text-sm">
+        <div className="flex flex-col items-center sm:items-start">
+          <h3 className="mb-2 text-sm font-bold uppercase tracking-[0.2em] text-white">Support</h3>
+          <ul className="space-y-1.5 text-sm text-left">
             {supportLinks.map(({ label, to }) => (
               <li key={label}>
-                <Link to={to} className="transition hover:text-white">{label}</Link>
+                <Link to={to} className="transition-colors hover:text-white">{label}</Link>
               </li>
             ))}
           </ul>
         </div>
 
-        <div className="flex flex-col items-center sm:items-start lg:items-end">
-          <h3 className="mb-2 text-sm font-semibold uppercase tracking-[0.14em] text-white">
-            {settings?.securePaymentTitle?.trim() || "Payments"}
+        <div className="flex flex-col items-center sm:items-start lg:items-start">
+          <h3 className="mb-2 text-sm font-bold uppercase tracking-[0.2em] text-white">
+            {settings?.securePaymentTitle?.trim() || "Safe Payments"}
           </h3>
 
           {securePaymentImages.length ? (
-            <div className="flex flex-wrap items-center justify-center gap-2 sm:justify-start lg:flex-nowrap lg:justify-end">
+            <div className="flex flex-wrap items-center justify-center gap-3 sm:justify-start lg:flex-nowrap lg:justify-end">
               {securePaymentImages.map((image, index) => (
-                <img key={`${image}-${index}`} src={image} alt="Secure payment" className="h-10 w-auto rounded bg-white object-contain p-1" loading="lazy" />
+                <img key={`${image}-${index}`} src={image} alt="Secure payment" className="h-10 w-auto rounded bg-white/10 p-1 object-contain backdrop-blur-sm transition-transform hover:scale-110" loading="lazy" />
               ))}
             </div>
-          ) : (<img src="/assets/images/payment-methods.svg" alt="Payments" className="w-[180px] max-w-full" />)}
+          ) : (<img src="/assets/images/payment-methods.svg" alt="Payments" className="w-[180px] max-w-full opacity-80" />)}
         </div>
       </div>
 
-      <div className="site-container mt-8 border-t border-gray-700 pt-3 text-center text-xs text-gray-400 sm:text-sm">
-        (c) {new Date().getFullYear()} Akyara. All rights reserved.
+      <div className="site-container mt-5 border-t border-gray-800 pt-4 text-center text-xs text-gray-500 sm:text-sm">
+        <p>&copy; {new Date().getFullYear()} Akyara. All rights reserved. Crafted for excellence.</p>
       </div>
     </footer>
   );
